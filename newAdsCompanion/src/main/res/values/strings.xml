@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="sa_id">000000</string>
+
+    <string name="it_s_time_to_upgrade">It\'s Time to Upgrade..</string>
+    <string name="version">Version-</string>
+    <string name="new_videos_added">New Videos Added.</string>
+    <string name="update_now">Update Now</string>
+    <string name="this_is_the_notification_message">This is the Notification Message</string>
+    <string name="ok">OK</string>
+    <string name="check_out_our_new_app">Check out our new App</string>
+    <string name="download">Download</string>
+    <string name="create_unique_photo_for_instagram_and_facebook_for_free">Create unique photo for instagram and facebook for free</string>
+    <string name="unique_photo_cut">Unique Photo Cut</string>
+    <string name="cancel">Cancel</string>
+    <string name="update_available">Update Available!!</string>
+    <string name="ad">AD</string>
+    <string name="consent_text">This app contain ads. Network ads support our work, and enable further development of this app. In line with the new European Data Protection Regulation(<a href="https://en.m.wikipedia.org/wiki/General_Data_Protection_Regulation"><U>GDPR</U></a>), we need your consent to serve ads tailored for you.\n\n <a href="https://sites.google.com/view/fiveacpolicy"><U>Learn how your data is used?</U></a> \n\n Can we continue to use your data to tailor ads for you?</string>
+    <string name="consent_positive">YES,CONTINUE TO SHOW RELEVANT ADS</string>
+    <string name="consent_negative">NO,SHOW ADS THAT ARE IRRELEVANT</string>
+    <string name="policy_google"><a href="https://policies.google.com/privacy"><U>Google Privacy Policy</U></a> </string>
+    <string name="policy_admob"><a href="https://support.google.com/admob/answer/6128543?hl=en"><U>Admob Privacy Policy</U></a> </string>
+    <string name="policy_facebook"><a href="https://www.facebook.com/about/privacy"><U>Facebook Audience Netwok Privacy Policy</U></a> </string>
+    <string name="policy_startapp"><a href="https://www.startapp.com/privacy/"><U>Startapp Privacy Policy</U></a> </string>
+    <string name="policy_appnext"><a href="https://www.appnext.com/privacy-policy-oem-operators/"><U>AppNext Privacy Policy</U></a> </string>
+    <string name="policy_mopub"><a href="https://www.mopub.com/en/legal/privacy"><U>Mopub Privacy Policy</U></a> </string>
+</resources>

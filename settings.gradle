@@ -1,0 +1,4 @@
+include ':unity-ads'
+include ':newAdsCompanion'
+include ':app'
+rootProject.name = "NewAdsCompanion"
