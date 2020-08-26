@@ -29,7 +29,7 @@ public class MainActivity extends BaseClass {
                 "b195f8dd8ded45fe847ad89ed1d016da","24534e1901884e398f1253216226017e","24534e1901884e398f1253216226017e","YOUR_PLACEMENT_ID","YOUR_PLACEMENT_ID",
                 "920b6145fb1546cf8b5cf2ac34638bb7","na","na","na","na","na",
                 "1","1","1","1","0000000","2",true,
-                false,true,true ,true,true,getResources().getColor(R.color._tint));
+                false,true,true ,true,false,getResources().getColor(R.color._tint));
 
         proceedWithDelay(4000, "loading", new Callable<Void>() {
             @Override

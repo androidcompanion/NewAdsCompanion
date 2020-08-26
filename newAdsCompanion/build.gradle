@@ -43,7 +43,8 @@ dependencies {
     //app next
     implementation 'com.appnext.sdk:ads:2.5.1.472'
     implementation 'com.appnext.sdk:banners:2.5.1.472'
-    implementation 'com.appnext.sdk:native-ads2:2.+'
+//    implementation 'com.appnext.sdk:native-ads2:2.+'
+    implementation 'com.appnext.sdk:native-ads2:2.5.3.472'
 
     implementation('com.mopub:mopub-sdk:5.12.0@aar') {
         transitive = true
