@@ -13,6 +13,7 @@
         <meta-data
             android:name="com.startapp.sdk.APPLICATION_ID"
             android:value="@string/sa_id" />
+
     </application>
 
 </manifest>

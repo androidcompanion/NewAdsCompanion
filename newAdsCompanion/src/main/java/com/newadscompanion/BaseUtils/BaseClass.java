@@ -57,6 +57,7 @@ import com.facebook.ads.NativeBannerAd;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.loopj.android.http.AsyncHttpClient;
@@ -167,87 +168,18 @@ public class BaseClass extends AppCompatActivity {
     public static boolean isMpInter2Shown = false;
     public static boolean isUInter2Shown = false;
 
+    public static boolean isGN1Shown = false;
+    public static boolean isFbN1Shown = false;
+    public static boolean isAnN1Shown = false;
+    public static boolean isMpN1Shown = false;
+    public static boolean isGN2Shown = false;
+    public static boolean isFbN2Shown = false;
+    public static boolean isAnN2Shown = false;
+    public static boolean isMpN2Shown = false;
+
     public static boolean isvalidInstall = false;
 
 
-    public void showConsentDialog(Context context) {
-        BottomSheetDialog consentDialog = new BottomSheetDialog(context, R.style.ConsentDialogTheme);
-        consentDialog.setCancelable(false);
-        consentDialog.setContentView(R.layout.dialog_consent);
-        Window window = consentDialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.BOTTOM;
-        window.setAttributes(wlp);
-        Objects.requireNonNull(consentDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
-        TextView tv_positive = consentDialog.findViewById(R.id.tv_positive);
-        TextView tv_negative = consentDialog.findViewById(R.id.tv_negative);
-        TextView tv_consentdetails = consentDialog.findViewById(R.id.tv_consentdetails);
-        TextView p1 = consentDialog.findViewById(R.id.tv_p1);
-        TextView p2 = consentDialog.findViewById(R.id.tv_p2);
-        TextView p3 = consentDialog.findViewById(R.id.tv_p3);
-        TextView p4 = consentDialog.findViewById(R.id.tv_p4);
-        TextView p5 = consentDialog.findViewById(R.id.tv_p5);
-        TextView p6 = consentDialog.findViewById(R.id.tv_p6);
-
-        p1.setMovementMethod(LinkMovementMethod.getInstance());
-        p2.setMovementMethod(LinkMovementMethod.getInstance());
-        p3.setMovementMethod(LinkMovementMethod.getInstance());
-        p4.setMovementMethod(LinkMovementMethod.getInstance());
-        p5.setMovementMethod(LinkMovementMethod.getInstance());
-        p6.setMovementMethod(LinkMovementMethod.getInstance());
-        tv_consentdetails.setMovementMethod(LinkMovementMethod.getInstance());
-        tv_positive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                consentDialog.dismiss();
-                adsPrefernce.setConsent(true);
-                adsPrefernce.setConsentShown();
-                StartAppSDK.setUserConsent(context,
-                        "pas",
-                        System.currentTimeMillis(),
-                        adsPrefernce.getConsent());
-                PersonalInfoManager personalInfoManager = MoPub.getPersonalInformationManager();
-                if (adsPrefernce.getConsent()) {
-                    if (personalInfoManager != null) {
-                        personalInfoManager.grantConsent();
-                    }
-                } else {
-                    if (personalInfoManager != null) {
-                        personalInfoManager.revokeConsent();
-                    }
-                }
-                Appnext.setParam("consent", String.valueOf(adsPrefernce.getConsent()));
-            }
-        });
-        tv_negative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                consentDialog.dismiss();
-                adsPrefernce.setConsent(false);
-                adsPrefernce.setConsentShown();
-                StartAppSDK.setUserConsent(context,
-                        "pas",
-                        System.currentTimeMillis(),
-                        adsPrefernce.getConsent());
-                PersonalInfoManager personalInfoManager = MoPub.getPersonalInformationManager();
-                if (adsPrefernce.getConsent()) {
-                    if (personalInfoManager != null) {
-                        personalInfoManager.grantConsent();
-                    }
-                } else {
-                    if (personalInfoManager != null) {
-                        personalInfoManager.revokeConsent();
-                    }
-                }
-                Appnext.setParam("consent", String.valueOf(adsPrefernce.getConsent()));
-            }
-        });
-
-        if (!adsPrefernce.isConsentShown()) {
-            consentDialog.show();
-        }
-
-    }
 
 
     @Override
@@ -264,13 +196,8 @@ public class BaseClass extends AppCompatActivity {
         defaultIds = new DefaultIds(this);
         adsPrefernce = new AdsPrefernce(this);
 
-        //initilize mopub banner
-//        initializeMoPubSDKforBanner(defaultIds.MP_BANNER(), false);
-
-
         // initialize startapp sdk
         StartAppSDK.init(BaseClass.this, defaultIds.SA_APP_ID(), false);
-        StartAppAd.disableAutoInterstitial();
         StartAppAd.enableConsent(this, false);
         //disable startapp splash
         if (defaultIds.DISABLE_SA_SPLASH()) {
@@ -624,108 +551,79 @@ public class BaseClass extends AppCompatActivity {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
-                    if (adsPrefernce.showgBanner()) {
-                        AdView gadView;
-                        MobileAds.initialize(this, adsPrefernce.gAppId());
-                        final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
-                        adContainerView.setVisibility(View.VISIBLE);
-                        gadView = new AdView(this);
-                        adContainerView.setPadding(0, top, 0, bottom);
-                        gadView.setAdUnitId(adsPrefernce.gBannerId());
-                        adContainerView.addView(gadView);
-                        AdRequest adRequest = new AdRequest.Builder().build();
-                        com.google.android.gms.ads.AdSize adSize = getAdSize();
-                        gadView.setAdSize(adSize);
-                        gadView.loadAd(adRequest);
-                        gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
-                            @Override
-                            public void onAdLoaded() {
-                                super.onAdLoaded();
-                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                    if (!adsPrefernce.isMediationActive()){
+                        if (adsPrefernce.showgBanner()) {
+                            AdView gadView;
+                            MobileAds.initialize(this, adsPrefernce.gAppId());
+                            final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            gadView = new AdView(this);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            gadView.setAdUnitId(adsPrefernce.gBannerId());
+                            adContainerView.addView(gadView);
+                            AdRequest adRequest = new AdRequest.Builder().build();
+                            com.google.android.gms.ads.AdSize adSize = getAdSize();
+                            gadView.setAdSize(adSize);
+                            gadView.loadAd(adRequest);
+                            gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    super.onAdLoaded();
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
                                 }
-                            }
-                        });
-                    } else if (adsPrefernce.showfbBanner()) {
-                        com.facebook.ads.AdView adView;
+                            });
+                        } else if (adsPrefernce.showfbBanner()) {
+                            com.facebook.ads.AdView adView;
 
-                        AudienceNetworkAds.initialize(this);
-                        adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
-                        final FrameLayout adContainerView = findViewById(R.id.banner_container);
-                        adContainerView.setVisibility(View.VISIBLE);
-                        adContainerView.addView(adView);
-                        adContainerView.setPadding(0, top, 0, bottom);
-                        adView.loadAd();
-                        adView.setAdListener(new AdListener() {
-                            @Override
-                            public void onError(Ad ad, AdError adError) {
-
-                            }
-
-                            @Override
-                            public void onAdLoaded(Ad ad) {
-                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                }
-
-                            }
-
-                            @Override
-                            public void onAdClicked(Ad ad) {
-
-                            }
-
-                            @Override
-                            public void onLoggingImpression(Ad ad) {
-
-                            }
-                        });
-
-                    } else if (adsPrefernce.showanBanner()) {
-                        final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
-                        adContainerView.setPadding(0, top, 0, bottom);
-                        Appnext.init(this);
-                        BannerView banner = new BannerView(this);
-                        banner.setPlacementId(adsPrefernce.anAdId());
-                        banner.setBannerSize(BannerSize.BANNER);
-                        banner.loadAd(new BannerAdRequest());
-                        adContainerView.addView(banner);
-                        banner.setBannerListener(new com.appnext.banners.BannerListener() {
-                            @Override
-                            public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
-                                super.onAdLoaded(s, appnextAdCreativeType);
-                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                }
-                            }
-
-                            @Override
-                            public void onError(AppnextError appnextError) {
-                                super.onError(appnextError);
-                                Log.e("an banner error: ", String.valueOf(appnextError));
-                            }
-                        });
-                    } else if (adsPrefernce.showmpBanner()) {
-                        MoPubView moPubView;
-                        moPubView = new MoPubView(this);
-                        Log.e("MP Ads...", "Banner Call");
-
-                        Log.e("MP Ads...", "showmpBanner");
-                        if (mpBannerInitilized) {
-                            Log.e("MP Ads...", "mpBannerInitilized true");
-                            moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
-                            moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
-                            moPubView.loadAd();
+                            AudienceNetworkAds.initialize(this);
+                            adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.addView(adView);
                             adContainerView.setPadding(0, top, 0, bottom);
-                            adContainerView.addView(moPubView);
-                            moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
+                            adView.loadAd();
+                            adView.setAdListener(new AdListener() {
                                 @Override
-                                public void onBannerLoaded(@NonNull MoPubView banner) {
+                                public void onError(Ad ad, AdError adError) {
+
+                                }
+
+                                @Override
+                                public void onAdLoaded(Ad ad) {
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
+
+                                }
+
+                                @Override
+                                public void onAdClicked(Ad ad) {
+
+                                }
+
+                                @Override
+                                public void onLoggingImpression(Ad ad) {
+
+                                }
+                            });
+
+                        } else if (adsPrefernce.showanBanner()) {
+                            final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            Appnext.init(this);
+                            BannerView banner = new BannerView(this);
+                            banner.setPlacementId(adsPrefernce.anAdId());
+                            banner.setBannerSize(BannerSize.BANNER);
+                            banner.loadAd(new BannerAdRequest());
+                            adContainerView.addView(banner);
+                            banner.setBannerListener(new com.appnext.banners.BannerListener() {
+                                @Override
+                                public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
+                                    super.onAdLoaded(s, appnextAdCreativeType);
                                     adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -733,32 +631,73 @@ public class BaseClass extends AppCompatActivity {
                                 }
 
                                 @Override
-                                public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-                                    Log.e("mp banner error: ", String.valueOf(errorCode));
-
-                                }
-
-                                @Override
-                                public void onBannerClicked(MoPubView banner) {
-
-                                }
-
-                                @Override
-                                public void onBannerExpanded(MoPubView banner) {
-
-                                }
-
-                                @Override
-                                public void onBannerCollapsed(MoPubView banner) {
-
+                                public void onError(AppnextError appnextError) {
+                                    super.onError(appnextError);
+                                    Log.e("an banner error: ", String.valueOf(appnextError));
                                 }
                             });
+                        } else if (adsPrefernce.showmpBanner()) {
+                            MoPubView moPubView;
+                            moPubView = new MoPubView(this);
+                            Log.e("MP Ads...", "Banner Call");
+
+                            Log.e("MP Ads...", "showmpBanner");
+                            if (mpBannerInitilized) {
+                                Log.e("MP Ads...", "mpBannerInitilized true");
+                                moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
+                                moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
+                                moPubView.loadAd();
+                                final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                                adContainerView.setVisibility(View.VISIBLE);
+                                adContainerView.setPadding(0, top, 0, bottom);
+                                adContainerView.addView(moPubView);
+                                moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
+                                    @Override
+                                    public void onBannerLoaded(@NonNull MoPubView banner) {
+                                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
+                                        Log.e("mp banner error: ", String.valueOf(errorCode));
+
+                                    }
+
+                                    @Override
+                                    public void onBannerClicked(MoPubView banner) {
+
+                                    }
+
+                                    @Override
+                                    public void onBannerExpanded(MoPubView banner) {
+
+                                    }
+
+                                    @Override
+                                    public void onBannerCollapsed(MoPubView banner) {
+
+                                    }
+                                });
+                            } else {
+                                Log.e("MP Ads...", "mpBannerInitilized true");
+                                initializeMoPubSDK();
+                            }
+                        }
+                    }else {
+                        if (adsPrefernce.showgBanner()) {
+                            if (!isGBannerShown) {
+                                showGBanner(top, bottom);
+                            } else {
+                                showFbBanner(top, bottom);
+                            }
                         } else {
-                            Log.e("MP Ads...", "mpBannerInitilized true");
-                            initializeMoPubSDK();
+                            showFbBanner(top, bottom);
                         }
                     }
-                } else {
+                     } else {
                     final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
                     Banner startAppBanner = new Banner(this, new BannerListener() {
                         @Override
@@ -792,8 +731,6 @@ public class BaseClass extends AppCompatActivity {
                     adContainerView.setPadding(0, top, 0, bottom);
                     adContainerView.addView(startAppBanner, bannerParameters);
                 }
-
-
             } else {
                 com.facebook.ads.AdView adView;
                 AudienceNetworkAds.initialize(this);
@@ -841,120 +778,187 @@ public class BaseClass extends AppCompatActivity {
     }
 
     public void showMpBanner(int top, int bottom) {
-        MoPubView moPubView;
-        moPubView = new MoPubView(this);
-        if (mpBannerInitilized) {
-            Log.e("MP Ads...", "mpBannerInitilized true");
-            moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
-            moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
-            moPubView.loadAd();
-            final FrameLayout adContainerView = findViewById(R.id.banner_container);
-            adContainerView.setVisibility(View.VISIBLE);
-            adContainerView.setPadding(0, top, 0, bottom);
-            adContainerView.addView(moPubView);
-            moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
-                @Override
-                public void onBannerLoaded(@NonNull MoPubView banner) {
-                    isMpBannerShown = true;
-                    resetAllShownBoolean();
-                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+        if (adsPrefernce.showmpBanner()){
+            if (!isMpBannerShown){
+                MoPubView moPubView;
+                moPubView = new MoPubView(this);
+                if (mpBannerInitilized) {
+                    Log.e("MP Ads...", "mpBannerInitilized true");
+                    moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
+                    moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
+                    moPubView.loadAd();
+                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                    adContainerView.setVisibility(View.VISIBLE);
+                    adContainerView.setPadding(0, top, 0, bottom);
+                    adContainerView.addView(moPubView);
+                    moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
+                        @Override
+                        public void onBannerLoaded(@NonNull MoPubView banner) {
+                            isMpBannerShown = true;
+                            resetAllShownBoolean();
+                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                            }
+                        }
+
+                        @Override
+                        public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
+                            Log.e("mp banner error: ", String.valueOf(errorCode));
+                            isMpBannerShown = true;
+                            resetAllBannerBoolean();
+                            if (adsPrefernce.showgBanner()) {
+                                if (!isGBannerShown) {
+                                    showGBanner(top, bottom);
+                                } else {
+                                    showFbBanner(top, bottom);
+                                }
+                            } else {
+                                showFbBanner(top, bottom);
+                            }
+                        }
+
+                        @Override
+                        public void onBannerClicked(MoPubView banner) {
+
+                        }
+
+                        @Override
+                        public void onBannerExpanded(MoPubView banner) {
+
+                        }
+
+                        @Override
+                        public void onBannerCollapsed(MoPubView banner) {
+
+                        }
+                    });
+                } else {
+                    Log.e("MP Ads...", "mpBannerInitilized true");
+                    initializeMoPubSDK();
+                    if (adsPrefernce.showgBanner()) {
+                        if (!isGBannerShown) {
+                            showGBanner(top, bottom);
+                        } else {
+                            showFbBanner(top, bottom);
+                        }
+                    } else {
+                        showFbBanner(top, bottom);
                     }
                 }
-
-                @Override
-                public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-                    Log.e("mp banner error: ", String.valueOf(errorCode));
-
+            }else {
+                resetAllBannerBoolean();
+                if (adsPrefernce.showgBanner()) {
+                    if (!isGBannerShown) {
+                        showGBanner(top, bottom);
+                    } else {
+                        showFbBanner(top, bottom);
+                    }
+                } else {
+                    showFbBanner(top, bottom);
                 }
-
-                @Override
-                public void onBannerClicked(MoPubView banner) {
-
+            }
+        }else {
+            resetAllBannerBoolean();
+            if (adsPrefernce.showgBanner()) {
+                if (!isGBannerShown) {
+                    showGBanner(top, bottom);
+                } else {
+                    showFbBanner(top, bottom);
                 }
-
-                @Override
-                public void onBannerExpanded(MoPubView banner) {
-
-                }
-
-                @Override
-                public void onBannerCollapsed(MoPubView banner) {
-
-                }
-            });
-        } else {
-            Log.e("MP Ads...", "mpBannerInitilized true");
-            initializeMoPubSDK();
+            } else {
+                showFbBanner(top, bottom);
+            }
         }
+
     }
 
 
     public void showAnBanner(int top, int bottom) {
-        final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
-        adContainerView.setPadding(0, top, 0, bottom);
-        Appnext.init(this);
-        BannerView banner = new BannerView(this);
-        banner.setPlacementId(adsPrefernce.anAdId());
-        banner.setBannerSize(BannerSize.BANNER);
-        banner.loadAd(new BannerAdRequest());
-        adContainerView.addView(banner);
-        banner.setBannerListener(new com.appnext.banners.BannerListener() {
-            @Override
-            public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
-                super.onAdLoaded(s, appnextAdCreativeType);
-                isAnBannerShown = true;
-                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                }
-            }
+        if (adsPrefernce.showanBanner()){
+            if (!isAnBannerShown){
+                final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
+                adContainerView.setPadding(0, top, 0, bottom);
+                Appnext.init(this);
+                BannerView banner = new BannerView(this);
+                banner.setPlacementId(adsPrefernce.anAdId());
+                banner.setBannerSize(BannerSize.BANNER);
+                banner.loadAd(new BannerAdRequest());
+                adContainerView.addView(banner);
+                banner.setBannerListener(new com.appnext.banners.BannerListener() {
+                    @Override
+                    public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
+                        super.onAdLoaded(s, appnextAdCreativeType);
+                        isAnBannerShown = true;
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
+                    }
 
-            @Override
-            public void onError(AppnextError appnextError) {
-                super.onError(appnextError);
-                Log.e("an banner error: ", String.valueOf(appnextError));
+                    @Override
+                    public void onError(AppnextError appnextError) {
+                        super.onError(appnextError);
+                        isAnBannerShown = true;
+                        showMpBanner(top,bottom);
+                        Log.e("an banner error: ", String.valueOf(appnextError));
+                    }
+                });
+            }else {
+                showMpBanner(top,bottom);
             }
-        });
+        }else {
+            showMpBanner(top,bottom);
+        }
+
     }
 
 
     public void showFbBanner(int top, int bottom) {
-        com.facebook.ads.AdView adView;
-        AudienceNetworkAds.initialize(this);
-        adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
-        final FrameLayout adContainerView = findViewById(R.id.banner_container);
-        adContainerView.setVisibility(View.VISIBLE);
-        adContainerView.addView(adView);
-        adContainerView.setPadding(0, top, 0, bottom);
-        adView.loadAd();
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onError(Ad ad, AdError adError) {
+        if (adsPrefernce.showfbBanner()){
+            if (!isFbBannerShown){
+                com.facebook.ads.AdView adView;
+                AudienceNetworkAds.initialize(this);
+                adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
+                final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                adContainerView.setVisibility(View.VISIBLE);
+                adContainerView.addView(adView);
+                adContainerView.setPadding(0, top, 0, bottom);
+                adView.loadAd();
+                adView.setAdListener(new AdListener() {
+                    @Override
+                    public void onError(Ad ad, AdError adError) {
+                        isFbBannerShown = true;
+                        showAnBanner(top,bottom);
+                    }
 
+                    @Override
+                    public void onAdLoaded(Ad ad) {
+                        isFbBannerShown = true;
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
+
+                    }
+
+                    @Override
+                    public void onAdClicked(Ad ad) {
+
+                    }
+
+                    @Override
+                    public void onLoggingImpression(Ad ad) {
+
+                    }
+                });
+            }else {
+                showAnBanner(top,bottom);
             }
+        }else {
+            showAnBanner(top,bottom);
+        }
 
-            @Override
-            public void onAdLoaded(Ad ad) {
-                isFbBannerShown = true;
-                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                }
-
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-
-            }
-        });
     }
 
     public void showGBanner(int top, int bottom) {
@@ -980,6 +984,13 @@ public class BaseClass extends AppCompatActivity {
                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
                 }
             }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                isGBannerShown = true;
+                showFbBanner(top,bottom);
+            }
         });
     }
 
@@ -990,304 +1001,6 @@ public class BaseClass extends AppCompatActivity {
     public void toast(String text, Boolean longToast) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
-
-    //new without validation static ads
-
-//    public void loadSplashInterstitial() {
-//        adsPrefernce = new AdsPrefernce(this);
-//        if (isNetworkAvailable(this)) {
-//            if (!adsPrefernce.planD()) {
-//                if (!adsPrefernce.isMediationActive()) {
-//                    if (adsPrefernce.planA()) {
-//                        Log.e("splash","planA true");
-//                        if (adsPrefernce.showgInter1()) {
-//                            Log.e("splash","showgInter1 true");
-//                                MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
-//                                gInterstitial1 = new com.google.android.gms.ads.InterstitialAd(this);
-//                                gInterstitial1.setAdUnitId(adsPrefernce.gInterId1());
-//                                gInterstitial1.loadAd(new AdRequest.Builder().build());
-//                                gInterstitial1.setAdListener(new com.google.android.gms.ads.AdListener() {
-//                                    @Override
-//                                    public void onAdLoaded() {
-//                                        super.onAdLoaded();
-//                                        Log.e("splash","gInter1 AdLoaded");
-//
-////                                        isGInter1Ready = true;
-//                                    }
-//                                });
-//
-//                        }
-//                        if (adsPrefernce.showfbInter1()) {
-//                                AudienceNetworkAds.initialize(this);
-//                                fbInterstitial1 = new com.facebook.ads.InterstitialAd(this, adsPrefernce.fbInterId1());
-//                                fbInterstitial1.loadAd();
-//                                fbInterstitial1.setAdListener(new InterstitialAdListener() {
-//                                    @Override
-//                                    public void onInterstitialDisplayed(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialDismissed(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(Ad ad, AdError adError) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdLoaded(Ad ad) {
-////                                        isFbInter1Ready = true;
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdClicked(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onLoggingImpression(Ad ad) {
-//
-//                                    }
-//                                });
-//
-//
-//                        }
-//
-//                    }
-//                    if (adsPrefernce.planB()) {
-//                        if (adsPrefernce.showanInter1()) {
-//                            an_interstitial_Ad1 = new Interstitial(this, adsPrefernce.anAdId());
-//                                an_interstitial_Ad1.loadAd();
-//                                an_interstitial_Ad1.setOnAdLoadedCallback(new OnAdLoaded() {
-//                                    @Override
-//                                    public void adLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
-////                                        isAnInter1Ready = true;
-//                                    }
-//                                });
-//
-//                        }
-//                    }
-//                    if (adsPrefernce.planC()) {
-//                        if (adsPrefernce.showmpInter1()) {
-//                            if (mpInter1Initilized) {
-//                                mpInterstitial1 = new MoPubInterstitial((Activity) this, adsPrefernce.mpInterId1());
-//                                     mpInterstitial1.load();
-//                                    mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-//                                        @Override
-//                                        public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-////                                            isMpInter1Ready = true;
-//                                        }
-//
-//                                        @Override
-//                                        public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onInterstitialShown(MoPubInterstitial interstitial) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onInterstitialClicked(MoPubInterstitial interstitial) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-//
-//                                        }
-//                                    });
-//
-//                            } else {
-//                                initializeMoPubSDK();
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    public void showSplashInterstitial() {
-//        if (!adsPrefernce.planD()) {
-//            Log.e("splash","planD false");
-//            if (adsPrefernce.allowAccess()) {
-//                Log.e("splash","allowAccess true");
-////                if (isvalidInstall) {
-//                    if (!adsPrefernce.isMediationActive()) {
-//                        Log.e("splash","isMediationActive false");
-//                        showSplashAd();
-//                    } else {
-//                        showMixedInterAds();
-//                    }
-////                }
-//            }
-//
-//        }
-//    }
-//
-//    public void  showSplashAd() {
-//        if (isNetworkAvailable(this)) {
-//            if (adsPrefernce.planA()) {
-//                Log.e("splash show","in Plan A");
-//                if (adsPrefernce.showgInter1()) {
-//                    Log.e("splash show","howgInter1 true");
-//                    if (gInterstitial1.isLoaded() && gInterstitial1 != null) {
-//                        Log.e("splash show"," ginter 1 loaded");
-//                        gInterstitial1.show();
-//                            gInterstitial1.setAdListener(new com.google.android.gms.ads.AdListener() {
-//                                public void onAdClosed() {
-//                                    gInterstitial1.loadAd(new AdRequest.Builder().build());
-//                                }
-//
-//                                @Override
-//                                public void onAdOpened() {
-//                                    super.onAdOpened();
-////                                    isGInter1Ready = false;
-////                                    isGInter1Shown = true;
-//                                }
-//                            });
-//                        }
-//
-//                } else if (adsPrefernce.showfbInter1()) {
-////                    if (isFbInter1Ready) {
-//                        if (fbInterstitial1.isAdLoaded()) {
-//                            fbInterstitial1.show();
-//                            fbInterstitial1.setAdListener(new InterstitialAdListener() {
-//                                @Override
-//                                public void onInterstitialDisplayed(Ad ad) {
-////                                    isFbInter1Ready = false;
-////                                    isFbInter1Shown = true;
-//                                }
-//
-//                                @Override
-//                                public void onInterstitialDismissed(Ad ad) {
-//                                    fbInterstitial1.loadAd();
-//                                }
-//
-//                                @Override
-//                                public void onError(Ad ad, AdError adError) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onAdLoaded(Ad ad) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onAdClicked(Ad ad) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onLoggingImpression(Ad ad) {
-//
-//                                }
-//                            });
-//                        }
-//
-////                    }
-//                }
-//            } else if (adsPrefernce.planB()) {
-//                if (adsPrefernce.showanInter1()) {
-////                    if (isAnInter1Ready) {
-//                        if (an_interstitial_Ad1.isAdLoaded()) {
-//                            an_interstitial_Ad1.showAd();
-//                            an_interstitial_Ad1.setOnAdClosedCallback(new OnAdClosed() {
-//                                @Override
-//                                public void onAdClosed() {
-//                                    loadInterstitial1();
-//                                }
-//                            });
-//                            an_interstitial_Ad1.setOnAdOpenedCallback(new OnAdOpened() {
-//                                @Override
-//                                public void adOpened() {
-////                                    isAnInter1Ready = false;
-////                                    isAnInter1Shown = true;
-//                                }
-//                            });
-//                        }
-////                    }
-//                }
-//            } else if (adsPrefernce.planC()) {
-//                if (adsPrefernce.showmpInter1()) {
-////                    if (isMpInter1Ready) {
-//                        if (mpInterstitial1 != null) {
-//                            if (mpInterstitial1.isReady()) {
-//                                mpInterstitial1.show();
-//                                mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-//                                    @Override
-//                                    public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialShown(MoPubInterstitial interstitial) {
-////                                        isMpInter1Ready = false;
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialClicked(MoPubInterstitial interstitial) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-//
-//                                        mpInterstitial1.load();
-//                                        mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-//                                            @Override
-//                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-//                                                Log.e("inLoadonClosed", "ismpinter1 ready = true");
-////                                                isMpInter1Ready = true;
-//                                            }
-//
-//                                            @Override
-//                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-//
-//                                            }
-//
-//                                            @Override
-//                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
-//
-//                                            }
-//
-//                                            @Override
-//                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
-//
-//                                            }
-//
-//                                            @Override
-//                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-//
-//                                            }
-//                                        });
-//
-//
-//                                    }
-//                                });
-//                            }
-//                        }
-////                    }
-//                }
-//            }
-//
-//
-//        }
-//    }
-
-
-    //old with validation
 
     public void loadSplashInterstitial() {
         adsPrefernce = new AdsPrefernce(this);
@@ -4059,336 +3772,6 @@ public class BaseClass extends AppCompatActivity {
         }
     }
 
-    // backpress ads with validation
-//    public void showBackPressAd(final Callable<Void> methodParam) {
-//        if (isNetworkAvailable(this)) {
-//            adsPrefernce = new AdsPrefernce(this);
-//            if (!adsPrefernce.isMediationActive()) {
-//                if (!adsPrefernce.planD()) {
-//                    if (isAdsAvailable) {
-//                        if (adsPrefernce.planA()) {
-//                            if (adsPrefernce.showgInter1()) {
-//                                if (isGInter1Ready) {
-//                                    if (gInterstitial1.isLoaded()) {
-//                                        gInterstitial1.show();
-//                                        gInterstitial1.setAdListener(new com.google.android.gms.ads.AdListener() {
-//                                            @Override
-//                                            public void onAdLoaded() {
-//                                            }
-//
-//                                            @Override
-//                                            public void onAdClosed() {
-//                                                try {
-//                                                    methodParam.call();
-//                                                } catch (Exception e) {
-//                                                    e.printStackTrace();
-//                                                }
-//                                                gInterstitial1.loadAd(new AdRequest.Builder().build());
-//                                            }
-//                                        });
-//                                    } else {
-//                                        try {
-//                                            methodParam.call();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                } else {
-//                                    try {
-//                                        methodParam.call();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//
-//                            } else {
-//                                if (adsPrefernce.showfbInter1()) {
-//                                    if (isFbInter1Ready) {
-//                                        if (fbInterstitial1.isAdLoaded()) {
-//                                            fbInterstitial1.show();
-//                                            fbInterstitial1.setAdListener(new InterstitialAdListener() {
-//                                                @Override
-//                                                public void onInterstitialDisplayed(Ad ad) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onInterstitialDismissed(Ad ad) {
-//                                                    try {
-//                                                        methodParam.call();
-//                                                    } catch (Exception e) {
-//                                                        e.printStackTrace();
-//                                                    }
-//                                                }
-//
-//                                                @Override
-//                                                public void onError(Ad ad, AdError adError) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onAdLoaded(Ad ad) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onAdClicked(Ad ad) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onLoggingImpression(Ad ad) {
-//
-//                                                }
-//                                            });
-//                                        } else {
-//                                            try {
-//                                                methodParam.call();
-//                                            } catch (Exception e) {
-//                                                e.printStackTrace();
-//                                            }
-//                                        }
-//                                    } else {
-//                                        try {
-//                                            methodParam.call();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                } else {
-//                                    try {
-//                                        methodParam.call();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        } else if (adsPrefernce.planB()) {
-//                            if (adsPrefernce.showanInter1()) {
-//                                if (isAnInter1Ready) {
-//                                    if (an_interstitial_Ad1.isAdLoaded()) {
-//                                        an_interstitial_Ad1.showAd();
-//                                        an_interstitial_Ad1.setOnAdClosedCallback(new OnAdClosed() {
-//                                            @Override
-//                                            public void onAdClosed() {
-//                                                loadInterstitial1();
-//                                                try {
-//                                                    methodParam.call();
-//                                                } catch (Exception e) {
-//                                                    e.printStackTrace();
-//                                                }
-//
-//                                            }
-//                                        });
-//                                        an_interstitial_Ad1.setOnAdOpenedCallback(new OnAdOpened() {
-//                                            @Override
-//                                            public void adOpened() {
-//                                                isAnInter1Ready = false;
-//                                            }
-//                                        });
-//                                    } else {
-//                                        try {
-//                                            methodParam.call();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//
-//
-//                                } else {
-//                                    try {
-//                                        methodParam.call();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            } else {
-//                                try {
-//                                    methodParam.call();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        } else if (adsPrefernce.planC()) {
-//                            if (adsPrefernce.showmpInter1()) {
-//                                if (isMpInter1Ready) {
-//                                    if (mpInterstitial1 != null) {
-//                                        if (mpInterstitial1.isReady()) {
-//                                            mpInterstitial1.show();
-//                                            mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-//                                                @Override
-//                                                public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onInterstitialShown(MoPubInterstitial interstitial) {
-//                                                    isMpInter1Ready = false;
-//                                                }
-//
-//                                                @Override
-//                                                public void onInterstitialClicked(MoPubInterstitial interstitial) {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-//                                                    mpInterstitial1.load();
-//                                                    try {
-//                                                        methodParam.call();
-//                                                    } catch (Exception e) {
-//                                                        e.printStackTrace();
-//                                                    }
-//                                                    mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-//                                                        @Override
-//                                                        public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-//                                                            isMpInter1Ready = true;
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-//
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onInterstitialShown(MoPubInterstitial interstitial) {
-//                                                            isMpInter1Ready = false;
-//                                                            isMpInter1Shown = true;
-//
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onInterstitialClicked(MoPubInterstitial interstitial) {
-//
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-//
-//                                                        }
-//                                                    });
-//
-//
-//                                                }
-//                                            });
-//                                        } else {
-//                                            try {
-//                                                methodParam.call();
-//                                            } catch (Exception e) {
-//                                                e.printStackTrace();
-//                                            }
-//                                        }
-//                                    } else {
-//                                        try {
-//                                            methodParam.call();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//
-//                                } else {
-//                                    try {
-//                                        methodParam.call();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            } else {
-//                                try {
-//                                    methodParam.call();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        } else {
-//                            try {
-//                                methodParam.call();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                    } else {
-//                        if (isFbInter1Ready) {
-//                            if (fbInterstitial1.isAdLoaded()) {
-//                                fbInterstitial1.show();
-//                                fbInterstitial1.setAdListener(new InterstitialAdListener() {
-//                                    @Override
-//                                    public void onInterstitialDisplayed(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onInterstitialDismissed(Ad ad) {
-//                                        try {
-//                                            methodParam.call();
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(Ad ad, AdError adError) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdLoaded(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdClicked(Ad ad) {
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onLoggingImpression(Ad ad) {
-//
-//                                    }
-//                                });
-//                            } else {
-//                                try {
-//                                    methodParam.call();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        } else {
-//                            try {
-//                                methodParam.call();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    super.onBackPressed();
-//                }
-//            } else {
-//                showMixedInterAdsOnClosed(new Callable<Void>() {
-//                    @Override
-//                    public Void call() throws Exception {
-//                        try {
-//                            methodParam.call();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                        return null;
-//                    }
-//                });
-//            }
-//
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
-
     public void checkAppService(String key, String appVersion) {
         if (isNetworkAvailable(this) && checkAppService) {
             runAppService(key, appVersion);
@@ -4840,44 +4223,83 @@ public class BaseClass extends AppCompatActivity {
 
     }
 
-    //                    adsPrefernce.setAdsDefaults(ads.getShowAds(),ads.getShowLoading(),ads.getAd1(),ads.getAd2(),ads.getAd3(),ads.getAd4(),ads.getAd5(),
-//                            ads.getGAppId(),ads.getGBanner(),ads.getShowGbanner(),ads.getGInter1(),ads.getShowGinter1(),ads.getGInter2(),ads.getShowGinter2(),
-//                            ads.getGRewarded(),ads.getShowGrewarded(),ads.getGNative1(),ads.getShowGnative1(),ads.getGNative2(),ads.getShowGnative2(),
-//
-//                            ads.getFbBanner(),ads.getShowFbbanner(),ads.getFbInter1(),ads.getShowFbinter1(),ads.getFbInter2(),ads.getShowFbinter2(),
-//                            ads.getFbRewarded(),ads.getShowFbRewarded(),ads.getFbNative1(),ads.getShowFbnative1(),ads.getFbNative2(),ads.getShowFbnative2(),
-//                            ads.getFbNativebanner(),ads.getFbNativebanner(),
-//
-//                            ads.getAnBanner(),ads.getShowAnbanner(),ads.getAnInter1(),ads.getShowAninter1(),ads.getAnInter2(),ads.getShowAninter2(),
-//                            ads.getAnNative1(),ads.getShowAnnative1(),ads.getAnNative2(),ads.getShowAnnative2(),ads.getAnRewarded(),ads.getShowAnrewarded(),
-//
-//                            ads.getMpBanner(),ads.getShowMpbanner(),ads.getMpInter1(),ads.getShowMpinter1(),ads.getMpInter2(),ads.getShowMpinter2(),
-//                            ads.getMpNative1(),ads.getShowMpnative1(),ads.getMpNative2(),ads.getShowMpnative2(),ads.getMpRewarded(),ads.getShowMprewarded(),
-//
-//                            ads.getUBanner(),ads.getShowUbanner(),ads.getUInter1(),ads.getShowUinter1(),ads.getUInter2(),ads.getShowUinter2(),
-//                            ads.getUNative1(),ads.getShowUnative1(), ads.getUNative2(),ads.getShowUnative2(),ads.getURewarded(),ads.getShowUrewarded(),
-//
-//                            ads.getExtraPara1(),ads.getExtraPara2(),ads.getExtraPara3(),ads.getExtraPara4(),
-//
-//                            ads.getSaAdCount()
-//                    );
-// if (ads.getAd1().equals("1")) {
-//        adsPrefernce.setAdsDefaults(ads.getShowAds(), ads.getShowLoading(), ads.getAd1(), ads.getAd2(), ads.getAd3(), ads.getAd4(), ads.getAd5(),
-//                ads.getGAppId(), ads.getGBanner(), ads.getShowGbanner(), ads.getGInter1(), ads.getShowGinter1(), ads.getGInter2(), ads.getShowGinter2(),
-//                ads.getGRewarded(), ads.getShowGrewarded(), ads.getGNative1(), ads.getShowGnative1(), ads.getGNative2(), ads.getShowGnative2(),
-//
-//                ads.getFbBanner(), ads.getShowFbbanner(), ads.getFbInter1(), ads.getShowFbinter1(), ads.getFbInter2(), ads.getShowFbinter2(),
-//                ads.getFbRewarded(), ads.getShowFbRewarded(), ads.getFbNative1(), ads.getShowFbnative1(), ads.getFbNative2(), ads.getShowFbnative2(),
-//                ads.getFbNativebanner(), ads.getFbNativebanner(),
-//
-//                "na", "0", "0", "0", "0", "0", "0",
-//                "na", "0", "na", "0", "na", "0", "na", "0", "na", "0", "na", "0",
-//                "na", "0", "na", "0", "na", "0", "na", "0", "na", "0", "na", "0",
-//
-//                ads.getExtraPara1(), ads.getExtraPara2(), ads.getExtraPara3(), ads.getExtraPara4(),
-//
-//                ads.getSaAdCount()
-//        );
-//    }
+    public void showConsentDialog(Context context) {
+        BottomSheetDialog consentDialog = new BottomSheetDialog(context, R.style.ConsentDialogTheme);
+        consentDialog.setCancelable(false);
+        consentDialog.setContentView(R.layout.dialog_consent);
+        Window window = consentDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.BOTTOM;
+        window.setAttributes(wlp);
+        Objects.requireNonNull(consentDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+        TextView tv_positive = consentDialog.findViewById(R.id.tv_positive);
+        TextView tv_negative = consentDialog.findViewById(R.id.tv_negative);
+        TextView tv_consentdetails = consentDialog.findViewById(R.id.tv_consentdetails);
+        TextView p1 = consentDialog.findViewById(R.id.tv_p1);
+        TextView p2 = consentDialog.findViewById(R.id.tv_p2);
+        TextView p3 = consentDialog.findViewById(R.id.tv_p3);
+        TextView p4 = consentDialog.findViewById(R.id.tv_p4);
+        TextView p5 = consentDialog.findViewById(R.id.tv_p5);
+        TextView p6 = consentDialog.findViewById(R.id.tv_p6);
+
+        p1.setMovementMethod(LinkMovementMethod.getInstance());
+        p2.setMovementMethod(LinkMovementMethod.getInstance());
+        p3.setMovementMethod(LinkMovementMethod.getInstance());
+        p4.setMovementMethod(LinkMovementMethod.getInstance());
+        p5.setMovementMethod(LinkMovementMethod.getInstance());
+        p6.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_consentdetails.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_positive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                consentDialog.dismiss();
+                adsPrefernce.setConsent(true);
+                adsPrefernce.setConsentShown();
+                StartAppSDK.setUserConsent(context,
+                        "pas",
+                        System.currentTimeMillis(),
+                        adsPrefernce.getConsent());
+                PersonalInfoManager personalInfoManager = MoPub.getPersonalInformationManager();
+                if (adsPrefernce.getConsent()) {
+                    if (personalInfoManager != null) {
+                        personalInfoManager.grantConsent();
+                    }
+                } else {
+                    if (personalInfoManager != null) {
+                        personalInfoManager.revokeConsent();
+                    }
+                }
+                Appnext.setParam("consent", String.valueOf(adsPrefernce.getConsent()));
+            }
+        });
+        tv_negative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                consentDialog.dismiss();
+                adsPrefernce.setConsent(false);
+                adsPrefernce.setConsentShown();
+                StartAppSDK.setUserConsent(context,
+                        "pas",
+                        System.currentTimeMillis(),
+                        adsPrefernce.getConsent());
+                PersonalInfoManager personalInfoManager = MoPub.getPersonalInformationManager();
+                if (adsPrefernce.getConsent()) {
+                    if (personalInfoManager != null) {
+                        personalInfoManager.grantConsent();
+                    }
+                } else {
+                    if (personalInfoManager != null) {
+                        personalInfoManager.revokeConsent();
+                    }
+                }
+                Appnext.setParam("consent", String.valueOf(adsPrefernce.getConsent()));
+            }
+        });
+
+        if (!adsPrefernce.isConsentShown()) {
+            consentDialog.show();
+        }
+
+    }
 
 }

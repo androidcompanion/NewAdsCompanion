@@ -19,3 +19,17 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+-dontwarn com.google.common.**
+
+-keep class com.google.gson.Gson
+
+
+
+-keep public class * extends com.google.gson.TypeAdapter
+
+-keepattributes *Annotation*
+
+-keepclassmembers enum * { *; }
+

@@ -4,14 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
+import com.appnext.base.Appnext;
+import com.appnext.core.AppnextAdCreativeType;
+import com.appnext.core.AppnextError;
+import com.appnext.nativeads.NativeAdRequest;
+import com.appnext.nativeads.NativeAdView;
+import com.appnext.nativeads.PrivacyIcon;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdIconView;
@@ -29,21 +38,49 @@ import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAd.OnUnifiedNativeAdLoadedListener;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.mopub.nativeads.AdapterHelper;
+import com.mopub.nativeads.MoPubNative;
+import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
+import com.mopub.nativeads.NativeErrorCode;
+import com.mopub.nativeads.RequestParameters;
+import com.mopub.nativeads.ViewBinder;
 import com.newadscompanion.ModelsCompanion.AdsPrefernce;
 import com.newadscompanion.R;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import static com.newadscompanion.BaseUtils.BaseClass.isAdsAvailable;
+import static com.newadscompanion.BaseUtils.BaseClass.isAnN1Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isAnN2Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isFbN1Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isFbN2Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isGN1Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isGN2Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isMpN1Shown;
+import static com.newadscompanion.BaseUtils.BaseClass.isMpN2Shown;
 import static com.newadscompanion.BaseUtils.BaseClass.isNetworkAvailable;
 //new NativeAdCompanion1(this).loadNativeAd((CardView) findViewById(R.id.native_ad_cardview), (CardView) findViewById(R.id.native_ad_container));
 
 public class NativeAdCompanion1 {
 
+    private ImageView imageView;
+    private TextView textView, rating, description;
+    private com.appnext.nativeads.MediaView mediaView;
+    private ProgressBar progressBar;
+    private Button button;
+    private ArrayList<View> viewArrayList;
+
+    MoPubNative moPubNative;
+    ViewBinder viewBinder;
+    ///////
+
     private Context context;
     AdsPrefernce adsPrefernce;
     DefaultIds defaultIds;
+    AdLoader.Builder builder;
+
 
     public NativeAdCompanion1(Context context) {
         this.context = context;
@@ -56,36 +93,37 @@ public class NativeAdCompanion1 {
         if (isNetworkAvailable(context)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
-                    MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
-                    if (adsPrefernce.showgNative1()) {
-                        builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE1());
-                        builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
-                            public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
-                                NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
-                            }
-                        });
-                        builder.withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build());
-                        builder.withAdListener(new AdListener() {
-                            public void onAdFailedToLoad(int i) {
-                            }
+                    if (!adsPrefernce.isMediationActive()) {
+                        MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
+                        if (adsPrefernce.showgNative1()) {
+                            builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE1());
+                            builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
+                                public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                                    NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
+                                }
+                            });
+                            builder.withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build());
+                            builder.withAdListener(new AdListener() {
+                                public void onAdFailedToLoad(int i) {
+                                }
 
-                            @Override
-                            public void onAdLoaded() {
-                                super.onAdLoaded();
-                                nativeAdContainer.setVisibility(View.VISIBLE);
-                                cardView.setVisibility(View.VISIBLE);
-                            }
+                                @Override
+                                public void onAdLoaded() {
+                                    super.onAdLoaded();
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+                                }
 
-                            @Override
-                            public void onAdImpression() {
-                                super.onAdImpression();
-                                nativeAdContainer.setVisibility(View.VISIBLE);
-                                cardView.setVisibility(View.VISIBLE);
-                            }
-                        }).build().loadAd(new Builder().build());
-                    } else {
-                        final NativeAd nativeAd;
-                        if (adsPrefernce.showfbNative1()) {
+                                @Override
+                                public void onAdImpression() {
+                                    super.onAdImpression();
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+                                }
+                            }).build().loadAd(new Builder().build());
+                        } else if (adsPrefernce.showfbNative1()) {
+                            final NativeAd nativeAd;
+
                             nativeAd = new NativeAd(context, defaultIds.FB_NATIVE1());
                             nativeAd.setAdListener(new NativeAdListener() {
                                 @Override
@@ -118,9 +156,141 @@ public class NativeAdCompanion1 {
                                 }
                             });
                             nativeAd.loadAd();
+                        } else if (adsPrefernce.showanNative1()) {
+                            Appnext.init(context);
+                            com.appnext.nativeads.NativeAd nativeAd;
+                            nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
+                            nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
+                            nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
+                                @Override
+                                public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
+                                    super.onAdLoaded(nativeAd, appnextAdCreativeType);
+
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+
+                                    FrameLayout.LayoutParams nativePara =
+                                            new FrameLayout.LayoutParams(
+                                                    FrameLayout.LayoutParams.MATCH_PARENT,
+                                                    FrameLayout.LayoutParams.WRAP_CONTENT);
+                                    // Add the Ad view into the ad container.
+                                    NativeAdView nativeAdView = new NativeAdView(context);
+                                    LayoutInflater inflater = LayoutInflater.from(context);
+                                    RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
+                                    cardView.addView(adViews, nativePara);
+
+                                    nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
+                                    imageView = (ImageView) adViews.findViewById(R.id.na_icon);
+                                    textView = (TextView) adViews.findViewById(R.id.na_title);
+                                    mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
+                                    progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
+                                    button = (Button) adViews.findViewById(R.id.install);
+                                    rating = (TextView) adViews.findViewById(R.id.rating);
+                                    description = (TextView) adViews.findViewById(R.id.description);
+                                    viewArrayList = new ArrayList<>();
+                                    viewArrayList.add(button);
+                                    viewArrayList.add(mediaView);
+
+                                    progressBar.setVisibility(View.GONE);
+                                    nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
+                                    textView.setText(nativeAd.getAdTitle());
+                                    nativeAd.setMediaView(mediaView);
+                                    rating.setText(nativeAd.getStoreRating());
+                                    description.setText(nativeAd.getAdDescription());
+                                    nativeAd.registerClickableViews(viewArrayList);
+                                    nativeAd.setNativeAdView(nativeAdView);
+                                    mediaView.setMute(true);
+                                    mediaView.setAutoPLay(true);
+                                    mediaView.setClickEnabled(true);
+                                }
+
+                                @Override
+                                public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
+                                    super.onAdClicked(nativeAd);
+                                }
+
+                                @Override
+                                public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
+                                    super.onError(nativeAd, appnextError);
+                                }
+
+                                @Override
+                                public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
+                                    super.adImpression(nativeAd);
+                                }
+                            });
+
+                            nativeAd.loadAd(new NativeAdRequest()
+                                    .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
+                                    .setCreativeType(NativeAdRequest.CreativeType.ALL)
+                                    .setVideoLength(NativeAdRequest.VideoLength.SHORT)
+                                    .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
+
+                        } else if (adsPrefernce.showmpNative1()) {
+                            MoPubNative.MoPubNativeNetworkListener moPubNativeNetworkListener = new MoPubNative.MoPubNativeNetworkListener() {
+                                @Override
+                                public void onNativeLoad(com.mopub.nativeads.NativeAd nativeAd) {
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+
+                                    FrameLayout.LayoutParams nativePara =
+                                            new FrameLayout.LayoutParams(
+                                                    FrameLayout.LayoutParams.MATCH_PARENT,
+                                                    FrameLayout.LayoutParams.WRAP_CONTENT);
+                                    // Add the Ad view into the ad container.
+                                    LayoutInflater inflater = LayoutInflater.from(context);
+                                    RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_mopub, cardView, false);
+                                    AdapterHelper ah = new AdapterHelper(context, 0, 2);
+                                    View v = ah.getAdView(null, adViews, nativeAd, viewBinder);
+
+                                    cardView.addView(v, nativePara);
+                                }
+
+                                @Override
+                                public void onNativeFail(NativeErrorCode errorCode) {
+
+                                }
+                                // We will be populating this below
+                            };
+
+                            moPubNative = new MoPubNative(context, adsPrefernce.mpNativeId1(), moPubNativeNetworkListener);
+                            viewBinder = new ViewBinder.Builder(R.layout.native_ad_layout_mopub)
+                                    .mainImageId(R.id.native_ad_main_image)
+                                    .iconImageId(R.id.native_ad_icon_image)
+                                    .titleId(R.id.native_ad_title)
+                                    .textId(R.id.native_ad_text)
+                                    .privacyInformationIconImageId(R.id.native_ad_privacy_information_icon_image)
+//                                .addExtra("sponsoredimage", R.id.sponsored_image) // If you display direct-sold native ads, you can add additional subviews for custom assets
+                                    .build();
+
+                            MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
+                            moPubNative.registerAdRenderer(moPubStaticNativeAdRenderer);
+
+                            EnumSet<RequestParameters.NativeAdAsset> desiredAssets = EnumSet.of(
+                                    RequestParameters.NativeAdAsset.TITLE,
+                                    RequestParameters.NativeAdAsset.TEXT,
+                                    RequestParameters.NativeAdAsset.CALL_TO_ACTION_TEXT,
+                                    RequestParameters.NativeAdAsset.MAIN_IMAGE,
+                                    RequestParameters.NativeAdAsset.ICON_IMAGE,
+                                    RequestParameters.NativeAdAsset.STAR_RATING
+                            );
+
+                            RequestParameters mRequestParameters = new RequestParameters.Builder()
+                                    .desiredAssets(desiredAssets)
+                                    .build();
+                            moPubNative.makeRequest(mRequestParameters);
+                        }
+                    } else {
+                        if (adsPrefernce.showgNative1()) {
+                            if (!isGN1Shown) {
+                                showGNative1(cardView, nativeAdContainer);
+                            } else {
+                                showFbNative1(cardView, nativeAdContainer);
+                            }
+                        } else {
+                            showFbNative1(cardView, nativeAdContainer);
                         }
                     }
-
                 }
             } else {
                 final NativeAd nativeAd;
@@ -254,4 +424,517 @@ public class NativeAdCompanion1 {
                 nativeAdIcon,
                 clickableViews);
     }
+
+    public void showGNative1(final CardView cardView, final CardView nativeAdContainer) {
+        MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
+        builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE1());
+        builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
+            public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
+            }
+        });
+        builder.withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build());
+        builder.withAdListener(new AdListener() {
+            public void onAdFailedToLoad(int i) {
+                isGN1Shown = true;
+                showFbNative1(cardView, nativeAdContainer);
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                isGN1Shown = true;
+                nativeAdContainer.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+                nativeAdContainer.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.VISIBLE);
+            }
+        }).build().loadAd(new Builder().build());
+    }
+
+    public void showFbNative1(final CardView cardView, final CardView nativeAdContainer) {
+        if (adsPrefernce.showfbNative1()) {
+            if (!isFbN1Shown) {
+                final NativeAd nativeAd;
+                nativeAd = new NativeAd(context, defaultIds.FB_NATIVE1());
+                nativeAd.setAdListener(new NativeAdListener() {
+                    @Override
+                    public void onMediaDownloaded(Ad ad) {
+                    }
+
+                    @Override
+                    public void onError(Ad ad, AdError adError) {
+                        isFbN1Shown = true;
+                        showAnNative1(cardView, nativeAdContainer);
+                    }
+
+                    @Override
+                    public void onAdLoaded(Ad ad) {
+                        isFbN1Shown = true;
+                        if (nativeAd != ad) {
+                            return;
+                        }
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                        // Inflate Native Ad into Container
+                        inflateNativeAdFacebook(nativeAd, cardView);
+                    }
+
+                    @Override
+                    public void onAdClicked(Ad ad) {
+                    }
+
+                    @Override
+                    public void onLoggingImpression(Ad ad) {
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                    }
+                });
+                nativeAd.loadAd();
+            } else {
+                showAnNative1(cardView, nativeAdContainer);
+            }
+        } else {
+            showAnNative1(cardView, nativeAdContainer);
+        }
+    }
+
+    public void showAnNative1(final CardView cardView, final CardView nativeAdContainer) {
+
+        if (adsPrefernce.showanNative1()) {
+            if (!isAnN1Shown) {
+                Appnext.init(context);
+                com.appnext.nativeads.NativeAd nativeAd;
+                nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
+                nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
+                nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
+                    @Override
+                    public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
+                        super.onAdLoaded(nativeAd, appnextAdCreativeType);
+                        isAnN1Shown = true;
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+
+                        FrameLayout.LayoutParams nativePara =
+                                new FrameLayout.LayoutParams(
+                                        FrameLayout.LayoutParams.MATCH_PARENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        // Add the Ad view into the ad container.
+                        NativeAdView nativeAdView = new NativeAdView(context);
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
+                        cardView.addView(adViews, nativePara);
+
+                        nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
+                        imageView = (ImageView) adViews.findViewById(R.id.na_icon);
+                        textView = (TextView) adViews.findViewById(R.id.na_title);
+                        mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
+                        progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
+                        button = (Button) adViews.findViewById(R.id.install);
+                        rating = (TextView) adViews.findViewById(R.id.rating);
+                        description = (TextView) adViews.findViewById(R.id.description);
+                        viewArrayList = new ArrayList<>();
+                        viewArrayList.add(button);
+                        viewArrayList.add(mediaView);
+
+                        progressBar.setVisibility(View.GONE);
+                        nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
+                        textView.setText(nativeAd.getAdTitle());
+                        nativeAd.setMediaView(mediaView);
+                        rating.setText(nativeAd.getStoreRating());
+                        description.setText(nativeAd.getAdDescription());
+                        nativeAd.registerClickableViews(viewArrayList);
+                        nativeAd.setNativeAdView(nativeAdView);
+                        mediaView.setMute(true);
+                        mediaView.setAutoPLay(true);
+                        mediaView.setClickEnabled(true);
+                    }
+
+                    @Override
+                    public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
+                        super.onAdClicked(nativeAd);
+                    }
+
+                    @Override
+                    public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
+                        super.onError(nativeAd, appnextError);
+                        isAnN1Shown = true;
+                        showMpNative1(cardView, nativeAdContainer);
+                    }
+
+                    @Override
+                    public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
+                        super.adImpression(nativeAd);
+                    }
+                });
+
+                nativeAd.loadAd(new NativeAdRequest()
+                        .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
+                        .setCreativeType(NativeAdRequest.CreativeType.ALL)
+                        .setVideoLength(NativeAdRequest.VideoLength.SHORT)
+                        .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
+
+            } else {
+                showMpNative1(cardView, nativeAdContainer);
+            }
+        } else {
+            showMpNative1(cardView, nativeAdContainer);
+        }
+
+    }
+
+    public void showMpNative1(final CardView cardView, final CardView nativeAdContainer) {
+
+        if (adsPrefernce.showmpNative1()) {
+            if (!isMpN1Shown) {
+                MoPubNative.MoPubNativeNetworkListener moPubNativeNetworkListener = new MoPubNative.MoPubNativeNetworkListener() {
+                    @Override
+                    public void onNativeLoad(com.mopub.nativeads.NativeAd nativeAd) {
+                        isMpN1Shown = true;
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+
+                        FrameLayout.LayoutParams nativePara =
+                                new FrameLayout.LayoutParams(
+                                        FrameLayout.LayoutParams.MATCH_PARENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        // Add the Ad view into the ad container.
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_mopub, cardView, false);
+                        AdapterHelper ah = new AdapterHelper(context, 0, 2);
+                        View v = ah.getAdView(null, adViews, nativeAd, viewBinder);
+
+                        cardView.addView(v, nativePara);
+                    }
+
+                    @Override
+                    public void onNativeFail(NativeErrorCode errorCode) {
+                        isMpN1Shown = true;
+                        showGNative2(cardView, nativeAdContainer);
+                    }
+                    // We will be populating this below
+                };
+
+                moPubNative = new MoPubNative(context, adsPrefernce.mpNativeId1(), moPubNativeNetworkListener);
+                viewBinder = new ViewBinder.Builder(R.layout.native_ad_layout_mopub)
+                        .mainImageId(R.id.native_ad_main_image)
+                        .iconImageId(R.id.native_ad_icon_image)
+                        .titleId(R.id.native_ad_title)
+                        .textId(R.id.native_ad_text)
+                        .privacyInformationIconImageId(R.id.native_ad_privacy_information_icon_image)
+//                                .addExtra("sponsoredimage", R.id.sponsored_image) // If you display direct-sold native ads, you can add additional subviews for custom assets
+                        .build();
+
+                MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
+                moPubNative.registerAdRenderer(moPubStaticNativeAdRenderer);
+
+                EnumSet<RequestParameters.NativeAdAsset> desiredAssets = EnumSet.of(
+                        RequestParameters.NativeAdAsset.TITLE,
+                        RequestParameters.NativeAdAsset.TEXT,
+                        RequestParameters.NativeAdAsset.CALL_TO_ACTION_TEXT,
+                        RequestParameters.NativeAdAsset.MAIN_IMAGE,
+                        RequestParameters.NativeAdAsset.ICON_IMAGE,
+                        RequestParameters.NativeAdAsset.STAR_RATING
+                );
+
+                RequestParameters mRequestParameters = new RequestParameters.Builder()
+                        .desiredAssets(desiredAssets)
+                        .build();
+                moPubNative.makeRequest(mRequestParameters);
+            } else {
+                showGNative2(cardView, nativeAdContainer);
+            }
+        } else {
+            showGNative2(cardView, nativeAdContainer);
+        }
+    }
+
+    public void showGNative2(final CardView cardView, final CardView nativeAdContainer) {
+
+        if (adsPrefernce.showgNative2()) {
+            if (!isGN2Shown) {
+                MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
+                builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE2());
+                builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
+                    public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                        NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
+                    }
+                });
+                builder.withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build());
+                builder.withAdListener(new AdListener() {
+                    public void onAdFailedToLoad(int i) {
+                        isGN2Shown = true;
+                        showFbNative2(cardView, nativeAdContainer);
+                    }
+
+                    @Override
+                    public void onAdLoaded() {
+                        super.onAdLoaded();
+                        isGN2Shown = true;
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAdImpression() {
+                        super.onAdImpression();
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                    }
+                }).build().loadAd(new Builder().build());
+            } else {
+                showFbNative2(cardView, nativeAdContainer);
+            }
+        } else {
+            showFbNative2(cardView, nativeAdContainer);
+        }
+
+
+    }
+
+    public void showFbNative2(final CardView cardView, final CardView nativeAdContainer) {
+        if (adsPrefernce.showfbNative2()) {
+            if (!isFbN2Shown) {
+                final NativeAd nativeAd;
+                nativeAd = new NativeAd(context, defaultIds.FB_NATIVE2());
+                nativeAd.setAdListener(new NativeAdListener() {
+                    @Override
+                    public void onMediaDownloaded(Ad ad) {
+                    }
+
+                    @Override
+                    public void onError(Ad ad, AdError adError) {
+                        isFbN2Shown = true;
+                        showAnNative2(cardView, nativeAdContainer);
+                    }
+
+                    @Override
+                    public void onAdLoaded(Ad ad) {
+                        isFbN2Shown = true;
+                        if (nativeAd != ad) {
+                            return;
+                        }
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                        // Inflate Native Ad into Container
+                        inflateNativeAdFacebook(nativeAd, cardView);
+                    }
+
+                    @Override
+                    public void onAdClicked(Ad ad) {
+                    }
+
+                    @Override
+                    public void onLoggingImpression(Ad ad) {
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                    }
+                });
+                nativeAd.loadAd();
+            } else {
+                showAnNative2(cardView, nativeAdContainer);
+            }
+        } else {
+            showAnNative2(cardView, nativeAdContainer);
+        }
+
+    }
+
+    public void showAnNative2(final CardView cardView, final CardView nativeAdContainer) {
+        if (adsPrefernce.showanNative2()) {
+            if (!isAnN2Shown) {
+                Appnext.init(context);
+                com.appnext.nativeads.NativeAd nativeAd;
+                nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
+                nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
+                nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
+                    @Override
+                    public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
+                        super.onAdLoaded(nativeAd, appnextAdCreativeType);
+
+                        isAnN2Shown = true;
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+
+                        FrameLayout.LayoutParams nativePara =
+                                new FrameLayout.LayoutParams(
+                                        FrameLayout.LayoutParams.MATCH_PARENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        // Add the Ad view into the ad container.
+                        NativeAdView nativeAdView = new NativeAdView(context);
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
+                        cardView.addView(adViews, nativePara);
+
+                        nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
+                        imageView = (ImageView) adViews.findViewById(R.id.na_icon);
+                        textView = (TextView) adViews.findViewById(R.id.na_title);
+                        mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
+                        progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
+                        button = (Button) adViews.findViewById(R.id.install);
+                        rating = (TextView) adViews.findViewById(R.id.rating);
+                        description = (TextView) adViews.findViewById(R.id.description);
+                        viewArrayList = new ArrayList<>();
+                        viewArrayList.add(button);
+                        viewArrayList.add(mediaView);
+
+                        progressBar.setVisibility(View.GONE);
+                        nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
+                        textView.setText(nativeAd.getAdTitle());
+                        nativeAd.setMediaView(mediaView);
+                        rating.setText(nativeAd.getStoreRating());
+                        description.setText(nativeAd.getAdDescription());
+                        nativeAd.registerClickableViews(viewArrayList);
+                        nativeAd.setNativeAdView(nativeAdView);
+                        mediaView.setMute(true);
+                        mediaView.setAutoPLay(true);
+                        mediaView.setClickEnabled(true);
+                    }
+
+                    @Override
+                    public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
+                        super.onAdClicked(nativeAd);
+                    }
+
+                    @Override
+                    public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
+                        super.onError(nativeAd, appnextError);
+                        isAnN2Shown = true;
+                        showMpNative2(cardView, nativeAdContainer);
+                    }
+
+                    @Override
+                    public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
+                        super.adImpression(nativeAd);
+                    }
+                });
+
+                nativeAd.loadAd(new NativeAdRequest()
+                        .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
+                        .setCreativeType(NativeAdRequest.CreativeType.ALL)
+                        .setVideoLength(NativeAdRequest.VideoLength.SHORT)
+                        .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
+
+            } else {
+                showMpNative2(cardView, nativeAdContainer);
+            }
+        } else {
+            showMpNative2(cardView, nativeAdContainer);
+        }
+
+    }
+
+    public void showMpNative2(final CardView cardView, final CardView nativeAdContainer) {
+        if (adsPrefernce.showmpNative2()) {
+            if (!isMpN2Shown) {
+                MoPubNative.MoPubNativeNetworkListener moPubNativeNetworkListener = new MoPubNative.MoPubNativeNetworkListener() {
+                    @Override
+                    public void onNativeLoad(com.mopub.nativeads.NativeAd nativeAd) {
+                        isMpN2Shown = true;
+                        resetNativeShownBoolean();
+
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+
+                        FrameLayout.LayoutParams nativePara =
+                                new FrameLayout.LayoutParams(
+                                        FrameLayout.LayoutParams.MATCH_PARENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                        // Add the Ad view into the ad container.
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_mopub, cardView, false);
+                        AdapterHelper ah = new AdapterHelper(context, 0, 2);
+                        View v = ah.getAdView(null, adViews, nativeAd, viewBinder);
+
+                        cardView.addView(v, nativePara);
+                    }
+
+                    @Override
+                    public void onNativeFail(NativeErrorCode errorCode) {
+                        isMpN2Shown = true;
+                        resetNativeShownBoolean();
+                        if (adsPrefernce.showgNative1()) {
+                            if (!isGN1Shown) {
+                                showGNative1(cardView, nativeAdContainer);
+                            } else {
+                                showFbNative1(cardView, nativeAdContainer);
+                            }
+                        } else {
+                            showFbNative1(cardView, nativeAdContainer);
+                        }
+                    }
+                    // We will be populating this below
+                };
+
+                moPubNative = new MoPubNative(context, adsPrefernce.mpNativeId2(), moPubNativeNetworkListener);
+                viewBinder = new ViewBinder.Builder(R.layout.native_ad_layout_mopub)
+                        .mainImageId(R.id.native_ad_main_image)
+                        .iconImageId(R.id.native_ad_icon_image)
+                        .titleId(R.id.native_ad_title)
+                        .textId(R.id.native_ad_text)
+                        .privacyInformationIconImageId(R.id.native_ad_privacy_information_icon_image)
+//                                .addExtra("sponsoredimage", R.id.sponsored_image) // If you display direct-sold native ads, you can add additional subviews for custom assets
+                        .build();
+
+                MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
+                moPubNative.registerAdRenderer(moPubStaticNativeAdRenderer);
+
+                EnumSet<RequestParameters.NativeAdAsset> desiredAssets = EnumSet.of(
+                        RequestParameters.NativeAdAsset.TITLE,
+                        RequestParameters.NativeAdAsset.TEXT,
+                        RequestParameters.NativeAdAsset.CALL_TO_ACTION_TEXT,
+                        RequestParameters.NativeAdAsset.MAIN_IMAGE,
+                        RequestParameters.NativeAdAsset.ICON_IMAGE,
+                        RequestParameters.NativeAdAsset.STAR_RATING
+                );
+
+                RequestParameters mRequestParameters = new RequestParameters.Builder()
+                        .desiredAssets(desiredAssets)
+                        .build();
+                moPubNative.makeRequest(mRequestParameters);
+            } else {
+                resetNativeShownBoolean();
+                if (adsPrefernce.showgNative1()) {
+                    if (!isGN1Shown) {
+                        showGNative1(cardView, nativeAdContainer);
+                    } else {
+                        showFbNative1(cardView, nativeAdContainer);
+                    }
+                } else {
+                    showFbNative1(cardView, nativeAdContainer);
+                }
+            }
+        } else {
+            resetNativeShownBoolean();
+            if (adsPrefernce.showgNative1()) {
+                if (!isGN1Shown) {
+                    showGNative1(cardView, nativeAdContainer);
+                } else {
+                    showFbNative1(cardView, nativeAdContainer);
+                }
+            } else {
+                showFbNative1(cardView, nativeAdContainer);
+            }
+
+        }
+
+    }
+
+    public void resetNativeShownBoolean() {
+        isGN1Shown = false;
+        isFbN1Shown = false;
+        isAnN1Shown = false;
+        isMpN1Shown = false;
+        isGN2Shown = false;
+        isFbN2Shown = false;
+        isAnN2Shown = false;
+        isMpN2Shown = false;
+
+    }
+
 }
