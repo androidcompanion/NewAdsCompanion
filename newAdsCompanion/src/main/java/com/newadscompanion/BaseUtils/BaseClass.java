@@ -3542,6 +3542,16 @@ public class BaseClass extends AppCompatActivity {
                                             }
                                             gInterstitial11.loadAd(new AdRequest.Builder().build());
                                         }
+
+                                        @Override
+                                        public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                            super.onAdFailedToLoad(loadAdError);
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
                                     });
                                 } else {
                                     try {
@@ -3572,7 +3582,11 @@ public class BaseClass extends AppCompatActivity {
 
                                             @Override
                                             public void onError(Ad ad, AdError adError) {
-
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             @Override
@@ -3628,6 +3642,16 @@ public class BaseClass extends AppCompatActivity {
                                         public void adOpened() {
                                         }
                                     });
+                                    an_interstitial_Ad1.setOnAdErrorCallback(new OnAdError() {
+                                        @Override
+                                        public void adError(String s) {
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
                                 } else {
                                     try {
                                         methodParam.call();
@@ -3655,7 +3679,11 @@ public class BaseClass extends AppCompatActivity {
 
                                             @Override
                                             public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             @Override
