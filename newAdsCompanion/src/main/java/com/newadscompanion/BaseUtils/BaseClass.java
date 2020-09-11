@@ -2319,6 +2319,12 @@ public class BaseClass extends AppCompatActivity {
                 }
             }
 
+        }else {
+            try {
+                mathodToPerform.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -2556,24 +2562,44 @@ public class BaseClass extends AppCompatActivity {
                             });
                         } else {
                             resetAllShownBoolean();
-                            super.onBackPressed();
+                            try {
+                                mathodToPerform.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else {
                         resetAllShownBoolean();
-                        super.onBackPressed();
+                        try {
+                            mathodToPerform.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     resetAllShownBoolean();
-                    super.onBackPressed();
+                    try {
+                        mathodToPerform.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 resetAllShownBoolean();
-                super.onBackPressed();
+                try {
+                    mathodToPerform.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         } else {
             resetAllShownBoolean();
-            super.onBackPressed();
+            try {
+                mathodToPerform.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -3812,7 +3838,11 @@ public class BaseClass extends AppCompatActivity {
                         }
                     }
                 } else {
-                    super.onBackPressed();
+                    try {
+                        methodParam.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 showMixedInterAdsOnClosed(new Callable<Void>() {
@@ -3829,7 +3859,12 @@ public class BaseClass extends AppCompatActivity {
             }
 
         } else {
-            super.onBackPressed();
+            try {
+                methodParam.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
