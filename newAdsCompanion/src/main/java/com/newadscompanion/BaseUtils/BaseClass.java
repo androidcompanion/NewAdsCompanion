@@ -40,6 +40,7 @@ import com.appnext.base.Appnext;
 import com.appnext.core.AppnextAdCreativeType;
 import com.appnext.core.AppnextError;
 import com.appnext.core.callbacks.OnAdClosed;
+import com.appnext.core.callbacks.OnAdError;
 import com.appnext.core.callbacks.OnAdLoaded;
 import com.appnext.core.callbacks.OnAdOpened;
 import com.bumptech.glide.Glide;
@@ -2215,6 +2216,19 @@ public class BaseClass extends AppCompatActivity {
                                                 isGInter1Ready = false;
                                                 isGInter1Shown = true;
                                             }
+
+
+                                            @Override
+                                            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                                super.onAdFailedToLoad(loadAdError);
+                                                //Added Later
+                                                isGInter1Shown = true;
+                                                try {
+                                                    mathodToPerform.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
                                         });
                                     } else {
                                         goToPlanA2OnClosed(mathodToPerform);
@@ -2367,7 +2381,12 @@ public class BaseClass extends AppCompatActivity {
 
                             @Override
                             public void onError(Ad ad, AdError adError) {
-
+                                //Added Later
+                                isFbInter1Shown = true;
+                                try {
+                                    mathodToPerform.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();}
                             }
 
                             @Override
@@ -2433,6 +2452,16 @@ public class BaseClass extends AppCompatActivity {
                                     isAnInter1Shown = true;
                                 }
                             });
+                            an_interstitial_Ad1.setOnAdErrorCallback(new OnAdError() {
+                                @Override
+                                public void adError(String s) {
+                                    isAnInter1Shown = true;
+                                    try {
+                                        mathodToPerform.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();}
+                                }
+                            });
                         } else {
                             goToPlanCOnClosed(mathodToPerform);
                         }
@@ -2466,7 +2495,11 @@ public class BaseClass extends AppCompatActivity {
 
                                 @Override
                                 public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-
+                                    isMpInter1Shown = true;
+                                    try {
+                                        mathodToPerform.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();}
                                 }
 
                                 @Override
