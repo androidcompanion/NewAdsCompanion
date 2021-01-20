@@ -1630,7 +1630,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-
     public void showAnBanner(int top, int bottom) {
         if (adsPrefernce.showanBanner()) {
             if (!isAnBannerShown) {
@@ -1670,7 +1669,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-
     public void showFbBanner(int top, int bottom) {
         if (adsPrefernce.showfbBanner()) {
             if (!isFbBannerShown) {
@@ -1685,23 +1683,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     @Override
                     public void onError(Ad ad, AdError adError) {
                         isFbBannerShown = true;
-                        final FrameLayout adContainerView = findViewById(R.id.banner_container);
-                        adContainerView.setVisibility(View.VISIBLE);
-                        adContainerView.setPadding(0, top, 0, bottom);
-                        showInhouseBannerAd(new InhouseBannerListener() {
-                            @Override
-                            public void onAdLoaded() {
-                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                }
-                            }
-
-                            @Override
-                            public void onAdShowFailed() {
-
-                            }
-                        });
+                        showAnBanner(top,bottom);
                     }
 
                     @Override
@@ -4385,6 +4367,23 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 public void adOpened() {
                                 }
                             });
+                        } else {
+                            showInhouseInterAd(new InhouseInterstitialListener() {
+                                @Override
+                                public void onAdShown() {
+
+                                }
+
+                                @Override
+                                public void onAdDismissed() {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
                         }
 
                     } else {
@@ -4479,6 +4478,24 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         }
+                    }
+                    else {
+                        showInhouseInterAd(new InhouseInterstitialListener() {
+                            @Override
+                            public void onAdShown() {
+
+                            }
+
+                            @Override
+                            public void onAdDismissed() {
+                                try {
+                                    mathodToFollow.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
                     }
                 } else {
                     showInhouseInterAd(new InhouseInterstitialListener() {
