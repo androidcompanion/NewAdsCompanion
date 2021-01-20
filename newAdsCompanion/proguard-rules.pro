@@ -20,7 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-
 -dontwarn com.google.common.**
 
 -keep class com.google.gson.Gson
@@ -33,3 +32,26 @@
 
 -keepclassmembers enum * { *; }
 
+
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+-keep public class com.google.android.gms.ads.** {
+   public *;
+}
+
+-keepattributes JavascriptInterface
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-keep public class com.newadscompanion.ModelsCompanion.AdsData {*;}
+-keep public class com.newadscompanion.ModelsCompanion.AdsIdsList {*;}
+-keep public class com.newadscompanion.ModelsCompanion.AdsPrefernce {*;}
+-keep public class com.newadscompanion.ModelsCompanion.BannerAdIH {*;}
+-keep public class com.newadscompanion.ModelsCompanion.BannerDetail {*;}
+-keep public class com.newadscompanion.ModelsCompanion.InterDetail {*;}
+-keep public class com.newadscompanion.ModelsCompanion.InterstitialAdIH {*;}
+-keep public class com.newadscompanion.ModelsCompanion.NativeAdIH {*;}
+-keep public class com.newadscompanion.ModelsCompanion.NativeDetail {*;}
+-keep public class com.newadscompanion.ModelsCompanion.GsonUtils {*;}

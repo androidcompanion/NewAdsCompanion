@@ -1878,6 +1878,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 } else {
                     showMixedInterAds(mathodToFollow);
                 }
+            }else {
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             try {
@@ -2364,8 +2370,19 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     });
                 }
+            }else {
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
+        }else {
+            try {
+                mathodToFollow.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
