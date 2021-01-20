@@ -2877,6 +2877,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 if (!isAnInter2Shown) {
                     if (isAnInter1Ready) {
                         if (an_interstitial_Ad1.isAdLoaded()) {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             an_interstitial_Ad1.showAd();
                             an_interstitial_Ad1.setOnAdClosedCallback(new OnAdClosed() {
                                 @Override
@@ -2943,6 +2948,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 if (!isMpInter2Shown) {
                     if (mpInterstitial2 != null) {
                         if (mpInterstitial2.isReady()) {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             mpInterstitial2.show();
                             mpInterstitial2.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
                                 @Override
@@ -3019,19 +3029,44 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         } else {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             resetAllShownBoolean();
                         }
                     } else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         resetAllShownBoolean();
                     }
                 } else {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     resetAllShownBoolean();
                 }
             } else {
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 resetAllShownBoolean();
             }
 
         } else {
+            try {
+                mathodToFollow.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             resetAllShownBoolean();
         }
 
