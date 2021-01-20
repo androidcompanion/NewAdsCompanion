@@ -1338,11 +1338,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         } else if (adsPrefernce.showmpBanner()) {
                             MoPubView moPubView;
                             moPubView = new MoPubView(this);
-                            Log.e("MP Ads...", "Banner Call");
-
-                            Log.e("MP Ads...", "showmpBanner");
                             if (mpBannerInitilized) {
-                                Log.e("MP Ads...", "mpBannerInitilized true");
                                 moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
                                 moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
                                 moPubView.loadAd();
@@ -1397,7 +1393,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     }
                                 });
                             } else {
-                                Log.e("MP Ads...", "mpBannerInitilized true");
                                 initializeMoPubSDK();
                             }
                         }
@@ -1516,7 +1511,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 MoPubView moPubView;
                 moPubView = new MoPubView(this);
                 if (mpBannerInitilized) {
-                    Log.e("MP Ads...", "mpBannerInitilized true");
                     moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
                     moPubView.setAdSize(MoPubView.MoPubAdSize.MATCH_VIEW); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
                     moPubView.loadAd();
@@ -1537,18 +1531,25 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                         @Override
                         public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-                            Log.e("mp banner error: ", String.valueOf(errorCode));
                             isMpBannerShown = true;
                             resetAllBannerBoolean();
-                            if (adsPrefernce.showgBanner()) {
-                                if (!isGBannerShown) {
-                                    showGBanner(top, bottom);
-                                } else {
-                                    showFbBanner(top, bottom);
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            showInhouseBannerAd(new InhouseBannerListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
                                 }
-                            } else {
-                                showFbBanner(top, bottom);
-                            }
+
+                                @Override
+                                public void onAdShowFailed() {
+
+                                }
+                            });
                         }
 
                         @Override
@@ -1567,41 +1568,64 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     });
                 } else {
-                    Log.e("MP Ads...", "mpBannerInitilized true");
                     initializeMoPubSDK();
-                    if (adsPrefernce.showgBanner()) {
-                        if (!isGBannerShown) {
-                            showGBanner(top, bottom);
-                        } else {
-                            showFbBanner(top, bottom);
+                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                    adContainerView.setVisibility(View.VISIBLE);
+                    adContainerView.setPadding(0, top, 0, bottom);
+                    showInhouseBannerAd(new InhouseBannerListener() {
+                        @Override
+                        public void onAdLoaded() {
+                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                            }
                         }
-                    } else {
-                        showFbBanner(top, bottom);
-                    }
+
+                        @Override
+                        public void onAdShowFailed() {
+
+                        }
+                    });
                 }
             } else {
                 resetAllBannerBoolean();
-                if (adsPrefernce.showgBanner()) {
-                    if (!isGBannerShown) {
-                        showGBanner(top, bottom);
-                    } else {
-                        showFbBanner(top, bottom);
+                final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                adContainerView.setVisibility(View.VISIBLE);
+                adContainerView.setPadding(0, top, 0, bottom);
+                showInhouseBannerAd(new InhouseBannerListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
                     }
-                } else {
-                    showFbBanner(top, bottom);
-                }
+
+                    @Override
+                    public void onAdShowFailed() {
+
+                    }
+                });
             }
         } else {
             resetAllBannerBoolean();
-            if (adsPrefernce.showgBanner()) {
-                if (!isGBannerShown) {
-                    showGBanner(top, bottom);
-                } else {
-                    showFbBanner(top, bottom);
+            final FrameLayout adContainerView = findViewById(R.id.banner_container);
+            adContainerView.setVisibility(View.VISIBLE);
+            adContainerView.setPadding(0, top, 0, bottom);
+            showInhouseBannerAd(new InhouseBannerListener() {
+                @Override
+                public void onAdLoaded() {
+                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                    }
                 }
-            } else {
-                showFbBanner(top, bottom);
-            }
+
+                @Override
+                public void onAdShowFailed() {
+
+                }
+            });
         }
 
     }
