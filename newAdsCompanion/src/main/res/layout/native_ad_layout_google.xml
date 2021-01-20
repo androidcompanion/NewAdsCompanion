@@ -63,13 +63,17 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
                             android:id="@+id/ad_headline"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
                             android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:maxLines="1"
                             android:textColor="#000"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -126,24 +130,35 @@
                 android:layout_gravity="end"
                 android:orientation="horizontal"
                 android:paddingLeft="10sp"
-                android:paddingTop="10dp"
+                android:paddingTop="5dp"
                 android:paddingRight="10sp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="5dp">
 
                 <TextView
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:id="@+id/ad_body"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@+id/ad_call_to_action"
-                    android:ellipsize="end"
                     android:maxLines="2"
                     android:textColor="#707070"
                     android:textSize="12sp"
                     android:visibility="visible" />
 
                 <TextView
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:id="@+id/ad_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -155,6 +170,12 @@
                     android:visibility="gone" />
 
                 <TextView
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:id="@+id/ad_store"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -168,14 +189,14 @@
                 <Button
                     android:id="@+id/ad_call_to_action"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/btn_ad_call"
                     android:gravity="center"
                     android:paddingLeft="2dp"
                     android:paddingRight="2dp"
                     android:textColor="@android:color/white"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>

@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.newadscompanion.AdsConfig.DefaultIds;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class AdsPrefernce {
@@ -748,6 +752,93 @@ public class AdsPrefernce {
 
     public boolean getConsent(){
         return adsPreference.getBoolean("userConsent",false);
+    }
+
+    // inhouse interstitial ads
+
+    public void setInterstitialLoaded(boolean isLoaded){
+        editor.putBoolean("isInterAdLoaded",isLoaded);
+        editor.apply();
+    }
+
+    public void setInterAdDetails(ArrayList<InterDetail> arrayList){
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayList);
+        editor.remove("interAdList");
+        editor.apply();
+        editor.putString("interAdList", json);
+        setInterstitialLoaded(true);
+        editor.apply();
+    }
+
+    public ArrayList<InterDetail> getInterAds(){
+        Gson gson = new Gson();
+        String json = adsPreference.getString("interAdList", "");
+        Type type = new TypeToken<ArrayList<InterDetail>>() {}.getType();
+        ArrayList<InterDetail> interDetails = gson.fromJson(json, type);
+        return interDetails;
+    }
+
+    public Boolean isInterstitialAdLoaded(){
+        return adsPreference.getBoolean("isInterAdLoaded",false);
+    }
+
+    // inhouse banner ads
+
+    public void setBannerLoaded(boolean isLoaded){
+        editor.putBoolean("isBannerAdLoaded",isLoaded);
+        editor.apply();
+    }
+
+    public void setBannerAdDetails(ArrayList<BannerDetail> arrayList){
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayList);
+        editor.remove("bannerAdList");
+        editor.apply();
+        editor.putString("bannerAdList", json);
+        setBannerLoaded(true);
+        editor.apply();
+    }
+
+    public ArrayList<BannerDetail> getBannerAds(){
+        Gson gson = new Gson();
+        String json = adsPreference.getString("bannerAdList", "");
+        Type type = new TypeToken<ArrayList<BannerDetail>>() {}.getType();
+        ArrayList<BannerDetail> bannerDetails = gson.fromJson(json, type);
+        return bannerDetails;
+    }
+
+    public Boolean isBannerAdLoaded(){
+        return adsPreference.getBoolean("isBannerAdLoaded",false);
+    }
+
+    // inhouse native ads
+
+    public void setNativeLoaded(boolean isLoaded){
+        editor.putBoolean("isNativeAdLoaded",isLoaded);
+        editor.apply();
+    }
+
+    public void setNativeAdDetails(ArrayList<NativeDetail> arrayList){
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayList);
+        editor.remove("nativeAdList");
+        editor.apply();
+        editor.putString("nativeAdList", json);
+        setNativeLoaded(true);
+        editor.apply();
+    }
+
+    public ArrayList<NativeDetail> getNativeAds(){
+        Gson gson = new Gson();
+        String json = adsPreference.getString("nativeAdList", "");
+        Type type = new TypeToken<ArrayList<NativeDetail>>() {}.getType();
+        ArrayList<NativeDetail> nativeDetails = gson.fromJson(json, type);
+        return nativeDetails;
+    }
+
+    public Boolean isNativeAdLoaded(){
+        return adsPreference.getBoolean("isNativeAdLoaded",false);
     }
 }
 

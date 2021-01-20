@@ -1,0 +1,43 @@
+A_Google/Fb
+B_AppNext
+C_Mopub
+D_StartApp
+E_null
+InHouse Ads Included
+
+19-1-2021
+Ads SDK Updated
+
+
+Need to check:
+ValidateInstall
+Inhouse ads call karave e
+Appnext inter1ready valu nahi
+appnext ma reward ma placement id ma app id nakhelu 6 e ready 6 k nai e check krvnu 6
+
+
+// mopub life cycle callbacks
+ @Override
+    public void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       MoPub.onCreate(this);
+       // ...
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MoPub.onPause(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MoPub.onStop(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MoPub.onResume(this);
+    }

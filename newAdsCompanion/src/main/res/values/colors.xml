@@ -6,4 +6,9 @@
     <color name="basic_gradiant_1">#D81B60</color>
     <color name="basic_gradiant_2">#880E4F</color>
     <color name="_tint_color">#c84e4b4b</color>
+    <color name="trasnperant_black">#C4000000</color>
+
+    <color name="basic_gray">#C8757171</color>
+    <color name="semi_gray">#C84A4848</color>
+    <color name="dark_gray">#C83E3C3C</color>
 </resources>

@@ -23,7 +23,6 @@ import com.appnext.nativeads.NativeAdView;
 import com.appnext.nativeads.PrivacyIcon;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
-import com.facebook.ads.AdIconView;
 import com.facebook.ads.AdOptionsView;
 import com.facebook.ads.NativeAd;
 import com.facebook.ads.NativeAdLayout;
@@ -44,6 +43,8 @@ import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.NativeErrorCode;
 import com.mopub.nativeads.RequestParameters;
 import com.mopub.nativeads.ViewBinder;
+import com.newadscompanion.BaseUtils.BaseClass;
+import com.newadscompanion.Interfaces.InhouseNativeListener;
 import com.newadscompanion.ModelsCompanion.AdsPrefernce;
 import com.newadscompanion.R;
 
@@ -124,14 +125,28 @@ public class NativeAdCompanion1 {
                         } else if (adsPrefernce.showfbNative1()) {
                             final NativeAd nativeAd;
 
-                            nativeAd = new NativeAd(context, defaultIds.FB_NATIVE1());
-                            nativeAd.setAdListener(new NativeAdListener() {
+                            nativeAd = new NativeAd(context, adsPrefernce.fbNativeId1());
+
+                            NativeAdListener nativeAdListener = new NativeAdListener() {
                                 @Override
                                 public void onMediaDownloaded(Ad ad) {
                                 }
 
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
+                                    if (context instanceof BaseClass){
+                                        ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                                            @Override
+                                            public void onAdLoaded() {
+                                                nativeAdContainer.setVisibility(View.VISIBLE);
+                                                cardView.setVisibility(View.VISIBLE);
+                                            }
+
+                                            @Override
+                                            public void onAdShowFailed() {
+                                            }
+                                        });
+                                    }
                                 }
 
                                 @Override
@@ -154,8 +169,8 @@ public class NativeAdCompanion1 {
                                     nativeAdContainer.setVisibility(View.VISIBLE);
                                     cardView.setVisibility(View.VISIBLE);
                                 }
-                            });
-                            nativeAd.loadAd();
+                            };
+                            nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
                         } else if (adsPrefernce.showanNative1()) {
                             Appnext.init(context);
                             com.appnext.nativeads.NativeAd nativeAd;
@@ -291,41 +306,49 @@ public class NativeAdCompanion1 {
                             showFbNative1(cardView, nativeAdContainer);
                         }
                     }
+                }else {
+                    if (context instanceof BaseClass){
+                        ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                            @Override
+                            public void onAdLoaded() {
+                                nativeAdContainer.setVisibility(View.VISIBLE);
+                                cardView.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAdShowFailed() {
+                            }
+                        });
+                    }
                 }
             } else {
-                final NativeAd nativeAd;
-                nativeAd = new NativeAd(context, defaultIds.FB_NATIVE1());
-                nativeAd.setAdListener(new NativeAdListener() {
-                    @Override
-                    public void onMediaDownloaded(Ad ad) {
-                    }
-
-                    @Override
-                    public void onError(Ad ad, AdError adError) {
-                    }
-
-                    @Override
-                    public void onAdLoaded(Ad ad) {
-                        if (nativeAd != ad) {
-                            return;
+                if (context instanceof BaseClass){
+                    ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                        @Override
+                        public void onAdLoaded() {
+                            nativeAdContainer.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.VISIBLE);
                         }
+
+                        @Override
+                        public void onAdShowFailed() {
+                        }
+                    });
+                }
+            }
+        }else {
+            if (context instanceof BaseClass){
+                ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                    @Override
+                    public void onAdLoaded() {
                         nativeAdContainer.setVisibility(View.VISIBLE);
                         cardView.setVisibility(View.VISIBLE);
-                        // Inflate Native Ad into Container
-                        inflateNativeAdFacebook(nativeAd, cardView);
                     }
 
                     @Override
-                    public void onAdClicked(Ad ad) {
-                    }
-
-                    @Override
-                    public void onLoggingImpression(Ad ad) {
-                        nativeAdContainer.setVisibility(View.VISIBLE);
-                        cardView.setVisibility(View.VISIBLE);
+                    public void onAdShowFailed() {
                     }
                 });
-                nativeAd.loadAd();
             }
         }
     }
@@ -396,7 +419,7 @@ public class NativeAdCompanion1 {
         adChoicesContainer.addView(adOptionsView, 0);
 
         // Create native UI using the ad metadata.
-        AdIconView nativeAdIcon = adViews.findViewById(R.id.native_ad_icon);
+        com.facebook.ads.MediaView nativeAdIcon = adViews.findViewById(R.id.native_ad_icon);
         TextView nativeAdTitle = adViews.findViewById(R.id.native_ad_title);
         com.facebook.ads.MediaView nativeAdMedia = adViews.findViewById(R.id.native_ad_media);
         TextView nativeAdSocialContext = adViews.findViewById(R.id.native_ad_social_context);
@@ -426,8 +449,8 @@ public class NativeAdCompanion1 {
     }
 
     public void showGNative1(final CardView cardView, final CardView nativeAdContainer) {
-        MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
-        builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE1());
+        MobileAds.initialize(context, adsPrefernce.gAppId());
+        builder = new AdLoader.Builder(this.context, adsPrefernce.gNativeId1());
         builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
             public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
                 NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
@@ -461,21 +484,21 @@ public class NativeAdCompanion1 {
         if (adsPrefernce.showfbNative1()) {
             if (!isFbN1Shown) {
                 final NativeAd nativeAd;
-                nativeAd = new NativeAd(context, defaultIds.FB_NATIVE1());
-                nativeAd.setAdListener(new NativeAdListener() {
+                nativeAd = new NativeAd(context, adsPrefernce.fbNativeId1());
+                NativeAdListener nativeAdListener = new NativeAdListener() {
                     @Override
                     public void onMediaDownloaded(Ad ad) {
                     }
 
                     @Override
                     public void onError(Ad ad, AdError adError) {
-                        isFbN1Shown = true;
-                        showAnNative1(cardView, nativeAdContainer);
+                        BaseClass.isFbN1Shown = true;
+                        showGNative2(cardView, nativeAdContainer);
                     }
 
                     @Override
                     public void onAdLoaded(Ad ad) {
-                        isFbN1Shown = true;
+                        BaseClass.isFbN1Shown = true;
                         if (nativeAd != ad) {
                             return;
                         }
@@ -494,8 +517,8 @@ public class NativeAdCompanion1 {
                         nativeAdContainer.setVisibility(View.VISIBLE);
                         cardView.setVisibility(View.VISIBLE);
                     }
-                });
-                nativeAd.loadAd();
+                };
+                nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
                 showAnNative1(cardView, nativeAdContainer);
             }
@@ -658,8 +681,8 @@ public class NativeAdCompanion1 {
 
         if (adsPrefernce.showgNative2()) {
             if (!isGN2Shown) {
-                MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
-                builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE2());
+                MobileAds.initialize(context, adsPrefernce.gAppId());
+                builder = new AdLoader.Builder(this.context, adsPrefernce.gNativeId2());
                 builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
                     public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
                         NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
@@ -701,21 +724,33 @@ public class NativeAdCompanion1 {
         if (adsPrefernce.showfbNative2()) {
             if (!isFbN2Shown) {
                 final NativeAd nativeAd;
-                nativeAd = new NativeAd(context, defaultIds.FB_NATIVE2());
-                nativeAd.setAdListener(new NativeAdListener() {
+                nativeAd = new NativeAd(context, adsPrefernce.fbNativeId2());
+                NativeAdListener nativeAdListener = new NativeAdListener() {
                     @Override
                     public void onMediaDownloaded(Ad ad) {
                     }
 
                     @Override
                     public void onError(Ad ad, AdError adError) {
-                        isFbN2Shown = true;
-                        showAnNative2(cardView, nativeAdContainer);
-                    }
+                        BaseClass.isFbN2Shown = true;
+                        resetNativeShownBoolean();
+                        if (context instanceof BaseClass){
+                            ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+                                }
+
+                                @Override
+                                public void onAdShowFailed() {
+                                }
+                            });
+                        }                      }
 
                     @Override
                     public void onAdLoaded(Ad ad) {
-                        isFbN2Shown = true;
+                        BaseClass.isFbN2Shown = true;
                         if (nativeAd != ad) {
                             return;
                         }
@@ -734,8 +769,8 @@ public class NativeAdCompanion1 {
                         nativeAdContainer.setVisibility(View.VISIBLE);
                         cardView.setVisibility(View.VISIBLE);
                     }
-                });
-                nativeAd.loadAd();
+                };
+                nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
                 showAnNative2(cardView, nativeAdContainer);
             }
@@ -858,14 +893,18 @@ public class NativeAdCompanion1 {
                     public void onNativeFail(NativeErrorCode errorCode) {
                         isMpN2Shown = true;
                         resetNativeShownBoolean();
-                        if (adsPrefernce.showgNative1()) {
-                            if (!isGN1Shown) {
-                                showGNative1(cardView, nativeAdContainer);
-                            } else {
-                                showFbNative1(cardView, nativeAdContainer);
-                            }
-                        } else {
-                            showFbNative1(cardView, nativeAdContainer);
+                        if (context instanceof BaseClass){
+                            ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.setVisibility(View.VISIBLE);
+                                }
+
+                                @Override
+                                public void onAdShowFailed() {
+                                }
+                            });
                         }
                     }
                     // We will be populating this below
@@ -899,26 +938,33 @@ public class NativeAdCompanion1 {
                 moPubNative.makeRequest(mRequestParameters);
             } else {
                 resetNativeShownBoolean();
-                if (adsPrefernce.showgNative1()) {
-                    if (!isGN1Shown) {
-                        showGNative1(cardView, nativeAdContainer);
-                    } else {
-                        showFbNative1(cardView, nativeAdContainer);
-                    }
-                } else {
-                    showFbNative1(cardView, nativeAdContainer);
-                }
-            }
+                if (context instanceof BaseClass){
+                    ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                        @Override
+                        public void onAdLoaded() {
+                            nativeAdContainer.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onAdShowFailed() {
+                        }
+                    });
+                } }
         } else {
             resetNativeShownBoolean();
-            if (adsPrefernce.showgNative1()) {
-                if (!isGN1Shown) {
-                    showGNative1(cardView, nativeAdContainer);
-                } else {
-                    showFbNative1(cardView, nativeAdContainer);
-                }
-            } else {
-                showFbNative1(cardView, nativeAdContainer);
+            if (context instanceof BaseClass){
+                ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAdShowFailed() {
+                    }
+                });
             }
 
         }

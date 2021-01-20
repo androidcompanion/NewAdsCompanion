@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
 
-        <com.facebook.ads.AdIconView
+        <com.facebook.ads.MediaView
             android:id="@+id/native_icon_view"
             android:layout_width="50dp"
             android:layout_height="50dp"

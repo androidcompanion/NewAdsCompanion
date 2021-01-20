@@ -6,4 +6,11 @@
     android:id="@+id/native_banner_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <include
+        android:visibility="gone"
+        android:layout_height="90dp"
+        android:layout_width="match_parent"
+        layout="@layout/ad_banner"/>
+</FrameLayout>
