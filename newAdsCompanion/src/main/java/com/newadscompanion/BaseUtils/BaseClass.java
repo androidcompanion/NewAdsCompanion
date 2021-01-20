@@ -87,9 +87,11 @@ import com.mopub.mobileads.MoPubRewardedVideoListener;
 import com.mopub.mobileads.MoPubRewardedVideos;
 import com.mopub.mobileads.MoPubView;
 import com.newadscompanion.AdsConfig.DefaultIds;
+import com.newadscompanion.BroadcastUtils.NetworkStateReceiver;
 import com.newadscompanion.Interfaces.InhouseBannerListener;
 import com.newadscompanion.Interfaces.InhouseInterstitialListener;
 import com.newadscompanion.Interfaces.InhouseNativeListener;
+import com.newadscompanion.Interfaces.OnNetworkChangeListner;
 import com.newadscompanion.Interfaces.OnPlayVerificationFailed;
 import com.newadscompanion.Interfaces.OnRewardAdClosedListener;
 import com.newadscompanion.ModelsCompanion.AdsData;
@@ -121,7 +123,7 @@ import java.util.concurrent.Callable;
 
 import cz.msebera.android.httpclient.Header;
 
-public class BaseClass extends AppCompatActivity {
+public class BaseClass extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener{
 
     //inHouse
     public static boolean isInterAdLoadedIH = false;
@@ -224,6 +226,11 @@ public class BaseClass extends AppCompatActivity {
     public static boolean isMpN2Shown = false;
 
     public static boolean isvalidInstall = false;
+
+    private NetworkStateReceiver networkStateReceiver;
+
+    OnNetworkChangeListner onNetworkChangeListner;
+
 
     //Rewarded Ads
     public static RewardedAd gRewardedAd;
@@ -790,6 +797,16 @@ public class BaseClass extends AppCompatActivity {
         //disable startapp splash
         if (defaultIds.DISABLE_SA_SPLASH()) {
             StartAppAd.disableSplash();
+        }
+
+        if (!isInterAdLoadedIH) {
+            getInterstitalAdsInHouse(defaultIds.APP_KEY());
+        }
+        if (!isBannerAdLoadedIH) {
+            getBannerAdsInHouse(defaultIds.APP_KEY());
+        }
+        if (!isNativeAdLoadedIH) {
+            getNativeAdsInHouse(defaultIds.APP_KEY());
         }
 
 
@@ -6161,4 +6178,33 @@ public class BaseClass extends AppCompatActivity {
     }
 
 
+    @Override
+    public void networkAvailable( ) {
+        if (!isInterAdLoadedIH) {
+            getInterstitalAdsInHouse(defaultIds.APP_KEY());
+        }
+        if (!isBannerAdLoadedIH) {
+            getBannerAdsInHouse(defaultIds.APP_KEY());
+        }
+        if (!isNativeAdLoadedIH) {
+            getNativeAdsInHouse(defaultIds.APP_KEY());
+        }
+
+        if (isNetworkAvailable(BaseClass.this)) {
+            if (!isAdsAvailable) {
+                getAds(defaultIds.APP_KEY());
+            }
+        }
+
+        onNetworkChangeListner = (OnNetworkChangeListner)this;
+        onNetworkChangeListner.onInternetConnected();
+
+
+    }
+
+    @Override
+    public void networkUnavailable( ) {
+        onNetworkChangeListner = (OnNetworkChangeListner)this;
+        onNetworkChangeListner.onInternetDisconnected();
+    }
 }
