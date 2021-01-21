@@ -102,7 +102,7 @@ public class AdsPrefernce {
             editor.putString("show_aninter2", show_aninter2);
             editor.putString("show_annative1", show_annative1);
             editor.putString("show_annative2", show_annative2);
-            editor.putString("show_anrewarded1", show_anrewarded);
+            editor.putString("show_anrewarded", show_anrewarded);
 
             editor.putString("mp_banner", mp_banner);
             editor.putString("show_mpbanner", show_mpbanner);
@@ -115,7 +115,7 @@ public class AdsPrefernce {
             editor.putString("mp_native2", mp_native2);
             editor.putString("show_mpnative2", show_mpnative2);
             editor.putString("mp_rewarded", mp_rewarded);
-            editor.putString("show_mprewarded1", show_mprewarded);
+            editor.putString("show_mprewarded", show_mprewarded);
 
             editor.putString("u_app_id", u_app_id);
             editor.putString("u_banner", u_banner);
@@ -125,7 +125,7 @@ public class AdsPrefernce {
             editor.putString("u_inter2", u_inter2);
             editor.putString("show_uinter2", show_uinter2);
             editor.putString("u_rewarded", u_rewarded);
-            editor.putString("show_urewarded1", show_urewarded);
+            editor.putString("show_urewarded", show_urewarded);
 
             editor.putString("extraPara1", extraPara1);
             editor.putString("extraPara2", extraPara2);
