@@ -677,7 +677,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             if (!isMpRewardedShown) {
                 if (isMpRewardedReady) {
                     if (MoPubRewardedVideos.hasRewardedVideo(adsPrefernce.mpRewardedId())) {
+                        MoPub.onCreate(this);
                         MoPubRewardedVideos.showRewardedVideo(adsPrefernce.mpRewardedId());
+
+                        MoPub.onPause(this);
                         MoPubRewardedVideoListener rewardedVideoListener = new MoPubRewardedVideoListener() {
                             @Override
                             public void onRewardedVideoLoadSuccess(String adUnitId) {
@@ -724,7 +727,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isMpRewardedReady = false;
                                     isMpRewardedShown = true;
                                     isMpUserRewarded = false;
-                                    Log.e("mpprewarded","isMpUserRewarded =  inside true");
                                     loadRewardAd();
                                     resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
                                 } else {
@@ -736,10 +738,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isMpRewardedReady = false;
                                     isMpRewardedShown = true;
                                     isMpUserRewarded = false;
-                                    Log.e("mpprewarded","isMpUserRewarded = inside false");
                                     loadRewardAd();
                                     resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
                                 }
+
+                                MoPub.onResume(BaseClass.this);
                             }
 
                             @Override
