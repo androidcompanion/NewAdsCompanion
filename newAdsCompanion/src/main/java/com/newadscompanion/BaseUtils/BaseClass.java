@@ -5450,7 +5450,19 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
     }
 
-
+    public void checkAppService(String key, String appVersion) {
+        if (adsPrefernce.allowAccess()) {
+            if (isNetworkAvailable(this) && checkAppService) {
+                runAppService(key, appVersion);
+            }
+        } else {
+            if (isvalidInstall) {
+                if (isNetworkAvailable(this) && checkAppService) {
+                    runAppService(key, appVersion);
+                }
+            }
+        }
+    }
     public void runAppService(String app_key, final String appVersion, OnCheckServiceListner onCheckServiceListner) {
         AsyncHttpClient client = new AsyncHttpClient();
 
