@@ -2580,6 +2580,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     }
 
     public void showMixedInterAds(Callable<Void> mathodToFollow) {
+
         if (isNetworkAvailable(this)) {
             if (!adsPrefernce.planD()) {
                 if (isAdsAvailable) {
@@ -2681,11 +2682,21 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 }
             }
         }else {
-            try {
-                mathodToFollow.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            showInhouseInterAd(new InhouseInterstitialListener() {
+                @Override
+                public void onAdShown() {
+
+                }
+
+                @Override
+                public void onAdDismissed() {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
     }
@@ -4886,102 +4897,38 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     public void showInter1AdonClosed(final Callable<Void> methodParam) {
         if (isNetworkAvailable(this)) {
             adsPrefernce = new AdsPrefernce(this);
-            if (!adsPrefernce.isMediationActive()) {
-                if (isAdsAvailable) {
-                    if (adsPrefernce.planA()) {
-                        if (adsPrefernce.showgInter1()) {
-                            if (gInterstitial11.isLoaded()) {
-                                gInterstitial11.show();
-                                gInterstitial11.setAdListener(new com.google.android.gms.ads.AdListener() {
-                                    @Override
-                                    public void onAdLoaded() {
-                                    }
-
-                                    @Override
-                                    public void onAdClosed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        gInterstitial11.loadAd(new AdRequest.Builder().build());
-                                    }
-
-                                    @Override
-                                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                                        super.onAdFailedToLoad(loadAdError);
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        gInterstitial11.loadAd(new AdRequest.Builder().build());  }
-                                });
-                            } else {
-                                showInhouseInterAd(new InhouseInterstitialListener() {
-                                    @Override
-                                    public void onAdShown() {
-
-                                    }
-
-                                    @Override
-                                    public void onAdDismissed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }
-
-                        } else {
-                            if (adsPrefernce.showfbInter1()) {
-                                if (fbInterstitial11.isAdLoaded()) {
-                                    fbInterstitial11.show();
-                                    InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+            if (!adsPrefernce.planD()){
+                if (!adsPrefernce.isMediationActive()) {
+                    if (isAdsAvailable) {
+                        if (adsPrefernce.planA()) {
+                            if (adsPrefernce.showgInter1()) {
+                                if (gInterstitial11.isLoaded()) {
+                                    gInterstitial11.show();
+                                    gInterstitial11.setAdListener(new com.google.android.gms.ads.AdListener() {
                                         @Override
-                                        public void onInterstitialDisplayed(Ad ad) {
-
+                                        public void onAdLoaded() {
                                         }
 
                                         @Override
-                                        public void onInterstitialDismissed(Ad ad) {
+                                        public void onAdClosed() {
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-                                            loadInterstitial1();
+                                            gInterstitial11.loadAd(new AdRequest.Builder().build());
                                         }
 
                                         @Override
-                                        public void onError(Ad ad, AdError adError) {
+                                        public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                            super.onAdFailedToLoad(loadAdError);
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-                                            loadInterstitial1();
-                                        }
-
-                                        @Override
-                                        public void onAdLoaded(Ad ad) {
-
-                                        }
-
-                                        @Override
-                                        public void onAdClicked(Ad ad) {
-
-                                        }
-
-                                        @Override
-                                        public void onLoggingImpression(Ad ad) {
-
-                                        }
-                                    };
-                                    fbInterstitial11.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
-
+                                            gInterstitial11.loadAd(new AdRequest.Builder().build());  }
+                                    });
                                 } else {
                                     showInhouseInterAd(new InhouseInterstitialListener() {
                                         @Override
@@ -5001,55 +4948,137 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
 
                             } else {
-                                showInhouseInterAd(new InhouseInterstitialListener() {
-                                    @Override
-                                    public void onAdShown() {
+                                if (adsPrefernce.showfbInter1()) {
+                                    if (fbInterstitial11.isAdLoaded()) {
+                                        fbInterstitial11.show();
+                                        InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialDisplayed(Ad ad) {
 
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(Ad ad) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                loadInterstitial1();
+                                            }
+
+                                            @Override
+                                            public void onError(Ad ad, AdError adError) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                loadInterstitial1();
+                                            }
+
+                                            @Override
+                                            public void onAdLoaded(Ad ad) {
+
+                                            }
+
+                                            @Override
+                                            public void onAdClicked(Ad ad) {
+
+                                            }
+
+                                            @Override
+                                            public void onLoggingImpression(Ad ad) {
+
+                                            }
+                                        };
+                                        fbInterstitial11.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
+
+                                    } else {
+                                        showInhouseInterAd(new InhouseInterstitialListener() {
+                                            @Override
+                                            public void onAdShown() {
+
+                                            }
+
+                                            @Override
+                                            public void onAdDismissed() {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
                                     }
 
-                                    @Override
-                                    public void onAdDismissed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                } else {
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
                                         }
-                                    }
-                                });
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    } else if (adsPrefernce.planB()) {
-                        if (adsPrefernce.showanInter1()) {
-                            if (an_interstitial_Ad11.isAdLoaded()) {
-                                an_interstitial_Ad11.showAd();
-                                an_interstitial_Ad11.setOnAdClosedCallback(new OnAdClosed() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        loadInterstitial1();
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                        } else if (adsPrefernce.planB()) {
+                            if (adsPrefernce.showanInter1()) {
+                                if (an_interstitial_Ad11.isAdLoaded()) {
+                                    an_interstitial_Ad11.showAd();
+                                    an_interstitial_Ad11.setOnAdClosedCallback(new OnAdClosed() {
+                                        @Override
+                                        public void onAdClosed() {
+                                            loadInterstitial1();
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
 
-                                });
-                                an_interstitial_Ad11.setOnAdErrorCallback(new OnAdError() {
-                                    @Override
-                                    public void adError(String s) {
-                                        loadInterstitial1();
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                    });
+                                    an_interstitial_Ad11.setOnAdErrorCallback(new OnAdError() {
+                                        @Override
+                                        public void adError(String s) {
+                                            loadInterstitial1();
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                });
-                                an_interstitial_Ad11.setOnAdOpenedCallback(new OnAdOpened() {
-                                    @Override
-                                    public void adOpened() {
-                                    }
-                                });
+                                    });
+                                    an_interstitial_Ad11.setOnAdOpenedCallback(new OnAdOpened() {
+                                        @Override
+                                        public void adOpened() {
+                                        }
+                                    });
+                                } else {
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
+                                        }
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
                             } else {
                                 showInhouseInterAd(new InhouseInterstitialListener() {
                                     @Override
@@ -5067,64 +5096,64 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     }
                                 });
                             }
-                        } else {
-                            showInhouseInterAd(new InhouseInterstitialListener() {
-                                @Override
-                                public void onAdShown() {
 
-                                }
+                        } else if (adsPrefernce.planC()) {
+                            if (adsPrefernce.showmpInter1()) {
+                                if (mpInterstitial11 != null) {
+                                    if (mpInterstitial11.isReady()) {
+                                        mpInterstitial11.show();
+                                        mpInterstitial11.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
 
-                                @Override
-                                public void onAdDismissed() {
-                                    try {
-                                        methodParam.call();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-
-                    } else if (adsPrefernce.planC()) {
-                        if (adsPrefernce.showmpInter1()) {
-                            if (mpInterstitial11 != null) {
-                                if (mpInterstitial11.isReady()) {
-                                    mpInterstitial11.show();
-                                    mpInterstitial11.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-                                        @Override
-                                        public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-
-                                        }
-
-                                        @Override
-                                        public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-                                            try {
-                                                methodParam.call();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
                                             }
-                                        }
 
-                                        @Override
-                                        public void onInterstitialShown(MoPubInterstitial interstitial) {
-                                        }
+                                            @Override
+                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
 
-                                        @Override
-                                        public void onInterstitialClicked(MoPubInterstitial interstitial) {
+                                            @Override
+                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
+                                            }
 
-                                        }
+                                            @Override
+                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
 
-                                        @Override
-                                        public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
                                                 mpInterstitial11.load();
-                                            try {
-                                                methodParam.call();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                        });
+                                    } else {
+                                        showInhouseInterAd(new InhouseInterstitialListener() {
+                                            @Override
+                                            public void onAdShown() {
+
                                             }
 
-                                        }
-                                    });
+                                            @Override
+                                            public void onAdDismissed() {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    }
                                 } else {
                                     showInhouseInterAd(new InhouseInterstitialListener() {
                                         @Override
@@ -5139,6 +5168,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
+
                                         }
                                     });
                                 }
@@ -5156,7 +5186,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-
                                     }
                                 });
                             }
@@ -5193,39 +5222,41 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             }
                         });
+
                     }
+
                 } else {
-                    showInhouseInterAd(new InhouseInterstitialListener() {
+                    showMixedInterAdsOnClosed(new Callable<Void>() {
                         @Override
-                        public void onAdShown() {
-
-                        }
-
-                        @Override
-                        public void onAdDismissed() {
+                        public Void call() throws Exception {
                             try {
                                 methodParam.call();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            return null;
                         }
                     });
-
                 }
-
-            } else {
-                showMixedInterAdsOnClosed(new Callable<Void>() {
+            }else {
+                showInhouseInterAd(new InhouseInterstitialListener() {
                     @Override
-                    public Void call() throws Exception {
+                    public void onAdShown() {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
                         try {
                             methodParam.call();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        return null;
                     }
                 });
+
             }
+
 
         } else {
             showInhouseInterAd(new InhouseInterstitialListener() {
@@ -5249,102 +5280,38 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     public void showInter2AdonClosed(final Callable<Void> methodParam) {
         if (isNetworkAvailable(this)) {
             adsPrefernce = new AdsPrefernce(this);
-            if (!adsPrefernce.isMediationActive()) {
-                if (isAdsAvailable) {
-                    if (adsPrefernce.planA()) {
-                        if (adsPrefernce.showgInter2()) {
-                            if (gInterstitial22.isLoaded()) {
-                                gInterstitial22.show();
-                                gInterstitial22.setAdListener(new com.google.android.gms.ads.AdListener() {
-                                    @Override
-                                    public void onAdLoaded() {
-                                    }
-
-                                    @Override
-                                    public void onAdClosed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        gInterstitial22.loadAd(new AdRequest.Builder().build());
-                                    }
-
-                                    @Override
-                                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                                        super.onAdFailedToLoad(loadAdError);
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        gInterstitial22.loadAd(new AdRequest.Builder().build());  }
-                                });
-                            } else {
-                                showInhouseInterAd(new InhouseInterstitialListener() {
-                                    @Override
-                                    public void onAdShown() {
-
-                                    }
-
-                                    @Override
-                                    public void onAdDismissed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }
-
-                        } else {
-                            if (adsPrefernce.showfbInter2()) {
-                                if (fbInterstitial22.isAdLoaded()) {
-                                    fbInterstitial22.show();
-                                    InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+            if (!adsPrefernce.planD()){
+                if (!adsPrefernce.isMediationActive()) {
+                    if (isAdsAvailable) {
+                        if (adsPrefernce.planA()) {
+                            if (adsPrefernce.showgInter2()) {
+                                if (gInterstitial22.isLoaded()) {
+                                    gInterstitial22.show();
+                                    gInterstitial22.setAdListener(new com.google.android.gms.ads.AdListener() {
                                         @Override
-                                        public void onInterstitialDisplayed(Ad ad) {
-
+                                        public void onAdLoaded() {
                                         }
 
                                         @Override
-                                        public void onInterstitialDismissed(Ad ad) {
+                                        public void onAdClosed() {
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-                                            loadInterstitial2();
+                                            gInterstitial22.loadAd(new AdRequest.Builder().build());
                                         }
 
                                         @Override
-                                        public void onError(Ad ad, AdError adError) {
+                                        public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                            super.onAdFailedToLoad(loadAdError);
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-                                            loadInterstitial2();
-                                        }
-
-                                        @Override
-                                        public void onAdLoaded(Ad ad) {
-
-                                        }
-
-                                        @Override
-                                        public void onAdClicked(Ad ad) {
-
-                                        }
-
-                                        @Override
-                                        public void onLoggingImpression(Ad ad) {
-
-                                        }
-                                    };
-                                    fbInterstitial22.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
-
+                                            gInterstitial22.loadAd(new AdRequest.Builder().build());  }
+                                    });
                                 } else {
                                     showInhouseInterAd(new InhouseInterstitialListener() {
                                         @Override
@@ -5364,103 +5331,96 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
 
                             } else {
-                                showInhouseInterAd(new InhouseInterstitialListener() {
-                                    @Override
-                                    public void onAdShown() {
+                                if (adsPrefernce.showfbInter2()) {
+                                    if (fbInterstitial22.isAdLoaded()) {
+                                        fbInterstitial22.show();
+                                        InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialDisplayed(Ad ad) {
 
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(Ad ad) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                loadInterstitial2();
+                                            }
+
+                                            @Override
+                                            public void onError(Ad ad, AdError adError) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                loadInterstitial2();
+                                            }
+
+                                            @Override
+                                            public void onAdLoaded(Ad ad) {
+
+                                            }
+
+                                            @Override
+                                            public void onAdClicked(Ad ad) {
+
+                                            }
+
+                                            @Override
+                                            public void onLoggingImpression(Ad ad) {
+
+                                            }
+                                        };
+                                        fbInterstitial22.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
+
+                                    } else {
+                                        showInhouseInterAd(new InhouseInterstitialListener() {
+                                            @Override
+                                            public void onAdShown() {
+
+                                            }
+
+                                            @Override
+                                            public void onAdDismissed() {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
                                     }
 
-                                    @Override
-                                    public void onAdDismissed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    } else if (adsPrefernce.planB()) {
-                        if (adsPrefernce.showanInter1()) {
-                            if (an_interstitial_Ad11.isAdLoaded()) {
-                                an_interstitial_Ad11.showAd();
-                                an_interstitial_Ad11.setOnAdClosedCallback(new OnAdClosed() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        loadInterstitial2();
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                });
-                                an_interstitial_Ad11.setOnAdErrorCallback(new OnAdError() {
-                                    @Override
-                                    public void adError(String s) {
-                                        loadInterstitial2();
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                                an_interstitial_Ad11.setOnAdOpenedCallback(new OnAdOpened() {
-                                    @Override
-                                    public void adOpened() {
-                                    }
-                                });
-                            } else {
-                                showInhouseInterAd(new InhouseInterstitialListener() {
-                                    @Override
-                                    public void onAdShown() {
-
-                                    }
-
-                                    @Override
-                                    public void onAdDismissed() {
-                                        try {
-                                            methodParam.call();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }
-                        } else {
-                            showInhouseInterAd(new InhouseInterstitialListener() {
-                                @Override
-                                public void onAdShown() {
-
-                                }
-
-                                @Override
-                                public void onAdDismissed() {
-                                    try {
-                                        methodParam.call();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-
-                    } else if (adsPrefernce.planC()) {
-                        if (adsPrefernce.showmpInter2()) {
-                            if (mpInterstitial22 != null) {
-                                if (mpInterstitial22.isReady()) {
-                                    mpInterstitial22.show();
-                                    mpInterstitial22.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                } else {
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
                                         @Override
-                                        public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+                                        public void onAdShown() {
 
                                         }
 
                                         @Override
-                                        public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                        public void onAdDismissed() {
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        } else if (adsPrefernce.planB()) {
+                            if (adsPrefernce.showanInter1()) {
+                                if (an_interstitial_Ad11.isAdLoaded()) {
+                                    an_interstitial_Ad11.showAd();
+                                    an_interstitial_Ad11.setOnAdClosedCallback(new OnAdClosed() {
+                                        @Override
+                                        public void onAdClosed() {
+                                            loadInterstitial2();
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
@@ -5468,24 +5428,21 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                             }
                                         }
 
+                                    });
+                                    an_interstitial_Ad11.setOnAdErrorCallback(new OnAdError() {
                                         @Override
-                                        public void onInterstitialShown(MoPubInterstitial interstitial) {
-                                        }
-
-                                        @Override
-                                        public void onInterstitialClicked(MoPubInterstitial interstitial) {
-
-                                        }
-
-                                        @Override
-                                        public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-                                            mpInterstitial22.load();
+                                        public void adError(String s) {
+                                            loadInterstitial2();
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-
+                                        }
+                                    });
+                                    an_interstitial_Ad11.setOnAdOpenedCallback(new OnAdOpened() {
+                                        @Override
+                                        public void adOpened() {
                                         }
                                     });
                                 } else {
@@ -5519,7 +5476,99 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
+                                    }
+                                });
+                            }
 
+                        } else if (adsPrefernce.planC()) {
+                            if (adsPrefernce.showmpInter2()) {
+                                if (mpInterstitial22 != null) {
+                                    if (mpInterstitial22.isReady()) {
+                                        mpInterstitial22.show();
+                                        mpInterstitial22.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
+                                            }
+
+                                            @Override
+                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+                                                mpInterstitial22.load();
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                        });
+                                    } else {
+                                        showInhouseInterAd(new InhouseInterstitialListener() {
+                                            @Override
+                                            public void onAdShown() {
+
+                                            }
+
+                                            @Override
+                                            public void onAdDismissed() {
+                                                try {
+                                                    methodParam.call();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
+                                        }
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                methodParam.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                    });
+                                }
+                            } else {
+                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                    @Override
+                                    public void onAdShown() {
+
+                                    }
+
+                                    @Override
+                                    public void onAdDismissed() {
+                                        try {
+                                            methodParam.call();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 });
                             }
@@ -5558,34 +5607,36 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         });
                     }
                 } else {
-                    showInhouseInterAd(new InhouseInterstitialListener() {
+                    showMixedInterAdsOnClosed(new Callable<Void>() {
                         @Override
-                        public void onAdShown() {
-
-                        }
-
-                        @Override
-                        public void onAdDismissed() {
+                        public Void call() throws Exception {
                             try {
                                 methodParam.call();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            return null;
                         }
                     });
                 }
-            } else {
-                showMixedInterAdsOnClosed(new Callable<Void>() {
+
+            }else {
+                showInhouseInterAd(new InhouseInterstitialListener() {
                     @Override
-                    public Void call() throws Exception {
+                    public void onAdShown() {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
                         try {
                             methodParam.call();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        return null;
                     }
                 });
+
             }
 
         } else {
