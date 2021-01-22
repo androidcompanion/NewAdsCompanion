@@ -271,7 +271,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             @Override
                             public void onRewardedAdLoaded() {
                                 isGRewardedReady = true;
-                                Log.e("RewardAds...", "google RewardAd ready");
                             }
 
                             @Override
@@ -289,46 +288,26 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         rewardedVideoAdListener = new RewardedVideoAdListener() {
                             @Override
                             public void onError(Ad ad, AdError error) {
-                                // Rewarded video ad failed to load
-                                Log.e("RewardAds...", "Rewarded video ad failed to load: " + error.getErrorMessage());
-                                isFbRewardedReady = false;
                             }
 
                             @Override
                             public void onAdLoaded(Ad ad) {
-                                // Rewarded video ad is loaded and ready to be displayed
-                                Log.d("RewardAds...", "Rewarded video ad is loaded and ready to be displayed!");
-                                isFbRewardedReady = true;
                             }
 
                             @Override
                             public void onAdClicked(Ad ad) {
-                                // Rewarded video ad clicked
-                                Log.d("RewardAds...", "Rewarded video ad clicked!");
                             }
 
                             @Override
                             public void onLoggingImpression(Ad ad) {
-                                // Rewarded Video ad impression - the event will fire when the
-                                // video starts playing
-                                Log.d("RewardAds...", "Rewarded video ad impression logged!");
                             }
 
                             @Override
                             public void onRewardedVideoCompleted() {
-                                // Rewarded Video View Complete - the video has been played to the end.
-                                // You can use this event to initialize your reward
-                                Log.d("RewardAds...", "Rewarded video completed!");
-
-                                // Call method to give reward
-                                // giveReward();
                             }
 
                             @Override
                             public void onRewardedVideoClosed() {
-                                // The Rewarded Video ad was closed - this can occur during the video
-                                // by closing the app, or closing the end card.
-                                Log.d("RewardAds...", "Rewarded video ad closed!");
                             }
                         };
                         fbRewardedVideoAd.loadAd(
@@ -443,6 +422,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                                     adsPrefernce.gRewardedId());
                                             gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
                                         }
+
+                                        loadRewardAd();
                                     }
 
                                     @Override
@@ -468,6 +449,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
+
+                                        loadRewardAd();
                                     }
                                 };
                                 gRewardedAd.show(this, adCallback);
@@ -518,6 +501,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+
+                            loadRewardAd();
                         }
 
                         @Override
@@ -584,6 +569,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                                 .withAdListener(rewardedVideoAdListener)
                                                 .build());
                             }
+                            loadRewardAd();
 
                         }
                     };
@@ -648,6 +634,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+
                             }
                         });
 
@@ -677,10 +664,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             if (!isMpRewardedShown) {
                 if (isMpRewardedReady) {
                     if (MoPubRewardedVideos.hasRewardedVideo(adsPrefernce.mpRewardedId())) {
-                        MoPub.onCreate(this);
+//                        MoPub.onCreate(this);
                         MoPubRewardedVideos.showRewardedVideo(adsPrefernce.mpRewardedId());
 
-                        MoPub.onPause(this);
+//                        MoPub.onPause(this);
                         MoPubRewardedVideoListener rewardedVideoListener = new MoPubRewardedVideoListener() {
                             @Override
                             public void onRewardedVideoLoadSuccess(String adUnitId) {
@@ -727,7 +714,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isMpRewardedReady = false;
                                     isMpRewardedShown = true;
                                     isMpUserRewarded = false;
-                                    loadRewardAd();
                                     resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
                                 } else {
                                     try {
@@ -738,17 +724,16 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isMpRewardedReady = false;
                                     isMpRewardedShown = true;
                                     isMpUserRewarded = false;
-                                    loadRewardAd();
                                     resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
                                 }
+                                loadRewardAd();
 
-                                MoPub.onResume(BaseClass.this);
+//                                MoPub.onResume(BaseClass.this);
                             }
 
                             @Override
                             public void onRewardedVideoCompleted(Set<String> adUnitIds, MoPubReward reward) {
                                 isMpUserRewarded = true;
-                                Log.e("mpprewarded","isMpUserRewarded = true");
                             }
                         };
                         MoPubRewardedVideos.setRewardedVideoListener(rewardedVideoListener);
