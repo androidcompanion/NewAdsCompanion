@@ -250,7 +250,7 @@ public class AdsPrefernce {
         boolean output = false;
         String var;
         if (adsPreference != null) {
-            output = showAds() && Objects.equals(adsPreference.getString("show_gbanner", "0"), "1");
+            output = showAds() && Objects.equals(adsPreference.getString("show_gbanner", "1"), "1");
         }
         return output;
     }
@@ -266,7 +266,7 @@ public class AdsPrefernce {
     public boolean showgInter1() {
         boolean output = false;
         if (adsPreference != null) {
-            output = showAds() && Objects.equals(adsPreference.getString("show_ginter1", "0"), "1");
+            output = showAds() && Objects.equals(adsPreference.getString("show_ginter1", "1"), "1");
         }
         return output;
     }
@@ -282,7 +282,7 @@ public class AdsPrefernce {
     public boolean showgInter2() {
         boolean output = false;
         if (adsPreference != null) {
-            output = showAds() && Objects.equals(adsPreference.getString("show_ginter2", "0"), "1");
+            output = showAds() && Objects.equals(adsPreference.getString("show_ginter2", "1"), "1");
         }
         return output;
     }
@@ -314,7 +314,7 @@ public class AdsPrefernce {
     public boolean showgNative1() {
         boolean output = false;
         if (adsPreference != null) {
-            output = showAds() && Objects.equals(adsPreference.getString("show_gnative1", "0"), "1");
+            output = showAds() && Objects.equals(adsPreference.getString("show_gnative1", "1"), "1");
         }
         ;
         return output;
@@ -331,7 +331,7 @@ public class AdsPrefernce {
     public boolean showgNative2() {
         boolean output = false;
         if (adsPreference != null) {
-            output = showAds() && Objects.equals(adsPreference.getString("show_gnative2", "0"), "1");
+            output = showAds() && Objects.equals(adsPreference.getString("show_gnative2", "1"), "1");
         }
         ;
         return output;
