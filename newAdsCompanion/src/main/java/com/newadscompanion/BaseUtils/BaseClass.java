@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telecom.Call;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1898,6 +1899,31 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
     }
 
+    public void showSplashInterstitialOnClosed(Callable<Void> mathodToFollow) {
+        if (!adsPrefernce.planD()) {
+            if (adsPrefernce.allowAccess()) {
+                if (!adsPrefernce.isMediationActive()) {
+                    showSplashAd(mathodToFollow);
+                } else {
+                    showMixedInterAdsOnClosed(mathodToFollow);
+                }
+            }else {
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try {
+                mathodToFollow.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     public void showSplashAd() {
         if (isNetworkAvailable(this)) {
             if (adsPrefernce.planA()) {
@@ -2049,6 +2075,279 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 }
             }
 
+
+        }
+    }
+    public void showSplashAd(Callable<Void> mathodToFollow) {
+        if (isNetworkAvailable(this)) {
+            if (adsPrefernce.planA()) {
+                if (adsPrefernce.showgInter1()) {
+                    if (isGInter1Ready) {
+                        if (gInterstitial1.isLoaded() && gInterstitial1 != null) {
+                            gInterstitial1.show();
+                            gInterstitial1.setAdListener(new com.google.android.gms.ads.AdListener() {
+                                public void onAdClosed() {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    gInterstitial1.loadAd(new AdRequest.Builder().build());
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    super.onAdOpened();
+                                    isGInter1Ready = false;
+                                    isGInter1Shown = true;
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                    super.onAdFailedToLoad(loadAdError);
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
+                        }else {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else if (adsPrefernce.showfbInter1()) {
+                    if (isFbInter1Ready) {
+                        if (fbInterstitial1.isAdLoaded()) {
+                            fbInterstitial1.show();
+                            InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+                                @Override
+                                public void onInterstitialDisplayed(Ad ad) {
+                                    isFbInter1Ready = false;
+                                    isFbInter1Shown = true;
+                                }
+
+                                @Override
+                                public void onInterstitialDismissed(Ad ad) {
+                                    fbInterstitial1.loadAd();
+                                }
+
+                                @Override
+                                public void onError(Ad ad, AdError adError) {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onAdLoaded(Ad ad) {
+
+                                }
+
+                                @Override
+                                public void onAdClicked(Ad ad) {
+
+                                }
+
+                                @Override
+                                public void onLoggingImpression(Ad ad) {
+
+                                }
+                            };
+                            fbInterstitial1.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
+                        }else {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (adsPrefernce.planB()) {
+                if (adsPrefernce.showanInter1()) {
+                    if (isAnInter1Ready) {
+                        if (an_interstitial_Ad1.isAdLoaded()) {
+                            an_interstitial_Ad1.showAd();
+                            an_interstitial_Ad1.setOnAdClosedCallback(new OnAdClosed() {
+                                @Override
+                                public void onAdClosed() {
+                                    loadInterstitial1();
+                                }
+                            });
+                            an_interstitial_Ad1.setOnAdOpenedCallback(new OnAdOpened() {
+                                @Override
+                                public void adOpened() {
+                                    isAnInter1Ready = false;
+                                    isAnInter1Shown = true;
+                                }
+                            });
+                            an_interstitial_Ad1.setOnAdErrorCallback(new OnAdError() {
+                                @Override
+                                public void adError(String s) {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }else {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (adsPrefernce.planC()) {
+                if (adsPrefernce.showmpInter1()) {
+                    if (isMpInter1Ready) {
+                        if (mpInterstitial1 != null) {
+                            if (mpInterstitial1.isReady()) {
+                                mpInterstitial1.show();
+                                mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                    @Override
+                                    public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+
+                                    }
+
+                                    @Override
+                                    public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                        try {
+                                            mathodToFollow.call();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onInterstitialShown(MoPubInterstitial interstitial) {
+                                        isMpInter1Ready = false;
+                                    }
+
+                                    @Override
+                                    public void onInterstitialClicked(MoPubInterstitial interstitial) {
+
+                                    }
+
+                                    @Override
+                                    public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+
+                                        mpInterstitial1.load();
+                                        mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+                                                Log.e("inLoadonClosed", "ismpinter1 ready = true");
+                                                isMpInter1Ready = true;
+                                            }
+
+                                            @Override
+                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+
+                                            }
+                                        });
+
+
+                                    }
+                                });
+                            }else {
+                                try {
+                                    mathodToFollow.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else {
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }else {
+            try {
+                mathodToFollow.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
     }
