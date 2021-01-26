@@ -2142,6 +2142,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onInterstitialDismissed(Ad ad) {
                                     fbInterstitial1.loadAd();
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                                 @Override
@@ -2199,6 +2204,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             an_interstitial_Ad1.setOnAdClosedCallback(new OnAdClosed() {
                                 @Override
                                 public void onAdClosed() {
+
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     loadInterstitial1();
                                 }
                             });
@@ -2274,6 +2285,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     @Override
                                     public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+
+                                        try {
+                                            mathodToFollow.call();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
 
                                         mpInterstitial1.load();
                                         mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
