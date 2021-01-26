@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
@@ -38,7 +38,7 @@ dependencies {
 
     implementation 'com.startapp:inapp-sdk:4.6.0'
     implementation 'com.facebook.android:audience-network-sdk:6.2.0'
-    implementation 'com.google.android.gms:play-services-ads:19.6.0'
+    implementation 'com.google.android.gms:play-services-ads:19.7.0'
 
     //app next
     implementation 'com.appnext.sdk:ads:2.5.1.472'
