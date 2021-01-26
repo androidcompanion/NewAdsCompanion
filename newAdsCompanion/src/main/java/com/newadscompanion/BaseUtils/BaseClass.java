@@ -1685,7 +1685,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
                         }
-                        resetAllBannerBoolean();
 
 
                     }
