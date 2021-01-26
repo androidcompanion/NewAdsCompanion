@@ -1562,23 +1562,23 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     });
                 } else {
                     initializeMoPubSDK();
-                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
-                    adContainerView.setVisibility(View.VISIBLE);
-                    adContainerView.setPadding(0, top, 0, bottom);
-                    showInhouseBannerAd(new InhouseBannerListener() {
-                        @Override
-                        public void onAdLoaded() {
-                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                            }
-                        }
-
-                        @Override
-                        public void onAdShowFailed() {
-
-                        }
-                    });
+//                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
+//                    adContainerView.setVisibility(View.VISIBLE);
+//                    adContainerView.setPadding(0, top, 0, bottom);
+//                    showInhouseBannerAd(new InhouseBannerListener() {
+//                        @Override
+//                        public void onAdLoaded() {
+//                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onAdShowFailed() {
+//
+//                        }
+//                    });
                 }
             } else {
                 resetAllBannerBoolean();
