@@ -963,52 +963,53 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
-                    if (adsPrefernce.showgBanner()) {
-                        AdView gadView;
-                        MobileAds.initialize(this, adsPrefernce.gAppId());
-                        final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
-                        adContainerView.setVisibility(View.VISIBLE);
-                        gadView = new AdView(this);
-                        adContainerView.setPadding(0, top, 0, bottom);
-                        gadView.setAdUnitId(adsPrefernce.gBannerId());
-                        adContainerView.addView(gadView);
-                        AdRequest adRequest = new AdRequest.Builder().build();
-                        gadView.setAdSize(AdSize.LARGE_BANNER);
-                        gadView.loadAd(adRequest);
-                        gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
-                            @Override
-                            public void onAdLoaded() {
-                                super.onAdLoaded();
-                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                    if (!adsPrefernce.isMediationActive()){
+                        if (adsPrefernce.showgBanner()) {
+                            AdView gadView;
+                            MobileAds.initialize(this, adsPrefernce.gAppId());
+                            final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            gadView = new AdView(this);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            gadView.setAdUnitId(adsPrefernce.gBannerId());
+                            adContainerView.addView(gadView);
+                            AdRequest adRequest = new AdRequest.Builder().build();
+                            gadView.setAdSize(AdSize.LARGE_BANNER);
+                            gadView.loadAd(adRequest);
+                            gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    super.onAdLoaded();
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onAdFailedToLoad(LoadAdError loadAdError) {
-                                super.onAdFailedToLoad(loadAdError);
-                                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
-                                adContainerView.setVisibility(View.VISIBLE);
-                                adContainerView.setPadding(0, top, 0, bottom);
-                                showInhouseBannerAd(new InhouseBannerListener() {
-                                    @Override
-                                    public void onAdLoaded() {
-                                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                @Override
+                                public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                    super.onAdFailedToLoad(loadAdError);
+                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                    adContainerView.setVisibility(View.VISIBLE);
+                                    adContainerView.setPadding(0, top, 0, bottom);
+                                    showInhouseBannerAd(new InhouseBannerListener() {
+                                        @Override
+                                        public void onAdLoaded() {
+                                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onAdShowFailed() {
+                                        @Override
+                                        public void onAdShowFailed() {
 
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        if (adsPrefernce.showfbNativeBanner()) {
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else if (adsPrefernce.showfbNativeBanner()) {
                             final NativeBannerAd nativeBannerAd;
                             AudienceNetworkAds.initialize(this);
                             nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
@@ -1065,7 +1066,141 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             };
                             nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
                         }
+                        else if (adsPrefernce.showanBanner()) {
+                            final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.native_banner_container);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            Appnext.init(this);
+                            BannerView banner = new BannerView(this);
+                            banner.setPlacementId(adsPrefernce.anAdId());
+                            banner.setBannerSize(BannerSize.LARGE_BANNER);
+                            banner.loadAd(new BannerAdRequest());
+                            adContainerView.addView(banner);
+                            banner.setBannerListener(new com.appnext.banners.BannerListener() {
+                                @Override
+                                public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
+                                    super.onAdLoaded(s, appnextAdCreativeType);
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
+                                }
+
+                                @Override
+                                public void onError(AppnextError appnextError) {
+                                    super.onError(appnextError);
+                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                                    adContainerView.setVisibility(View.VISIBLE);
+                                    adContainerView.setPadding(0, top, 0, bottom);
+                                    showInhouseBannerAd(new InhouseBannerListener() {
+                                        @Override
+                                        public void onAdLoaded() {
+                                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onAdShowFailed() {
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else if (adsPrefernce.showmpBanner()) {
+                            MoPubView moPubView;
+                            moPubView = new MoPubView(this);
+                            if (mpBannerInitilized) {
+                                moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
+                                moPubView.setAdSize(MoPubView.MoPubAdSize.HEIGHT_90); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
+                                moPubView.loadAd();
+                                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                adContainerView.setVisibility(View.VISIBLE);
+                                adContainerView.setPadding(0, top, 0, bottom);
+                                adContainerView.addView(moPubView);
+                                moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
+                                    @Override
+                                    public void onBannerLoaded(@NonNull MoPubView banner) {
+                                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
+                                        final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                                        adContainerView.setVisibility(View.VISIBLE);
+                                        adContainerView.setPadding(0, top, 0, bottom);
+                                        showInhouseBannerAd(new InhouseBannerListener() {
+                                            @Override
+                                            public void onAdLoaded() {
+                                                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onAdShowFailed() {
+
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onBannerClicked(MoPubView banner) {
+
+                                    }
+
+                                    @Override
+                                    public void onBannerExpanded(MoPubView banner) {
+
+                                    }
+
+                                    @Override
+                                    public void onBannerCollapsed(MoPubView banner) {
+
+                                    }
+                                });
+                            } else {
+                                initializeMoPubSDK();
+                            }
+                        }
+                        else {
+                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            showInhouseBannerAd(new InhouseBannerListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
+                                }
+
+                                @Override
+                                public void onAdShowFailed() {
+
+                                }
+                            });
+                        }
+                    }else {
+                        if (adsPrefernce.showgBanner()) {
+                            if (!isGLargeBannerShown) {
+                                showGLargeBanner(top,bottom);
+                            } else {
+                                showFbLargeBanner(top, bottom);
+                            }
+                        } else {
+                            showFbLargeBanner(top, bottom);
+                        }
                     }
+
+
                 } else {
                     final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.native_banner_container);
                     Banner startAppBanner = new Banner(this, new BannerListener() {
@@ -1185,6 +1320,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     public static boolean isFbBannerShown = false;
     public static boolean isAnBannerShown = false;
     public static boolean isMpBannerShown = false;
+
+
+    public static boolean isGLargeBannerShown = false;
+    public static boolean isFbLargeBannerShown = false;
+    public static boolean isAnLargeBannerShown = false;
+    public static boolean isMpLargeBannerShown = false;
 
     public void showBannerAd(Integer top, Integer bottom) {
         if (isNetworkAvailable(this)) {
@@ -1389,6 +1530,25 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 initializeMoPubSDK();
                             }
                         }
+                        else {
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            showInhouseBannerAd(new InhouseBannerListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
+                                }
+
+                                @Override
+                                public void onAdShowFailed() {
+
+                                }
+                            });
+                        }
                     } else {
                         if (adsPrefernce.showgBanner()) {
                             if (!isGBannerShown) {
@@ -1497,6 +1657,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         isAnBannerShown = false;
         isMpBannerShown = false;
     }
+    public void resetAllLargeBannerBoolean() {
+        isGLargeBannerShown = false;
+        isFbLargeBannerShown = false;
+        isAnLargeBannerShown = false;
+        isMpLargeBannerShown = false;
+    }
 
     public void showMpBanner(int top, int bottom) {
         if (adsPrefernce.showmpBanner()) {
@@ -1515,7 +1681,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         @Override
                         public void onBannerLoaded(@NonNull MoPubView banner) {
                             isMpBannerShown = true;
-                            resetAllShownBoolean();
+                            resetAllBannerBoolean();
                             adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -1622,6 +1788,113 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
 
     }
+    public void showMpLargeBanner(int top, int bottom) {
+        if (adsPrefernce.showmpBanner()) {
+            if (!isMpLargeBannerShown) {
+                MoPubView moPubView;
+                moPubView = new MoPubView(this);
+                if (mpBannerInitilized) {
+                    moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
+                    moPubView.setAdSize(MoPubView.MoPubAdSize.HEIGHT_90); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
+                    moPubView.loadAd();
+                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                    adContainerView.setVisibility(View.VISIBLE);
+                    adContainerView.setPadding(0, top, 0, bottom);
+                    adContainerView.addView(moPubView);
+                    moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
+                        @Override
+                        public void onBannerLoaded(@NonNull MoPubView banner) {
+                            isMpLargeBannerShown = true;
+                            resetAllLargeBannerBoolean();
+                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                            }
+                        }
+
+                        @Override
+                        public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
+                            isMpLargeBannerShown = true;
+                            resetAllLargeBannerBoolean();
+                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.setPadding(0, top, 0, bottom);
+                            showInhouseBannerAd(new InhouseBannerListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                                    }
+                                }
+
+                                @Override
+                                public void onAdShowFailed() {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onBannerClicked(MoPubView banner) {
+
+                        }
+
+                        @Override
+                        public void onBannerExpanded(MoPubView banner) {
+
+                        }
+
+                        @Override
+                        public void onBannerCollapsed(MoPubView banner) {
+
+                        }
+                    });
+                } else {
+                    initializeMoPubSDK();
+                }
+            } else {
+                resetAllLargeBannerBoolean();
+                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                adContainerView.setVisibility(View.VISIBLE);
+                adContainerView.setPadding(0, top, 0, bottom);
+                showInhouseBannerAd(new InhouseBannerListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
+                    }
+
+                    @Override
+                    public void onAdShowFailed() {
+
+                    }
+                });
+            }
+        } else {
+            resetAllLargeBannerBoolean();
+            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+            adContainerView.setVisibility(View.VISIBLE);
+            adContainerView.setPadding(0, top, 0, bottom);
+            showInhouseBannerAd(new InhouseBannerListener() {
+                @Override
+                public void onAdLoaded() {
+                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                    }
+                }
+
+                @Override
+                public void onAdShowFailed() {
+
+                }
+            });
+        }
+
+    }
 
     public void showAnBanner(int top, int bottom) {
         if (adsPrefernce.showanBanner()) {
@@ -1658,6 +1931,43 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             }
         } else {
             showMpBanner(top, bottom);
+        }
+
+    }
+    public void showAnLargeBanner(int top, int bottom) {
+        if (adsPrefernce.showanBanner()) {
+            if (!isAnLargeBannerShown) {
+                final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.native_banner_container);
+                adContainerView.setPadding(0, top, 0, bottom);
+                Appnext.init(this);
+                BannerView banner = new BannerView(this);
+                banner.setPlacementId(adsPrefernce.anAdId());
+                banner.setBannerSize(BannerSize.LARGE_BANNER);
+                banner.loadAd(new BannerAdRequest());
+                adContainerView.addView(banner);
+                banner.setBannerListener(new com.appnext.banners.BannerListener() {
+                    @Override
+                    public void onAdLoaded(String s, AppnextAdCreativeType appnextAdCreativeType) {
+                        super.onAdLoaded(s, appnextAdCreativeType);
+                        isAnLargeBannerShown = true;
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
+                    }
+
+                    @Override
+                    public void onError(AppnextError appnextError) {
+                        super.onError(appnextError);
+                        isAnLargeBannerShown = true;
+                        showMpLargeBanner(top, bottom);
+                    }
+                });
+            } else {
+                showMpLargeBanner(top, bottom);
+            }
+        } else {
+            showMpLargeBanner(top, bottom);
         }
 
     }
@@ -1708,6 +2018,59 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
 
     }
+    public void showFbLargeBanner(int top, int bottom) {
+        if (adsPrefernce.showfbNativeBanner()) {
+            if (!isFbLargeBannerShown) {
+                final NativeBannerAd nativeBannerAd;
+                AudienceNetworkAds.initialize(this);
+                nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
+                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                adContainerView.setVisibility(View.VISIBLE);
+                adContainerView.setPadding(0, top, 0, bottom);
+                NativeAdListener nativeAdListener = new NativeAdListener() {
+                    @Override
+                    public void onMediaDownloaded(Ad ad) {
+                        // Native ad finished downloading all assets
+                    }
+
+                    @Override
+                    public void onError(Ad ad, AdError adError) {
+                        // Native ad failed to load
+                        isFbLargeBannerShown = true;
+                        showAnLargeBanner(top,bottom);
+                    }
+
+                    @Override
+                    public void onAdLoaded(Ad ad) {
+                        // Native ad is loaded and ready to be displayed
+                        inflateNativeBannerAdFacebook(nativeBannerAd);
+                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                        }
+                        isFbLargeBannerShown = true;
+
+                    }
+
+                    @Override
+                    public void onAdClicked(Ad ad) {
+                        // Native ad clicked
+                    }
+
+                    @Override
+                    public void onLoggingImpression(Ad ad) {
+                        // Native ad impression
+                    }
+                };
+                nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
+            } else {
+                showAnLargeBanner(top, bottom);
+            }
+        } else {
+            showAnLargeBanner(top, bottom);
+        }
+
+    }
 
     public void showGBanner(int top, int bottom) {
         AdView gadView;
@@ -1738,6 +2101,38 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 super.onAdFailedToLoad(loadAdError);
                 isGBannerShown = true;
                 showFbBanner(top, bottom);
+            }
+        });
+    }
+    public void showGLargeBanner(int top, int bottom) {
+        AdView gadView;
+        MobileAds.initialize(this, adsPrefernce.gAppId());
+        final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
+        adContainerView.setVisibility(View.VISIBLE);
+        gadView = new AdView(this);
+        adContainerView.setPadding(0, top, 0, bottom);
+        gadView.setAdUnitId(adsPrefernce.gBannerId());
+        adContainerView.addView(gadView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        com.google.android.gms.ads.AdSize adSize = getAdSize();
+        gadView.setAdSize(adSize);
+        gadView.loadAd(adRequest);
+        gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                isGLargeBannerShown = true;
+                adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+                }
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                isGLargeBannerShown = true;
+                showFbLargeBanner(top, bottom);
             }
         });
     }
