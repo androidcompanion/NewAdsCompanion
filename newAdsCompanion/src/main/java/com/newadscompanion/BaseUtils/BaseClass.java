@@ -2114,8 +2114,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         gadView.setAdUnitId(adsPrefernce.gBannerId());
         adContainerView.addView(gadView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        com.google.android.gms.ads.AdSize adSize = getAdSize();
-        gadView.setAdSize(adSize);
+        gadView.setAdSize(AdSize.LARGE_BANNER);
         gadView.loadAd(adRequest);
         gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
             @Override
