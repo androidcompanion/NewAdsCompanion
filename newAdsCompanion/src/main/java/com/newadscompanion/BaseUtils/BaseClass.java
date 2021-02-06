@@ -1009,22 +1009,18 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         }
-                        else if (adsPrefernce.showfbNativeBanner()) {
-                            final NativeBannerAd nativeBannerAd;
+                        else if (adsPrefernce.showfbBanner()) {
+
+                            com.facebook.ads.AdView adView;
                             AudienceNetworkAds.initialize(this);
-                            nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
+                            adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
                             final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
+                            adContainerView.addView(adView);
                             adContainerView.setPadding(0, top, 0, bottom);
-                            NativeAdListener nativeAdListener = new NativeAdListener() {
-                                @Override
-                                public void onMediaDownloaded(Ad ad) {
-                                    // Native ad finished downloading all assets
-                                }
-
+                            AdListener bannerAdListner = new AdListener() {
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
-                                    // Native ad failed to load
                                     final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
@@ -1046,25 +1042,79 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onAdLoaded(Ad ad) {
-                                    // Native ad is loaded and ready to be displayed
-                                    inflateNativeBannerAdFacebook(nativeBannerAd);
                                     adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
                                     }
+
                                 }
 
                                 @Override
                                 public void onAdClicked(Ad ad) {
-                                    // Native ad clicked
+
                                 }
 
                                 @Override
                                 public void onLoggingImpression(Ad ad) {
-                                    // Native ad impression
+
                                 }
                             };
-                            nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
+                            adView.loadAd(adView.buildLoadAdConfig().withAdListener(bannerAdListner).build());
+//                            final NativeBannerAd nativeBannerAd;
+//                            AudienceNetworkAds.initialize(this);
+//                            nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
+//                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+//                            adContainerView.setVisibility(View.VISIBLE);
+//                            adContainerView.setPadding(0, top, 0, bottom);
+//                            NativeAdListener nativeAdListener = new NativeAdListener() {
+//                                @Override
+//                                public void onMediaDownloaded(Ad ad) {
+//                                    // Native ad finished downloading all assets
+//                                }
+//
+//                                @Override
+//                                public void onError(Ad ad, AdError adError) {
+//                                    // Native ad failed to load
+//                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+//                                    adContainerView.setVisibility(View.VISIBLE);
+//                                    adContainerView.setPadding(0, top, 0, bottom);
+//                                    showInhouseBannerAd(new InhouseBannerListener() {
+//                                        @Override
+//                                        public void onAdLoaded() {
+//                                            adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+//                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onAdShowFailed() {
+//
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onAdLoaded(Ad ad) {
+//                                    // Native ad is loaded and ready to be displayed
+//                                    inflateNativeBannerAdFacebook(nativeBannerAd);
+//                                    adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onAdClicked(Ad ad) {
+//                                    // Native ad clicked
+//                                }
+//
+//                                @Override
+//                                public void onLoggingImpression(Ad ad) {
+//                                    // Native ad impression
+//                                }
+//                            };
+//                            nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
                         }
                         else if (adsPrefernce.showanBanner()) {
                             final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.native_banner_container);
@@ -1088,7 +1138,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onError(AppnextError appnextError) {
                                     super.onError(appnextError);
-                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
                                     showInhouseBannerAd(new InhouseBannerListener() {
@@ -2019,31 +2069,24 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
     public void showFbLargeBanner(int top, int bottom) {
-        if (adsPrefernce.showfbNativeBanner()) {
+        if (adsPrefernce.showfbBanner()) {
             if (!isFbLargeBannerShown) {
-                final NativeBannerAd nativeBannerAd;
+                com.facebook.ads.AdView adView;
                 AudienceNetworkAds.initialize(this);
-                nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
+                adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
                 final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
+                adContainerView.addView(adView);
                 adContainerView.setPadding(0, top, 0, bottom);
-                NativeAdListener nativeAdListener = new NativeAdListener() {
-                    @Override
-                    public void onMediaDownloaded(Ad ad) {
-                        // Native ad finished downloading all assets
-                    }
-
+                AdListener bannerAdListner = new AdListener() {
                     @Override
                     public void onError(Ad ad, AdError adError) {
-                        // Native ad failed to load
                         isFbLargeBannerShown = true;
                         showAnLargeBanner(top,bottom);
                     }
 
                     @Override
                     public void onAdLoaded(Ad ad) {
-                        // Native ad is loaded and ready to be displayed
-                        inflateNativeBannerAdFacebook(nativeBannerAd);
                         adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -2054,15 +2097,57 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     @Override
                     public void onAdClicked(Ad ad) {
-                        // Native ad clicked
+
                     }
 
                     @Override
                     public void onLoggingImpression(Ad ad) {
-                        // Native ad impression
+
                     }
                 };
-                nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
+                adView.loadAd(adView.buildLoadAdConfig().withAdListener(bannerAdListner).build());
+//                final NativeBannerAd nativeBannerAd;
+//                AudienceNetworkAds.initialize(this);
+//                nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
+//                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+//                adContainerView.setVisibility(View.VISIBLE);
+//                adContainerView.setPadding(0, top, 0, bottom);
+//                NativeAdListener nativeAdListener = new NativeAdListener() {
+//                    @Override
+//                    public void onMediaDownloaded(Ad ad) {
+//                        // Native ad finished downloading all assets
+//                    }
+//
+//                    @Override
+//                    public void onError(Ad ad, AdError adError) {
+//                        // Native ad failed to load
+//                        isFbLargeBannerShown = true;
+//                        showAnLargeBanner(top,bottom);
+//                    }
+//
+//                    @Override
+//                    public void onAdLoaded(Ad ad) {
+//                        // Native ad is loaded and ready to be displayed
+//                        inflateNativeBannerAdFacebook(nativeBannerAd);
+//                        adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
+//                        }
+//                        isFbLargeBannerShown = true;
+//
+//                    }
+//
+//                    @Override
+//                    public void onAdClicked(Ad ad) {
+//                        // Native ad clicked
+//                    }
+//
+//                    @Override
+//                    public void onLoggingImpression(Ad ad) {
+//                        // Native ad impression
+//                    }
+//                };
+//                nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
                 showAnLargeBanner(top, bottom);
             }
