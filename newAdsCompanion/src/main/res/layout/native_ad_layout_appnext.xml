@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@android:color/darker_gray">
-
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -33,36 +32,38 @@
             tools:src="@drawable/ic_ads" />
 
         <TextView
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:background="@color/trasnperant_black"
             android:textColor="@android:color/holo_orange_dark"
             android:text="Sponsered"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_toRightOf="@id/icon"
-            android:gravity="left"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@id/icon"
+            android:gravity="start"
             android:textSize="12sp" />
 
     </RelativeLayout>
-
 
     <com.appnext.nativeads.NativeAdView
         android:layout_below="@+id/lay_sponsered"
         android:id="@+id/na_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
         android:background="@android:color/white"
-        android:padding="10dp">
+        android:padding="3dp">
 
 
         <RelativeLayout
             android:id="@+id/na_ad"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/na_icon"
@@ -77,45 +78,65 @@
                 android:id="@+id/na_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="15dp"
-                android:layout_toRightOf="@id/na_icon"
-                android:gravity="left"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_toEndOf="@id/na_icon"
+                android:gravity="start"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/na_media"
+                android:layout_above="@+id/lay_media"
                 android:layout_below="@+id/na_title"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/na_icon"
                 android:textSize="16sp" />
 
-            <com.appnext.nativeads.MediaView
-                android:id="@+id/na_media"
+            <LinearLayout
+                android:id="@+id/lay_media"
+                android:layout_above="@id/lay_install"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/description" />
+                android:layout_below="@id/description"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/install"
-                android:layout_width="104dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/na_media"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/btn_ad_call"
-                android:text="install"
-                android:textColor="#ffffff" />
+            <com.appnext.nativeads.MediaView
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/na_media"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_alignParentBottom="true"
+                android:id="@+id/lay_install"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/install"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/btn_ad_call"
+                    android:text="install"
+                    android:textColor="#ffffff" />
+
+            </RelativeLayout>
+
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/na_title"
-                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@+id/rating"
                 app:srcCompat="@drawable/apnxt_ads_full_star" />
@@ -132,4 +153,5 @@
 
         </RelativeLayout>
     </com.appnext.nativeads.NativeAdView>
+
 </RelativeLayout>

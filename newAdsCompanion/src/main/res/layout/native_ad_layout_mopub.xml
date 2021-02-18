@@ -45,8 +45,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
             android:id="@+id/native_ad_privacy_information_icon_image"
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -55,8 +53,6 @@
 
         <ImageView
             android:src="@drawable/ic_ads"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
             android:id="@+id/iv_ad"
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -68,10 +64,7 @@
             android:layout_marginStart="5dp"
             android:layout_gravity="center_vertical"
             android:gravity="center|start|center_vertical"
-            android:layout_centerVertical="true"
             android:text="Sponsored"
-            android:layout_toEndOf="@id/native_ad_privacy_information_icon_image"
-            android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:id="@+id/native_sponsored_text_view" />
