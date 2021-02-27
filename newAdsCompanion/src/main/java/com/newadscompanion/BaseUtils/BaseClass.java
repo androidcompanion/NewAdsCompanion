@@ -930,6 +930,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     isAdsAvailable = true;
 
+                    onNetworkChangeListner.onAdDataDownloaded();
+
+
+
                 }
 
                 @Override
