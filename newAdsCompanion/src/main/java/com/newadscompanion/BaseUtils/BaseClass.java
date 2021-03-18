@@ -6232,50 +6232,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }, delay);
     }
 
-    public void loadInterAdsDialog(int adToLoad) {
-        adsPrefernce = new AdsPrefernce(this);
-        if (isNetworkAvailable(this)) {
-            if (isAdsAvailable) {
-
-                MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
-                if (adToLoad == 1 && adsPrefernce.showgInter1()) {
-                    gDialogInterstitial = new com.google.android.gms.ads.InterstitialAd(this);
-                    gDialogInterstitial.setAdUnitId(adsPrefernce.gInterId1());
-                    gDialogInterstitial.loadAd(new AdRequest.Builder().build());
-                } else if (adToLoad == 2 && adsPrefernce.showgInter2()) {
-                    gDialogInterstitial = new com.google.android.gms.ads.InterstitialAd(this);
-                    gDialogInterstitial.setAdUnitId(adsPrefernce.gInterId2());
-                    gDialogInterstitial.loadAd(new AdRequest.Builder().build());
-                } else {
-                    AudienceNetworkAds.initialize(this);
-                    if (adToLoad == 1 && adsPrefernce.showfbInter1()) {
-                        fbDialogInterstitial = new com.facebook.ads.InterstitialAd(this, adsPrefernce.fbInterId1());
-                        fbDialogInterstitial.loadAd();
-                    } else if (adToLoad == 2 && adsPrefernce.showfbInter2()) {
-                        fbDialogInterstitial = new com.facebook.ads.InterstitialAd(this, adsPrefernce.fbInterId2());
-                        fbDialogInterstitial.loadAd();
-                    }
-                }
-            } else {
-                MobileAds.initialize(getApplicationContext(), defaultIds.GOOGLE_APP_ID());
-                if (adToLoad == 1) {
-                    gDialogInterstitial = new com.google.android.gms.ads.InterstitialAd(this);
-                    gDialogInterstitial.setAdUnitId(defaultIds.GOOGLE_INTER1());
-                    gDialogInterstitial.loadAd(new AdRequest.Builder().build());
-                    fbDialogInterstitial = new com.facebook.ads.InterstitialAd(this, defaultIds.FB_INTER1());
-                    fbDialogInterstitial.loadAd();
-                } else if (adToLoad == 2) {
-                    gDialogInterstitial = new com.google.android.gms.ads.InterstitialAd(this);
-                    gDialogInterstitial.setAdUnitId(defaultIds.GOOGLE_INTER2());
-                    gDialogInterstitial.loadAd(new AdRequest.Builder().build());
-                    fbDialogInterstitial = new com.facebook.ads.InterstitialAd(this, defaultIds.FB_INTER2());
-                    fbDialogInterstitial.loadAd();
-                }
-            }
-        }
-    }
-
-
     public void checkAppService(String key, String appVersion, OnCheckServiceListner onCheckServiceListner) {
         if (adsPrefernce.allowAccess()) {
             if (isNetworkAvailable(this) && checkAppService) {

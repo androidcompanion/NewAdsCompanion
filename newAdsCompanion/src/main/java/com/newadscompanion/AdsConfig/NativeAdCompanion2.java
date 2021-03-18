@@ -731,8 +731,8 @@ public class NativeAdCompanion2 {
 
         if (adsPrefernce.showgNative2()) {
             if (!isGN2Shown) {
-                MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
-                builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE2());
+                MobileAds.initialize(context, adsPrefernce.gAppId());
+                builder = new AdLoader.Builder(this.context, adsPrefernce.gNativeId2());
                 builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
                     public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
                         NativeAdCompanion2.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);

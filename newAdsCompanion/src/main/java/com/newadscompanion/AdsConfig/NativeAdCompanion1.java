@@ -95,9 +95,9 @@ public class NativeAdCompanion1 {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
                     if (!adsPrefernce.isMediationActive()) {
-                        MobileAds.initialize(context, defaultIds.GOOGLE_APP_ID());
+                        MobileAds.initialize(context, adsPrefernce.gAppId());
                         if (adsPrefernce.showgNative1()) {
-                            builder = new AdLoader.Builder(this.context, defaultIds.GOOGLE_NATIVE1());
+                            builder = new AdLoader.Builder(this.context, adsPrefernce.gNativeId1());
                             builder.forUnifiedNativeAd(new OnUnifiedNativeAdLoadedListener() {
                                 public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
                                     NativeAdCompanion1.this.inflateNativeAdGoogle(unifiedNativeAd, cardView);
