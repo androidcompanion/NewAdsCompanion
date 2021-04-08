@@ -7,6 +7,7 @@ import com.intentsoftware.addapptr.AATKitConfiguration;
 import com.intentsoftware.addapptr.BannerPlacementLayout;
 import com.intentsoftware.addapptr.ad.VASTAdData;
 import com.newadscompanion.Interfaces.AATKitEventListner;
+import com.newadscompanion.ModelsCompanion.AdsPrefernce;
 
 public class AdsAppClass extends Application implements AATKit.Delegate{
     private AATKitEventListner listener;
@@ -16,9 +17,12 @@ public class AdsAppClass extends Application implements AATKit.Delegate{
         super.onCreate();
         AATKitConfiguration configuration = new AATKitConfiguration(this);
         configuration.setUseDebugShake(false);
-        configuration.setDelegate(this);
+//        configuration.setDelegate(this);
         AATKit.init(configuration);
-        AATKit.enableTestMode(2525);
+        AdsPrefernce adsPrefernce = new AdsPrefernce(this);
+        if (adsPrefernce.extraPara4().equals("TEST")){
+            AATKit.enableTestMode(2525);
+        }
 
     }
 

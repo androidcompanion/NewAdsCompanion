@@ -715,7 +715,7 @@ public class AdsPrefernce {
     public String extraPara4() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("extraPara4", "1");
+            var = adsPreference.getString("extraPara4", "TEST");
         }
         return var;
     }
