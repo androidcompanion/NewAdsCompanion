@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.newadscompanion.BaseUtils.BaseClass;
+import com.newadscompanion.Interfaces.OnNetworkChangeListner;
 
-public class SecondActivity extends BaseClass {
+import java.util.concurrent.Callable;
+
+public class SecondActivity extends BaseClass implements OnNetworkChangeListner {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +22,26 @@ public class SecondActivity extends BaseClass {
 
     public void changeActivity(View view) {
 //        startActivity(new Intent(this,MainActivity.class));
-        showMixedInterAds();
+//        showMixedInterAds(new Callable<Void>() {
+//            @Override
+//            public Void call() throws Exception {
+//                return null;
+//            }
+//        });
+    }
+
+    @Override
+    public void onInternetConnected() {
+
+    }
+
+    @Override
+    public void onInternetDisconnected() {
+
+    }
+
+    @Override
+    public void onAdDataDownloaded() {
+
     }
 }
