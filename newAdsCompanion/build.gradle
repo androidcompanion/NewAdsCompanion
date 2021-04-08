@@ -59,4 +59,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.android.support:multidex:1.0.3'
 
+
+    implementation ('com.intentsoftware.addapptr:AATKit:2.29.13') {
+        exclude group: 'com.mopub'
+    }
+
 }

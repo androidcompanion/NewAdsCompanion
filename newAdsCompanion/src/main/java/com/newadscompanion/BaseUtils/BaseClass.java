@@ -21,6 +21,7 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -74,6 +75,11 @@ import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdCallback;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.intentsoftware.addapptr.AATKit;
+import com.intentsoftware.addapptr.AATKitConfiguration;
+import com.intentsoftware.addapptr.BannerPlacementLayout;
+import com.intentsoftware.addapptr.PlacementSize;
+import com.intentsoftware.addapptr.ad.VASTAdData;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -90,6 +96,7 @@ import com.mopub.mobileads.MoPubRewardedVideos;
 import com.mopub.mobileads.MoPubView;
 import com.newadscompanion.AdsConfig.DefaultIds;
 import com.newadscompanion.BroadcastUtils.NetworkStateReceiver;
+import com.newadscompanion.Interfaces.AATKitEventListner;
 import com.newadscompanion.Interfaces.InhouseBannerListener;
 import com.newadscompanion.Interfaces.InhouseInterstitialListener;
 import com.newadscompanion.Interfaces.InhouseNativeListener;
@@ -127,6 +134,11 @@ import java.util.concurrent.Callable;
 import cz.msebera.android.httpclient.Header;
 
 public class BaseClass extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener {
+
+    //addapptr
+    private int fullscreenPlacementId = -1;
+    private int bannerPlacementId = -1;
+
 
     //inHouse
     public static boolean isInterAdLoadedIH = false;
@@ -257,6 +269,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     public static boolean isfbUserRewarded = false;
     public static boolean isAnUserRewarded = false;
     public static boolean isMpUserRewarded = false;
+
+
 
 
     public void loadRewardAd() {
@@ -896,8 +910,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     if (ads.getAd4().equals("1")) {
 
+
                         adsPrefernce = new AdsPrefernce(BaseClass.this);
-                        adsPrefernce.setAdsDefaults("0", ads.getShowLoading(), ads.getAllowAccess(), ads.getMediation(), "0", "0", "0", ads.getAd4(), "0", "na", "na", "0",
+                        adsPrefernce.setAdsDefaults("0", ads.getShowLoading(), ads.getAllowAccess(), ads.getMediation(), "0", "0", "0", ads.getAd4(), ads.getAd5(), "na", "na", "0",
                                 "na", "0", "na", "0", "na", "0", "na", "0", "na", "0",
                                 "na", "0", "na", "0", "na", "0", "na", "0", "na", "0",
                                 "na", "0", "na", "0", "0", "0", "0",
@@ -906,18 +921,22 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 "na", "0", "na", "na", "0", "na", "0",
                                 "na", "0", "na", "0", ads.getExtraPara1(), ads.getExtraPara2(), ads.getExtraPara3(), ads.getExtraPara4(),
                                 ads.getSaAdCount());
-                        // initialize startapp sdk
-                        StartAppSDK.init(BaseClass.this, defaultIds.SA_APP_ID(), false);
-                        StartAppAd.enableAutoInterstitial();
 
-                        //disable startapp splash
-                        if (defaultIds.DISABLE_SA_SPLASH()) {
-                            StartAppAd.disableSplash();
+                        if (!adsPrefernce.planE()){
+                            // initialize startapp sdk
+                            StartAppSDK.init(BaseClass.this, defaultIds.SA_APP_ID(), false);
+                            StartAppAd.enableAutoInterstitial();
+
+                            //disable startapp splash
+                            if (defaultIds.DISABLE_SA_SPLASH()) {
+                                StartAppAd.disableSplash();
+                            }
+                            StartAppAd.setAutoInterstitialPreferences(
+                                    new AutoInterstitialPreferences()
+                                            .setActivitiesBetweenAds(Integer.parseInt(adsPrefernce.adCountSA()))
+                            );
                         }
-                        StartAppAd.setAutoInterstitialPreferences(
-                                new AutoInterstitialPreferences()
-                                        .setActivitiesBetweenAds(Integer.parseInt(adsPrefernce.adCountSA()))
-                        );
+
                     }
 
                     if (adsPrefernce.isMediationActive()) {
@@ -961,7 +980,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
 
     }
-
 
     public void showNativeBannerAd(Integer top, Integer bottom) {
         if (isNetworkAvailable(this)) {
@@ -1381,6 +1399,36 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     public static boolean isAnLargeBannerShown = false;
     public static boolean isMpLargeBannerShown = false;
 
+    public int getFullscreenPlacementId() {
+        return fullscreenPlacementId;
+    }
+
+    public int getBannerPlacementId() {
+        return bannerPlacementId;
+    }
+
+    private void addPlacementView(int placementId) {
+        FrameLayout mainLayout = (FrameLayout) findViewById(R.id.banner_container);
+
+        mainLayout.removeAllViews();
+        View placementView = AATKit.getPlacementView(placementId);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+        mainLayout.setVisibility(View.VISIBLE);
+        mainLayout.setForegroundGravity(Gravity.CENTER);
+        mainLayout.addView(placementView, layoutParams);
+    }
+
+    private void removePlacementView(int placementId) {
+        View placementView = AATKit.getPlacementView(placementId);
+
+        if (placementView.getParent() != null) {
+            ViewGroup parent = (ViewGroup) placementView.getParent();
+            parent.removeView(placementView);
+        }
+    }
+
     public void showBannerAd(Integer top, Integer bottom) {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
@@ -1614,7 +1662,23 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             showFbBanner(top, bottom);
                         }
                     }
-                } else {
+                }else if (adsPrefernce.planE()){
+
+//                    AATKitConfiguration configuration = new AATKitConfiguration(getApplication());
+//                    configuration.setUseDebugShake(false);
+////                      AATKit.enableTestMode(2525);
+//                    AATKit.init(configuration);
+//                    int bannerPlacementId = getBannerPlacementId();
+                    bannerPlacementId = AATKit.createPlacement("banner",
+                            PlacementSize.Banner320x53);
+
+                    AATKit.onActivityResume(this);
+                    addPlacementView(bannerPlacementId);
+                    AATKit.startPlacementAutoReload(bannerPlacementId);
+
+                }
+                else {
+
                     final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
                     Banner startAppBanner = new Banner(this, new BannerListener() {
                         @Override
@@ -4469,6 +4533,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             }
                         }
                     }
+                }else if (adsPrefernce.planE()){
+                    fullscreenPlacementId = AATKit.createPlacement("fullscreen",
+                            PlacementSize.Fullscreen);
+                    AATKit.onActivityResume(this);
+                    int fullscreenPlacementId = getFullscreenPlacementId();
+                    AATKit.startPlacementAutoReload(fullscreenPlacementId);
                 }
             }
         }
@@ -4555,6 +4625,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             }
                         }
                     }
+                }else if (adsPrefernce.planE()){
+                    fullscreenPlacementId = AATKit.createPlacement("fullscreen",
+                            PlacementSize.Fullscreen);
+
+                    AATKit.onActivityResume(this);
+                    int fullscreenPlacementId = getFullscreenPlacementId();
+                    AATKit.startPlacementAutoReload(fullscreenPlacementId);
                 }
 
             }
@@ -5354,6 +5431,38 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
     }
 
+
+    private AATKitEventListner aatKitEventListner(){
+        return new AATKitEventListner() {
+            @Override
+            public void onNoAd(int placementId) {
+
+            }
+
+            @Override
+            public void onHaveAd(int placementId) {
+
+            }
+
+            @Override
+            public void onUserEarnedIncentive(int placementId) {
+
+            }
+
+            @Override
+            public void onResumeAfterAd(int placementId) {
+                toast("nikunj");
+            }
+
+            @Override
+            public void onHaveVASTAd(int placementId, VASTAdData data) {
+
+            }
+        };
+    }
+
+    Boolean isShown = false;
+
     public void showInterstitial1(final boolean loadOnClosed,
                                   final Callable<Void> mathodToFollow) {
         if (adsPrefernce.showLoading()) {
@@ -5366,7 +5475,14 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         } else {
                             showMixedInterAds(mathodToFollow);
                         }
-                    } else {
+                    }else if (adsPrefernce.planE()){
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        AATKit.showPlacement(fullscreenPlacementId);
+                    }else {
                         try {
                             mathodToFollow.call();
                         } catch (Exception e) {
@@ -5383,7 +5499,15 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 } else {
                     showMixedInterAds(mathodToFollow);
                 }
-            } else {
+            }else if (adsPrefernce.planE()){
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                AATKit.showPlacement(fullscreenPlacementId);
+            }
+            else {
                 try {
                     mathodToFollow.call();
                 } catch (Exception e) {
@@ -5392,6 +5516,36 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             }
         }
     }
+
+    private AATKitEventListner createOnAATKitEventListener(){
+        return new AATKitEventListner() {
+            @Override
+            public void onNoAd(int placementId) {
+
+            }
+
+            @Override
+            public void onHaveAd(int placementId) {
+
+            }
+
+            @Override
+            public void onUserEarnedIncentive(int placementId) {
+
+            }
+
+            @Override
+            public void onResumeAfterAd(int placementId) {
+
+            }
+
+            @Override
+            public void onHaveVASTAd(int placementId, VASTAdData data) {
+
+            }
+        };
+    }
+
 
     public void showInter1AdonClosed(final Callable<Void> methodParam) {
         if (isNetworkAvailable(this)) {
@@ -5737,7 +5891,16 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     });
                 }
-            }else {
+            }else if (adsPrefernce.planE()){
+                try {
+                    methodParam.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                AATKit.showPlacement(fullscreenPlacementId);
+
+            }
+            else {
                 showInhouseInterAd(new InhouseInterstitialListener() {
                     @Override
                     public void onAdShown() {
@@ -6170,7 +6333,14 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         } else {
                             showMixedInterAds(mathodToFollow);
                         }
-                    } else {
+                    } else if (adsPrefernce.planE()){
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        AATKit.showPlacement(fullscreenPlacementId);
+                    }else {
                         try {
                             mathodToFollow.call();
                         } catch (Exception e) {
@@ -6187,6 +6357,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 } else {
                     showMixedInterAds(mathodToFollow);
                 }
+            }else if (adsPrefernce.planE()){
+                try {
+                    mathodToFollow.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                AATKit.showPlacement(fullscreenPlacementId);
             } else {
                 try {
                     mathodToFollow.call();
