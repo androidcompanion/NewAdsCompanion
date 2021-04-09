@@ -62,7 +62,6 @@ dependencies {
 
     implementation ('com.intentsoftware.addapptr:AATKit:2.29.13') {
         exclude group: 'com.mopub'
-        exclude group: 'com.google.android.gms'
     }
 
 }

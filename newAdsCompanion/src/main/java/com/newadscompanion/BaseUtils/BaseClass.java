@@ -136,8 +136,8 @@ import cz.msebera.android.httpclient.Header;
 public class BaseClass extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener {
 
     //addapptr
-    private int fullscreenPlacementId = -1;
-    private int bannerPlacementId = -1;
+    public int fullscreenPlacementId = -1;
+    public int bannerPlacementId = -1;
 
 
     //inHouse
