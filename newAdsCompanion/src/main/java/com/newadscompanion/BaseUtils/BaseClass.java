@@ -1412,6 +1412,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
         mainLayout.removeAllViews();
         View placementView = AATKit.getPlacementView(placementId);
+        if (placementView.getParent() != null){
+        ((ViewGroup)placementView.getParent()).removeView(placementView);
+        }
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
@@ -1663,16 +1666,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     }
                 }else if (adsPrefernce.planE()){
-
-//                    AATKitConfiguration configuration = new AATKitConfiguration(getApplication());
-//                    configuration.setUseDebugShake(false);
-////                      AATKit.enableTestMode(2525);
-//                    AATKit.init(configuration);
-//                    int bannerPlacementId = getBannerPlacementId();
+                    AATKit.onActivityResume(this);
                     bannerPlacementId = AATKit.createPlacement("banner",
                             PlacementSize.Banner320x53);
 
-                    AATKit.onActivityResume(this);
                     addPlacementView(bannerPlacementId);
                     AATKit.startPlacementAutoReload(bannerPlacementId);
 
