@@ -4534,10 +4534,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     }
                 }else if (adsPrefernce.planE()){
+                    AATKit.onActivityResume(this);
                     fullscreenPlacementId = AATKit.createPlacement("fullscreen",
                             PlacementSize.Fullscreen);
-                    AATKit.onActivityResume(this);
-                    int fullscreenPlacementId = getFullscreenPlacementId();
+                     int fullscreenPlacementId = getFullscreenPlacementId();
                     AATKit.startPlacementAutoReload(fullscreenPlacementId);
                 }
             }
@@ -4626,10 +4626,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     }
                 }else if (adsPrefernce.planE()){
+                    AATKit.onActivityResume(this);
                     fullscreenPlacementId = AATKit.createPlacement("fullscreen",
                             PlacementSize.Fullscreen);
 
-                    AATKit.onActivityResume(this);
                     int fullscreenPlacementId = getFullscreenPlacementId();
                     AATKit.startPlacementAutoReload(fullscreenPlacementId);
                 }
