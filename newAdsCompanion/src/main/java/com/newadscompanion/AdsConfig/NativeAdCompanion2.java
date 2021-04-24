@@ -13,13 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
-
-import com.appnext.base.Appnext;
-import com.appnext.core.AppnextAdCreativeType;
-import com.appnext.core.AppnextError;
-import com.appnext.nativeads.NativeAdRequest;
-import com.appnext.nativeads.NativeAdView;
-import com.appnext.nativeads.PrivacyIcon;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdOptionsView;
@@ -52,8 +45,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static com.newadscompanion.BaseUtils.BaseClass.isAdsAvailable;
-import static com.newadscompanion.BaseUtils.BaseClass.isAnN1Shown;
-import static com.newadscompanion.BaseUtils.BaseClass.isAnN2Shown;
 import static com.newadscompanion.BaseUtils.BaseClass.isFbN1Shown;
 import static com.newadscompanion.BaseUtils.BaseClass.isFbN2Shown;
 import static com.newadscompanion.BaseUtils.BaseClass.isGN1Shown;
@@ -66,7 +57,6 @@ public class NativeAdCompanion2 {
 
     private ImageView imageView;
     private TextView textView, rating, description;
-    private com.appnext.nativeads.MediaView mediaView;
     private ProgressBar progressBar;
     private Button button;
     private ArrayList<View> viewArrayList;
@@ -178,90 +168,6 @@ public class NativeAdCompanion2 {
                                 }
                             };
                             nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
-                        } else if (adsPrefernce.showanNative2()) {
-                            Appnext.init(context);
-                            com.appnext.nativeads.NativeAd nativeAd;
-                            nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
-                            nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
-                            nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
-                                @Override
-                                public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
-                                    super.onAdLoaded(nativeAd, appnextAdCreativeType);
-
-                                    nativeAdContainer.setVisibility(View.VISIBLE);
-                                    cardView.setVisibility(View.VISIBLE);
-
-                                    FrameLayout.LayoutParams nativePara =
-                                            new FrameLayout.LayoutParams(
-                                                    FrameLayout.LayoutParams.MATCH_PARENT,
-                                                    FrameLayout.LayoutParams.WRAP_CONTENT);
-                                    // Add the Ad view into the ad container.
-                                    NativeAdView nativeAdView = new NativeAdView(context);
-                                    LayoutInflater inflater = LayoutInflater.from(context);
-                                    RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
-                                    cardView.addView(adViews, nativePara);
-
-                                    nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
-                                    imageView = (ImageView) adViews.findViewById(R.id.na_icon);
-                                    textView = (TextView) adViews.findViewById(R.id.na_title);
-                                    mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
-                                    progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
-                                    button = (Button) adViews.findViewById(R.id.install);
-                                    rating = (TextView) adViews.findViewById(R.id.rating);
-                                    description = (TextView) adViews.findViewById(R.id.description);
-                                    viewArrayList = new ArrayList<>();
-                                    viewArrayList.add(button);
-                                    viewArrayList.add(mediaView);
-
-                                    progressBar.setVisibility(View.GONE);
-                                    nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
-                                    textView.setText(nativeAd.getAdTitle());
-                                    nativeAd.setMediaView(mediaView);
-                                    rating.setText(nativeAd.getStoreRating());
-                                    description.setText(nativeAd.getAdDescription());
-                                    nativeAd.registerClickableViews(viewArrayList);
-                                    nativeAd.setNativeAdView(nativeAdView);
-                                    mediaView.setMute(true);
-                                    mediaView.setAutoPLay(true);
-                                    mediaView.setClickEnabled(true);
-                                }
-
-                                @Override
-                                public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
-                                    super.onAdClicked(nativeAd);
-                                }
-
-                                @Override
-                                public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
-                                    super.onError(nativeAd, appnextError);
-                                    if (context instanceof BaseClass) {
-                                        ((BaseClass) context).showInhouseNativeAd(nativeAdContainer, new InhouseNativeListener() {
-                                            @Override
-                                            public void onAdLoaded() {
-                                                nativeAdContainer.setVisibility(View.VISIBLE);
-                                                cardView.setVisibility(View.VISIBLE);
-                                            }
-
-                                            @Override
-                                            public void onAdShowFailed() {
-                                            }
-                                        });
-                                    }
-
-                                }
-
-                                @Override
-                                public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
-                                    super.adImpression(nativeAd);
-                                }
-                            });
-
-                            nativeAd.loadAd(new NativeAdRequest()
-                                    .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
-                                    .setCreativeType(NativeAdRequest.CreativeType.ALL)
-                                    .setVideoLength(NativeAdRequest.VideoLength.SHORT)
-                                    .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
-
                         } else if (adsPrefernce.showmpNative2()) {
                             MoPubNative.MoPubNativeNetworkListener moPubNativeNetworkListener = new MoPubNative.MoPubNativeNetworkListener() {
                                 @Override
@@ -570,96 +476,13 @@ public class NativeAdCompanion2 {
                 };
                 nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
-                showAnNative1(cardView, nativeAdContainer);
-            }
-        } else {
-            showAnNative1(cardView, nativeAdContainer);
-        }
-    }
-
-    public void showAnNative1(final CardView cardView, final CardView nativeAdContainer) {
-
-        if (adsPrefernce.showanNative1()) {
-            if (!isAnN1Shown) {
-                Appnext.init(context);
-                com.appnext.nativeads.NativeAd nativeAd;
-                nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
-                nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
-                nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
-                    @Override
-                    public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
-                        super.onAdLoaded(nativeAd, appnextAdCreativeType);
-                        isAnN1Shown = true;
-                        nativeAdContainer.setVisibility(View.VISIBLE);
-                        cardView.setVisibility(View.VISIBLE);
-
-                        FrameLayout.LayoutParams nativePara =
-                                new FrameLayout.LayoutParams(
-                                        FrameLayout.LayoutParams.MATCH_PARENT,
-                                        FrameLayout.LayoutParams.WRAP_CONTENT);
-                        // Add the Ad view into the ad container.
-                        NativeAdView nativeAdView = new NativeAdView(context);
-                        LayoutInflater inflater = LayoutInflater.from(context);
-                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
-                        cardView.addView(adViews, nativePara);
-
-                        nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
-                        imageView = (ImageView) adViews.findViewById(R.id.na_icon);
-                        textView = (TextView) adViews.findViewById(R.id.na_title);
-                        mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
-                        progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
-                        button = (Button) adViews.findViewById(R.id.install);
-                        rating = (TextView) adViews.findViewById(R.id.rating);
-                        description = (TextView) adViews.findViewById(R.id.description);
-                        viewArrayList = new ArrayList<>();
-                        viewArrayList.add(button);
-                        viewArrayList.add(mediaView);
-
-                        progressBar.setVisibility(View.GONE);
-                        nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
-                        textView.setText(nativeAd.getAdTitle());
-                        nativeAd.setMediaView(mediaView);
-                        rating.setText(nativeAd.getStoreRating());
-                        description.setText(nativeAd.getAdDescription());
-                        nativeAd.registerClickableViews(viewArrayList);
-                        nativeAd.setNativeAdView(nativeAdView);
-                        mediaView.setMute(true);
-                        mediaView.setAutoPLay(true);
-                        mediaView.setClickEnabled(true);
-                    }
-
-                    @Override
-                    public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
-                        super.onAdClicked(nativeAd);
-                    }
-
-                    @Override
-                    public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
-                        super.onError(nativeAd, appnextError);
-                        isAnN1Shown = true;
-                        showMpNative1(cardView, nativeAdContainer);
-                    }
-
-                    @Override
-                    public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
-                        super.adImpression(nativeAd);
-                    }
-                });
-
-                nativeAd.loadAd(new NativeAdRequest()
-                        .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
-                        .setCreativeType(NativeAdRequest.CreativeType.ALL)
-                        .setVideoLength(NativeAdRequest.VideoLength.SHORT)
-                        .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
-
-            } else {
                 showMpNative1(cardView, nativeAdContainer);
             }
         } else {
             showMpNative1(cardView, nativeAdContainer);
         }
-
     }
+
 
     public void showMpNative1(final CardView cardView, final CardView nativeAdContainer) {
 
@@ -784,7 +607,7 @@ public class NativeAdCompanion2 {
                     @Override
                     public void onError(Ad ad, AdError adError) {
                         BaseClass.isFbN2Shown = true;
-                        showAnNative2(cardView, nativeAdContainer);
+                        showMpNative2(cardView, nativeAdContainer);
                     }
 
                     @Override
@@ -811,97 +634,12 @@ public class NativeAdCompanion2 {
                 };
                 nativeAd.loadAd(nativeAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
-                showAnNative2(cardView, nativeAdContainer);
-            }
+                showMpNative2(cardView, nativeAdContainer);            }
         } else {
-            showAnNative2(cardView, nativeAdContainer);
-        }
+            showMpNative2(cardView, nativeAdContainer);        }
 
     }
 
-    public void showAnNative2(final CardView cardView, final CardView nativeAdContainer) {
-        if (adsPrefernce.showanNative2()) {
-            if (!isAnN2Shown) {
-                Appnext.init(context);
-                com.appnext.nativeads.NativeAd nativeAd;
-                nativeAd = new com.appnext.nativeads.NativeAd(context, adsPrefernce.anAdId());
-                nativeAd.setPrivacyPolicyColor(PrivacyIcon.PP_ICON_COLOR_LIGHT);
-                nativeAd.setAdListener(new com.appnext.nativeads.NativeAdListener() {
-                    @Override
-                    public void onAdLoaded(com.appnext.nativeads.NativeAd nativeAd, AppnextAdCreativeType appnextAdCreativeType) {
-                        super.onAdLoaded(nativeAd, appnextAdCreativeType);
-
-                        isAnN2Shown = true;
-                        nativeAdContainer.setVisibility(View.VISIBLE);
-                        cardView.setVisibility(View.VISIBLE);
-
-                        FrameLayout.LayoutParams nativePara =
-                                new FrameLayout.LayoutParams(
-                                        FrameLayout.LayoutParams.MATCH_PARENT,
-                                        FrameLayout.LayoutParams.WRAP_CONTENT);
-                        // Add the Ad view into the ad container.
-                        NativeAdView nativeAdView = new NativeAdView(context);
-                        LayoutInflater inflater = LayoutInflater.from(context);
-                        RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_appnext, cardView, false);
-                        cardView.addView(adViews, nativePara);
-
-                        nativeAdView = (NativeAdView) adViews.findViewById(R.id.na_view);
-                        imageView = (ImageView) adViews.findViewById(R.id.na_icon);
-                        textView = (TextView) adViews.findViewById(R.id.na_title);
-                        mediaView = (com.appnext.nativeads.MediaView) adViews.findViewById(R.id.na_media);
-                        progressBar = (ProgressBar) adViews.findViewById(R.id.progressBar);
-                        button = (Button) adViews.findViewById(R.id.install);
-                        rating = (TextView) adViews.findViewById(R.id.rating);
-                        description = (TextView) adViews.findViewById(R.id.description);
-                        viewArrayList = new ArrayList<>();
-                        viewArrayList.add(button);
-                        viewArrayList.add(mediaView);
-
-                        progressBar.setVisibility(View.GONE);
-                        nativeAd.downloadAndDisplayImage(imageView, nativeAd.getIconURL());
-                        textView.setText(nativeAd.getAdTitle());
-                        nativeAd.setMediaView(mediaView);
-                        rating.setText(nativeAd.getStoreRating());
-                        description.setText(nativeAd.getAdDescription());
-                        nativeAd.registerClickableViews(viewArrayList);
-                        nativeAd.setNativeAdView(nativeAdView);
-                        mediaView.setMute(true);
-                        mediaView.setAutoPLay(true);
-                        mediaView.setClickEnabled(true);
-                    }
-
-                    @Override
-                    public void onAdClicked(com.appnext.nativeads.NativeAd nativeAd) {
-                        super.onAdClicked(nativeAd);
-                    }
-
-                    @Override
-                    public void onError(com.appnext.nativeads.NativeAd nativeAd, AppnextError appnextError) {
-                        super.onError(nativeAd, appnextError);
-                        isAnN2Shown = true;
-                        showMpNative2(cardView, nativeAdContainer);
-                    }
-
-                    @Override
-                    public void adImpression(com.appnext.nativeads.NativeAd nativeAd) {
-                        super.adImpression(nativeAd);
-                    }
-                });
-
-                nativeAd.loadAd(new NativeAdRequest()
-                        .setCachingPolicy(NativeAdRequest.CachingPolicy.STATIC_ONLY)
-                        .setCreativeType(NativeAdRequest.CreativeType.ALL)
-                        .setVideoLength(NativeAdRequest.VideoLength.SHORT)
-                        .setVideoQuality(NativeAdRequest.VideoQuality.LOW));
-
-            } else {
-                showMpNative2(cardView, nativeAdContainer);
-            }
-        } else {
-            showMpNative2(cardView, nativeAdContainer);
-        }
-
-    }
 
     public void showMpNative2(final CardView cardView, final CardView nativeAdContainer) {
         if (adsPrefernce.showmpNative2()) {
@@ -1016,11 +754,9 @@ public class NativeAdCompanion2 {
     public void resetNativeShownBoolean() {
         isGN1Shown = false;
         isFbN1Shown = false;
-        isAnN1Shown = false;
         isMpN1Shown = false;
         isGN2Shown = false;
         isFbN2Shown = false;
-        isAnN2Shown = false;
         isMpN2Shown = false;
 
     }

@@ -41,10 +41,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:19.7.0'
 
     //app next
-    implementation 'com.appnext.sdk:ads:2.5.1.472'
-    implementation 'com.appnext.sdk:banners:2.5.1.472'
+//    implementation 'com.appnext.sdk:ads:2.5.1.472'
+//    implementation 'com.appnext.sdk:banners:2.5.1.472'
 //    implementation 'com.appnext.sdk:native-ads2:2.+'
-    implementation 'com.appnext.sdk:native-ads2:2.5.3.472'
+//    implementation 'com.appnext.sdk:native-ads2:2.5.3.472'
+
+    //iron source
+    implementation 'com.ironsource.sdk:mediationsdk:7.0.1.1'
+
 
     implementation('com.mopub:mopub-sdk:5.12.0@aar') {
         transitive = true
@@ -58,10 +62,5 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.android.support:multidex:1.0.3'
-
-
-    implementation ('com.intentsoftware.addapptr:AATKit:2.29.13') {
-        exclude group: 'com.mopub'
-    }
 
 }

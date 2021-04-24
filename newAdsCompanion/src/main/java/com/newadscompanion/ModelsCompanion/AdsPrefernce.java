@@ -501,7 +501,7 @@ public class AdsPrefernce {
         return output;
     }
 
-    public String uAppId() {
+    public String IS_APP_KEY() {
         String var = "";
         if (adsPreference != null) {
             var = adsPreference.getString("u_app_id", ads.U_APP_ID());
@@ -525,7 +525,7 @@ public class AdsPrefernce {
         return output;
     }
 
-    public String uInterId1() {
+    public String isInterId1() {
         String var = "";
         if (adsPreference != null) {
             var = adsPreference.getString("u_inter1", ads.U_INTER1());
@@ -533,7 +533,7 @@ public class AdsPrefernce {
         return var;
     }
 
-    public boolean showuInter1() {
+    public boolean showisInter1() {
         boolean output = false;
         if (adsPreference != null) {
             output = showAds() && Objects.equals(adsPreference.getString("show_uinter1", "0"), "1");
@@ -541,7 +541,7 @@ public class AdsPrefernce {
         return output;
     }
 
-    public String uInterId2() {
+    public String isInterId2() {
         String var = "";
         if (adsPreference != null) {
             var = adsPreference.getString("u_inter2", ads.U_INTER2());
@@ -549,7 +549,7 @@ public class AdsPrefernce {
         return var;
     }
 
-    public boolean showuInter2() {
+    public boolean showisInter2() {
         boolean output = false;
         if (adsPreference != null) {
             output = showAds() && Objects.equals(adsPreference.getString("show_uinter2", "0"), "1");
@@ -565,7 +565,7 @@ public class AdsPrefernce {
         return var;
     }
 
-    public boolean showuRewarded() {
+    public boolean showisRewarded() {
         boolean output = false;
         if (adsPreference != null) {
             output = showAds() && Objects.equals(adsPreference.getString("show_urewarded", "0"), "1");
@@ -715,7 +715,7 @@ public class AdsPrefernce {
     public String extraPara4() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("extraPara4", "TEST");
+            var = adsPreference.getString("extraPara4", "1");
         }
         return var;
     }
