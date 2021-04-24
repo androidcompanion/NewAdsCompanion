@@ -2278,6 +2278,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     public void showGLargeBanner(int top, int bottom) {
         AdView gadView;
+
         MobileAds.initialize(this, adsPrefernce.gAppId());
         final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
         adContainerView.setVisibility(View.VISIBLE);
