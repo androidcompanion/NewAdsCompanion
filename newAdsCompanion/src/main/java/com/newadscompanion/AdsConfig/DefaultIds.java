@@ -23,8 +23,8 @@ public class DefaultIds {
                             String fb_banner, String fb_inter1, String fb_inter2, String fb_native1, String fb_native2, String fb_native_banner, String fb_rewarded,
                             String an_ad_id,
                             String mp_banner, String mp_inter1, String mp_inter2, String mp_native1, String mp_native2, String mp_rewarded,
-                            String u_app_id,
-                            String u_banner, String u_inter1, String u_inter2, String u_rewarded,
+                            String is_app_id,
+                            String is_banner, String is_inter1, String is_inter2, String is_rewarded,
                             String extraPara1Default, String extraPara2Default, String extraPara3Default, String extraPara4Default,
                             String sa_app_id, String sa_ad_count,
                             Boolean disable_sa_splash, Boolean show_notification, Boolean show_loading, Boolean u_test_mode, Boolean allow_access,Boolean mediation_status, int tint_Mode) {
@@ -63,11 +63,11 @@ public class DefaultIds {
         editor.putString("mp_native2", mp_native2);
         editor.putString("mp_rewarded", mp_rewarded);
 
-        editor.putString("u_app_id", u_app_id);
-        editor.putString("u_banner", u_banner);
-        editor.putString("u_inter1", u_inter1);
-        editor.putString("u_inter2", u_inter2);
-        editor.putString("u_rewarded", u_rewarded);
+        editor.putString("is_app_id", is_app_id);
+        editor.putString("is_banner", is_banner);
+        editor.putString("is_inter1", is_inter1);
+        editor.putString("is_inter2", is_inter2);
+        editor.putString("is_rewarded", is_rewarded);
 
 
         editor.putString("sa_app_id", sa_app_id);
@@ -132,24 +132,24 @@ public class DefaultIds {
         return defaultAdsPreference.getString("mp_rewarded", "");
     }
 
-    public String U_APP_ID() {
-        return defaultAdsPreference.getString("u_app_id", "");
+    public String IS_APP_ID() {
+        return defaultAdsPreference.getString("is_app_id", "");
     }
 
-    public String U_BANNER() {
-        return defaultAdsPreference.getString("u_banner", "");
+    public String IS_BANNER() {
+        return defaultAdsPreference.getString("is_banner", "");
     }
 
-    public String U_INTER1() {
-        return defaultAdsPreference.getString("u_inter1", "");
+    public String IS_INTER1() {
+        return defaultAdsPreference.getString("is_inter1", "");
     }
 
-    public String U_INTER2() {
-        return defaultAdsPreference.getString("u_inter2", "");
+    public String IS_INTER2() {
+        return defaultAdsPreference.getString("is_inter2", "");
     }
 
-    public String U_REWARDED() {
-        return defaultAdsPreference.getString("u_rewarded", "");
+    public String IS_REWARDED() {
+        return defaultAdsPreference.getString("is_rewarded", "");
     }
 
 

@@ -445,13 +445,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     public void onUserEarnedReward(@NonNull RewardItem reward) {
                                         // User earned reward.
                                         isGUserRewarded = true;
-                                        Log.d("RewardAds...", "onUserEarnedReward Google");
 
                                     }
 
                                     @Override
                                     public void onRewardedAdFailedToShow(com.google.android.gms.ads.AdError adError) {
-                                        Log.d("RewardAds...", "onRewardedAdFailedToShow Google");
                                         // Ad failed to display.
                                         isGRewardedReady = false;
                                         isGRewardedShown = true;
@@ -502,7 +500,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         @Override
                         public void onError(Ad ad, AdError error) {
                             // Rewarded video ad failed to load
-                            Log.e("RewardAds...", "Rewarded video ad failed to load: " + error.getErrorMessage());
                             isFbRewardedReady = false;
                             isFbBannerShown = true;
                             isfbUserRewarded = false;
@@ -523,27 +520,23 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         @Override
                         public void onAdLoaded(Ad ad) {
                             // Rewarded video ad is loaded and ready to be displayed
-                            Log.d("RewardAds...", "Rewarded video ad is loaded and ready to be displayed!");
                         }
 
                         @Override
                         public void onAdClicked(Ad ad) {
                             // Rewarded video ad clicked
-                            Log.d("RewardAds...", "Rewarded video ad clicked!");
                         }
 
                         @Override
                         public void onLoggingImpression(Ad ad) {
                             // Rewarded Video ad impression - the event will fire when the
                             // video starts playing
-                            Log.d("RewardAds...", "Rewarded video ad impression logged!");
                         }
 
                         @Override
                         public void onRewardedVideoCompleted() {
                             // Rewarded Video View Complete - the video has been played to the end.
                             // You can use this event to initialize your reward
-                            Log.d("RewardAds...", "Rewarded video completed!");
                             isfbUserRewarded = true;
 
                             // Call method to give reward
@@ -554,7 +547,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         public void onRewardedVideoClosed() {
                             // The Rewarded Video ad was closed - this can occur during the video
                             // by closing the app, or closing the end card.
-                            Log.d("RewardAds...", "Rewarded video ad closed!");
                             if (isfbUserRewarded) {
                                 try {
                                     onRewardAdClosedListener.onRewardSuccess();
@@ -796,10 +788,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         isMpRewardedShown = false;
         if (withListner) {
             try {
-                Log.e("RewardAds...", "onRewardAdNotShown TRY ");
                 onRewardAdClosedListener.onRewardAdNotShown();
             } catch (Exception e) {
-                Log.e("RewardAds...", "onRewardAdNotShown CATCH ");
                 e.printStackTrace();
             }
         }
@@ -849,7 +839,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             public void run() {
                 if (isNetworkAvailable(BaseClass.this)) {
                     if (!isAdsAvailable) {
-                        Log.e("Ads...", "call get Ads");
                         getAds(defaultIds.APP_KEY());
                     }
                 }
@@ -878,7 +867,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, AdsData response) {
 
-                    Log.e("Ads...", "Success");
 
                     adsList.clear();
                     adsList = new ArrayList<>();
@@ -955,7 +943,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     if (adsPrefernce.isMediationActive()) {
                         if (!adsPrefernce.planD()) {
-                            Log.e("Ads...", "loading Mixed Inter");
                             isAdsAvailable = true;
                             loadMixedInterAds();
                         }
@@ -995,7 +982,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     }
 
 
-    public void showNativeBannerAd(Integer top, Integer bottom) {
+    public void showLargeBannerAd(Integer top, Integer bottom) {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
@@ -1003,7 +990,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         if (adsPrefernce.showgBanner()) {
                             AdView gadView;
                             MobileAds.initialize(this, adsPrefernce.gAppId());
-                            final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
+                            final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             gadView = new AdView(this);
                             adContainerView.setPadding(0, top, 0, bottom);
@@ -1016,25 +1003,17 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onAdLoaded() {
                                     super.onAdLoaded();
-                                    //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                    //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                    //                              }
                                 }
 
                                 @Override
                                 public void onAdFailedToLoad(LoadAdError loadAdError) {
                                     super.onAdFailedToLoad(loadAdError);
-                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
-                                            //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                            //                              }
                                         }
 
                                         @Override
@@ -1049,23 +1028,19 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             com.facebook.ads.AdView adView;
                             AudienceNetworkAds.initialize(this);
                             adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
-                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.addView(adView);
                             adContainerView.setPadding(0, top, 0, bottom);
                             AdListener bannerAdListner = new AdListener() {
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
-                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
-                                            //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                            //                              }
                                         }
 
                                         @Override
@@ -1077,10 +1052,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onAdLoaded(Ad ad) {
-                                    //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-                                    //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-                                    //                              }
 
                                 }
 
@@ -1107,12 +1078,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onBannerAdLoaded() {
                                     banner.setVisibility(View.VISIBLE);
-                                    // Called after a banner ad has been successfully loaded
-                                    //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                                    }
-
                                 }
 
                                 @Override
@@ -1125,7 +1090,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         }
                                     });
 
-                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
                                     showInhouseBannerAd(new InhouseBannerListener() {
@@ -1170,17 +1135,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
                                 moPubView.setAdSize(MoPubView.MoPubAdSize.HEIGHT_90); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
                                 moPubView.loadAd();
-                                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                 adContainerView.setVisibility(View.VISIBLE);
                                 adContainerView.setPadding(0, top, 0, bottom);
                                 adContainerView.addView(moPubView);
                                 moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                                     @Override
                                     public void onBannerLoaded(@NonNull MoPubView banner) {
-                                        //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                                        }
                                     }
 
                                     @Override
@@ -1191,10 +1152,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         showInhouseBannerAd(new InhouseBannerListener() {
                                             @Override
                                             public void onAdLoaded() {
-                                                //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                                    getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                                                }
                                             }
 
                                             @Override
@@ -1224,7 +1181,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 initializeMoPubSDK();
                             }
                         } else {
-                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.setPadding(0, top, 0, bottom);
                             showInhouseBannerAd(new InhouseBannerListener() {
@@ -1256,28 +1213,20 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
 
                 } else {
-                    final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.native_banner_container);
+                    final FrameLayout adContainerView = (FrameLayout) findViewById(R.id.banner_container);
                     Banner startAppBanner = new Banner(this, new BannerListener() {
                         @Override
                         public void onReceiveAd(View view) {
-                            //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                            }
                         }
 
                         @Override
                         public void onFailedToReceiveAd(View view) {
-                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.setPadding(0, top, 0, bottom);
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
-                                    //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                                    }
                                 }
 
                                 @Override
@@ -1308,16 +1257,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                 }
             } else {
-                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
                 adContainerView.setPadding(0, top, 0, bottom);
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
-                        //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
-//                        }
                     }
 
                     @Override
@@ -1338,7 +1283,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         NativeAdLayout nativeAdLayout = new NativeAdLayout(this);
         LayoutInflater inflater = LayoutInflater.from(this);
         // Inflate the Ad view.  The layout referenced is the one you created in the last step.
-        FrameLayout adContainer = (FrameLayout) findViewById(R.id.native_banner_container);
+        FrameLayout adContainer = (FrameLayout) findViewById(R.id.banner_container);
         LinearLayout adView = (LinearLayout) inflater.inflate(R.layout.native_banner_ad_layout_facebook, adContainer, false);
         adContainer.addView(adView);
 
@@ -1512,7 +1457,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         }
                                     });
 
-                                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
                                     adContainerView.setPadding(0, top, 0, bottom);
                                     showInhouseBannerAd(new InhouseBannerListener() {
@@ -1879,7 +1824,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     moPubView.setAdUnitId(adsPrefernce.mpBannerId()); // Enter your Ad Unit ID from www.mopub.com
                     moPubView.setAdSize(MoPubView.MoPubAdSize.HEIGHT_90); // Call this if you are not setting the ad size in XML or wish to use an ad size other than what has been set in the XML. Note that multiple calls to `setAdSize()` will override one another, and the MoPub SDK only considers the most recent one.
                     moPubView.loadAd();
-                    final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
                     adContainerView.setVisibility(View.VISIBLE);
                     adContainerView.setPadding(0, top, 0, bottom);
                     adContainerView.addView(moPubView);
@@ -1898,7 +1843,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
                             isMpLargeBannerShown = true;
                             resetAllLargeBannerBoolean();
-                            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                            final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.setPadding(0, top, 0, bottom);
                             showInhouseBannerAd(new InhouseBannerListener() {
@@ -1937,7 +1882,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 }
             } else {
                 resetAllLargeBannerBoolean();
-                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
                 adContainerView.setPadding(0, top, 0, bottom);
                 showInhouseBannerAd(new InhouseBannerListener() {
@@ -1957,7 +1902,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             }
         } else {
             resetAllLargeBannerBoolean();
-            final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+            final FrameLayout adContainerView = findViewById(R.id.banner_container);
             adContainerView.setVisibility(View.VISIBLE);
             adContainerView.setPadding(0, top, 0, bottom);
             showInhouseBannerAd(new InhouseBannerListener() {
@@ -2160,7 +2105,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 com.facebook.ads.AdView adView;
                 AudienceNetworkAds.initialize(this);
                 adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
-                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+                final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
                 adContainerView.addView(adView);
                 adContainerView.setPadding(0, top, 0, bottom);
@@ -2195,7 +2140,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 //                final NativeBannerAd nativeBannerAd;
 //                AudienceNetworkAds.initialize(this);
 //                nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
-//                final FrameLayout adContainerView = findViewById(R.id.native_banner_container);
+//                final FrameLayout adContainerView = findViewById(R.id.banner_container);
 //                adContainerView.setVisibility(View.VISIBLE);
 //                adContainerView.setPadding(0, top, 0, bottom);
 //                NativeAdListener nativeAdListener = new NativeAdListener() {
@@ -2280,7 +2225,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         AdView gadView;
 
         MobileAds.initialize(this, adsPrefernce.gAppId());
-        final FrameLayout adContainerView = this.findViewById(R.id.native_banner_container);
+        final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
         adContainerView.setVisibility(View.VISIBLE);
         gadView = new AdView(this);
         adContainerView.setPadding(0, top, 0, bottom);
@@ -2976,12 +2921,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             if (isAdsAvailable) {
                 if (adsPrefernce.isMediationActive()) {
                     if (adsPrefernce.planA()) {
-                        Log.e("Ads...", "planA");
                         if (adsPrefernce.showgInter1()) {
-                            Log.e("Ads...", "showgoogle1");
 
                             if (!isGInter1Ready) {
-                                Log.e("Ads...", "google1 not ready");
                                 MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
                                 gInterstitial1 = new com.google.android.gms.ads.InterstitialAd(this);
                                 gInterstitial1.setAdUnitId(adsPrefernce.gInterId1());
@@ -2990,16 +2932,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     @Override
                                     public void onAdLoaded() {
                                         super.onAdLoaded();
-                                        Log.e("Ads...", "google1 ready");
                                         isGInter1Ready = true;
                                     }
                                 });
                             }
                         }
                         if (adsPrefernce.showgInter2()) {
-                            Log.e("Ads...", "showgoogle2");
                             if (!isGInter2Ready) {
-                                Log.e("Ads...", "google2 not ready");
                                 MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
                                 gInterstitial2 = new com.google.android.gms.ads.InterstitialAd(this);
                                 gInterstitial2.setAdUnitId(adsPrefernce.gInterId2());
@@ -3008,7 +2947,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     @Override
                                     public void onAdLoaded() {
                                         super.onAdLoaded();
-                                        Log.e("Ads...", "google2 ready");
                                         isGInter2Ready = true;
                                     }
                                 });
@@ -3143,17 +3081,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                     if (adsPrefernce.planC()) {
                         if (adsPrefernce.showmpInter1()) {
-                            Log.e("Ads...", "showmpInter1");
                             if (mpInter1Initilized) {
-                                Log.e("Ads...", "mpInter1Initilized");
                                 if (!isMpInter1Ready) {
-                                    Log.e("Ads...", "isMpInter1 Not Ready");
                                     mpInterstitial1 = new MoPubInterstitial((Activity) this, adsPrefernce.mpInterId1());
                                     mpInterstitial1.load();
                                     mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
                                         @Override
                                         public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-                                            Log.e("Ads...", "isMpInter1Ready = true");
                                             isMpInter1Ready = true;
                                         }
 
@@ -3179,7 +3113,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     });
                                 }
                             } else {
-                                Log.e("Ads...", "Calling init for mp 1");
                                 initializeMoPubSDK();
                             }
                         }
@@ -3244,7 +3177,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         gInterstitial1.show();
                                         gInterstitial1.setAdListener(new com.google.android.gms.ads.AdListener() {
                                             public void onAdClosed() {
-                                                Log.e("Ads...", "g Inter 1 dismissed");
                                                 MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
                                                 gInterstitial1 = new com.google.android.gms.ads.InterstitialAd(BaseClass.this);
                                                 gInterstitial1.setAdUnitId(adsPrefernce.gInterId1());
@@ -3261,7 +3193,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                             @Override
                                             public void onAdOpened() {
                                                 super.onAdOpened();
-                                                Log.e("Ads...", "g Inter 1 shown");
                                                 isGInter1Ready = false;
                                                 isGInter1Shown = true;
                                             }
@@ -3365,12 +3296,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             public void onInterstitialDisplayed(Ad ad) {
                                 isFbInter1Ready = false;
                                 isFbInter1Shown = true;
-                                Log.e("Ads...", "fb 1 displayed");
                             }
 
                             @Override
                             public void onInterstitialDismissed(Ad ad) {
-                                Log.e("Ads...", "fb 1 dismissed");
                                 AudienceNetworkAds.initialize(BaseClass.this);
                                 fbInterstitial1 = new com.facebook.ads.InterstitialAd(BaseClass.this, adsPrefernce.fbInterId1());
                                 InterstitialAdListener interstitialAdListener1 = new InterstitialAdListener() {
@@ -3621,7 +3550,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onInterstitialShown(MoPubInterstitial interstitial) {
-                                    Log.e("Ads...", "Mp Inter 1 shown");
                                     isMpInter1Ready = false;
                                     isMpInter1Shown = true;
                                 }
@@ -3633,7 +3561,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-                                    Log.e("Ads...", "Mp Inter 1 dismissed");
                                     if (mpInter1Initilized) {
                                         mpInterstitial1.load();
                                         mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
@@ -3700,7 +3627,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             gInterstitial2.show();
                             gInterstitial2.setAdListener(new com.google.android.gms.ads.AdListener() {
                                 public void onAdClosed() {
-                                    Log.e("Ads...", "g Inter 2 dismissed");
                                     MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
                                     gInterstitial2 = new com.google.android.gms.ads.InterstitialAd(BaseClass.this);
                                     gInterstitial2.setAdUnitId(adsPrefernce.gInterId2());
@@ -3717,7 +3643,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onAdOpened() {
                                     super.onAdOpened();
-                                    Log.e("Ads...", "g Inter 2 shown");
                                     isGInter2Ready = false;
                                     isGInter2Shown = true;
                                 }
@@ -3777,7 +3702,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
                             @Override
                             public void onInterstitialDisplayed(Ad ad) {
-                                Log.e("Ads...", "fb 2 displayed");
                                 isFbInter2Ready = false;
                                 isFbInter2Shown = true;
                                 resetAllShownBoolean();
@@ -3785,7 +3709,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                             @Override
                             public void onInterstitialDismissed(Ad ad) {
-                                Log.e("Ads...", "fb 2 dismissed");
                                 AudienceNetworkAds.initialize(BaseClass.this);
                                 fbInterstitial2 = new com.facebook.ads.InterstitialAd(BaseClass.this, adsPrefernce.fbInterId2());
                                 InterstitialAdListener interstitialAdListener1 = new InterstitialAdListener() {
@@ -4035,7 +3958,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onInterstitialShown(MoPubInterstitial interstitial) {
-                                    Log.e("Ads...", "Mp Inter 2 shown");
                                     isMpInter2Ready = false;
                                     isMpInter2Shown = true;
                                     resetAllShownBoolean();
@@ -4048,7 +3970,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-                                    Log.e("Ads...", "mp Inter 2 dismissed");
                                     if (mpInter2Initilized) {
                                         mpInterstitial2.load();
                                         mpInterstitial2.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
@@ -7198,18 +7119,15 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         return new SdkInitializationListener() {
             @Override
             public void onInitializationFinished() {
-                Log.e("Ads...", "onInitializationFinished");
 
                 if (!mpInter1Initilized) {
                     if (adsPrefernce.showmpInter1()) {
                         if (!isMpInter1Ready) {
-                            Log.e("Ads...", "isMpInter1Ready false");
                             mpInterstitial1 = new MoPubInterstitial(BaseClass.this, adsPrefernce.mpInterId1());
                             mpInterstitial1.load();
                             mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
                                 @Override
                                 public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-                                    Log.e("Ads...", "isMpInter1Ready true");
                                     isMpInter1Ready = true;
                                 }
 
@@ -8160,7 +8078,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, InterstitialAdIH response) {
 
-                    Log.e("IHAds...", "Success");
 
                     interDetails.clear();
                     interDetails = new ArrayList<>();
@@ -8200,7 +8117,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     adsPrefernce.setInterAdDetails(finalInter);
                     isInterAdLoadedIH = true;
-                    Log.e("IHAds...", "Success = 1");
                 }
 
                 @Override

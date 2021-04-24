@@ -504,14 +504,14 @@ public class AdsPrefernce {
     public String IS_APP_KEY() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("u_app_id", ads.U_APP_ID());
+            var = adsPreference.getString("u_app_id", ads.IS_APP_ID());
         }
         return var;
     }
   public String uBannerId() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("u_banner", ads.U_BANNER());
+            var = adsPreference.getString("u_banner", ads.IS_BANNER());
         }
         return var;
     }
@@ -528,7 +528,7 @@ public class AdsPrefernce {
     public String isInterId1() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("u_inter1", ads.U_INTER1());
+            var = adsPreference.getString("u_inter1", ads.IS_INTER1());
         }
         return var;
     }
@@ -544,7 +544,7 @@ public class AdsPrefernce {
     public String isInterId2() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("u_inter2", ads.U_INTER2());
+            var = adsPreference.getString("u_inter2", ads.IS_INTER2());
         }
         return var;
     }
@@ -560,7 +560,7 @@ public class AdsPrefernce {
     public String uRewardedId() {
         String var = "";
         if (adsPreference != null) {
-            var = adsPreference.getString("u_rewarded", ads.U_REWARDED());
+            var = adsPreference.getString("u_rewarded", ads.IS_REWARDED());
         }
         return var;
     }
