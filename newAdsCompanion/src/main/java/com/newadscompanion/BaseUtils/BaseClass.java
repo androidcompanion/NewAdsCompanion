@@ -5645,8 +5645,10 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         public void onAdLoaded() {
                                         }
 
+
                                         @Override
                                         public void onAdClosed() {
+                                            super.onAdClosed();
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
@@ -6058,6 +6060,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                         @Override
                                         public void onAdClosed() {
+                                            super.onAdClosed();
                                             try {
                                                 methodParam.call();
                                             } catch (Exception e) {
