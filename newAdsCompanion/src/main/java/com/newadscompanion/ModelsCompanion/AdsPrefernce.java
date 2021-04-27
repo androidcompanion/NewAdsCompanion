@@ -501,7 +501,7 @@ public class AdsPrefernce {
         return output;
     }
 
-    public String IS_APP_KEY() {
+    public String isAppKey() {
         String var = "";
         if (adsPreference != null) {
             var = adsPreference.getString("u_app_id", ads.IS_APP_ID());
@@ -516,7 +516,7 @@ public class AdsPrefernce {
         return var;
     }
 
-    public boolean showuBanner() {
+    public boolean showisBanner() {
         boolean output = false;
         String var;
         if (adsPreference != null) {

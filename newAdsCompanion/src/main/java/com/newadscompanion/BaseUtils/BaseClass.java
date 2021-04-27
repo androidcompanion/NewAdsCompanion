@@ -348,7 +348,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             }
                         };
                         IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                        IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                        IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
 
                     }
                 }
@@ -618,7 +618,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isIsRewardedShown = true;
                                     isIsUserRewarded = false;
                                     IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                    IronSource.init(BaseClass.this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
                                 } else {
                                     try {
                                         onRewardAdClosedListener.onRewardFailed();
@@ -629,7 +629,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     isIsRewardedShown = true;
                                     isIsUserRewarded = false;
                                     IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                    IronSource.init(BaseClass.this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
                                 }
                             }
 
@@ -659,7 +659,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 isIsRewardedShown = true;
                                 isIsUserRewarded = false;
                                 IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                IronSource.init(BaseClass.this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
                                 try {
                                     onRewardAdClosedListener.onRewardAdNotShown();
                                 } catch (Exception e) {
@@ -1066,8 +1066,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             };
                             adView.loadAd(adView.buildLoadAdConfig().withAdListener(bannerAdListner).build());
-                        } else if (adsPrefernce.showuBanner()) {
+                        } else if (adsPrefernce.showisBanner()) {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
+                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                             banner = IronSource.createBanner(this, ISBannerSize.LARGE);
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -1126,7 +1127,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     // Called when a user would be taken out of the application context.
                                 }
                             });
-                            IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.BANNER);
+//                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                             IronSource.loadBanner(banner);
                         } else if (adsPrefernce.showmpBanner()) {
                             MoPubView moPubView;
@@ -1427,7 +1428,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             };
                             adView.loadAd(adView.buildLoadAdConfig().withAdListener(bannerAdListner).build());
 
-                        } else if (adsPrefernce.showuBanner()) {
+                        } else if (adsPrefernce.showisBanner()) {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             banner = IronSource.createBanner(this, ISBannerSize.BANNER);
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
@@ -1493,7 +1494,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     // Called when a user would be taken out of the application context.
                                 }
                             });
-                            IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.BANNER);
+                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                             IronSource.loadBanner(banner);
                         } else if (adsPrefernce.showmpBanner()) {
                             MoPubView moPubView;
@@ -1924,7 +1925,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
     }
 
     public void showIsBanner(int top, int bottom) {
-        if (adsPrefernce.showuBanner()) {
+        if (adsPrefernce.showisBanner()) {
             if (!isIsBannerShown) {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 banner = IronSource.createBanner(this, ISBannerSize.BANNER);
@@ -1976,7 +1977,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                 });
 
-                IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.BANNER);
+                IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                 IronSource.loadBanner(banner);
             } else {
                 showMpBanner(top, bottom);
@@ -1989,7 +1990,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
 
     public void showIsLargeBanner(int top, int bottom) {
-        if (adsPrefernce.showuBanner()) {
+        if (adsPrefernce.showisBanner()) {
             if (!isIsLargeBannerShown) {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 banner = IronSource.createBanner(this, ISBannerSize.LARGE);
@@ -2041,7 +2042,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                 });
 
-                IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.BANNER);
+                IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                 IronSource.loadBanner(banner);
             } else {
                 showMpLargeBanner(top, bottom);
@@ -2323,7 +2324,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                     if (adsPrefernce.showisInter1()) {
                         if (!isIsInter1Ready) {
-                            IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.INTERSTITIAL);
+                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.INTERSTITIAL);
                             IronSource.loadInterstitial();
                             IronSource.setInterstitialListener(new InterstitialListener() {
                                 @Override
@@ -3035,7 +3036,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                         if (adsPrefernce.showisInter1()) {
                             if (!isIsInter1Ready) {
-                                IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.INTERSTITIAL);
+                                IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.INTERSTITIAL);
                                 IronSource.loadInterstitial();
                                 IronSource.setInterstitialListener(new InterstitialListener() {
                                     @Override
@@ -4620,7 +4621,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             }
                         } else if (adsPrefernce.planB()) {
-                            IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.INTERSTITIAL);
+                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.INTERSTITIAL);
                             if (adsPrefernce.showisInter1()) {
                                 IronSource.loadInterstitial();
                             }
@@ -4700,7 +4701,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 fbInterstitial22.loadAd();
                             }
                         } else if (adsPrefernce.planB()) {
-                            IronSource.init(this, adsPrefernce.IS_APP_KEY(), IronSource.AD_UNIT.INTERSTITIAL);
+                            IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.INTERSTITIAL);
                             if (adsPrefernce.showisInter2()) {
                                 IronSource.loadInterstitial();
                             }
@@ -4992,7 +4993,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 }
                             });
-                        }else {
+                        } else {
                             showInhouseInterAd(new InhouseInterstitialListener() {
                                 @Override
                                 public void onAdShown() {
@@ -5010,8 +5011,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         showInhouseInterAd(new InhouseInterstitialListener() {
                             @Override
                             public void onAdShown() {
@@ -5425,8 +5425,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         showInhouseInterAd(new InhouseInterstitialListener() {
                             @Override
                             public void onAdShown() {
@@ -7545,12 +7544,18 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     });
 
-                    if (!appInstalledOrNot(getAppIdFromAppLink(interAd.getApplink()))) {
+                    if (interAd.getOpenin().equals("playstore")) {
+                        if (!appInstalledOrNot(getAppIdFromAppLink(interAd.getApplink()))) {
+                            interDialog.show();
+                            inhouseInterstitialListener.onAdShown();
+                        } else {
+                            inhouseInterstitialListener.onAdDismissed();
+                        }
+                    } else {
                         interDialog.show();
                         inhouseInterstitialListener.onAdShown();
-                    } else {
-                        inhouseInterstitialListener.onAdDismissed();
                     }
+
                 } else {
                     inhouseInterstitialListener.onAdDismissed();
                 }
@@ -7661,12 +7666,19 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                 });
 
-                if (!appInstalledOrNot(getAppIdFromAppLink(interAd.getApplink()))) {
+
+                if (interAd.getOpenin().equals("playstore")) {
+                    if (!appInstalledOrNot(getAppIdFromAppLink(interAd.getApplink()))) {
+                        interDialog.show();
+                        inhouseInterstitialListener.onAdShown();
+                    } else {
+                        inhouseInterstitialListener.onAdDismissed();
+                    }
+                } else {
                     interDialog.show();
                     inhouseInterstitialListener.onAdShown();
-                } else {
-                    inhouseInterstitialListener.onAdDismissed();
                 }
+
             }
 
         } else {
