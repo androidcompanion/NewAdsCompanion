@@ -62,7 +62,7 @@
         android:gravity="center"
         android:layout_toStartOf="@id/tv_install_btn_banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="0.0dip"
         android:layout_marginEnd="5.0dip"
         android:layout_toEndOf="@id/iv_ad_icon_banner"
