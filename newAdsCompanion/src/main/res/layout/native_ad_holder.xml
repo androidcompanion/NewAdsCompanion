@@ -19,7 +19,6 @@
         android:id="@+id/native_ad_cardview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
         android:background="@android:color/white"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="8dp" />
