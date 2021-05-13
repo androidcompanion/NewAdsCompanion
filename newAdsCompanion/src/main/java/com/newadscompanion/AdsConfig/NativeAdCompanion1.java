@@ -22,6 +22,7 @@ import com.facebook.ads.NativeAdListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest.Builder;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.formats.MediaView;
@@ -94,7 +95,23 @@ public class NativeAdCompanion1 {
                             });
                             builder.withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build());
                             builder.withAdListener(new AdListener() {
-                                public void onAdFailedToLoad(int i) {
+
+                                @Override
+                                public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                    super.onAdFailedToLoad(loadAdError);
+                                    if (context instanceof BaseClass){
+                                        ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                                            @Override
+                                            public void onAdLoaded() {
+                                                nativeAdContainer.setVisibility(View.VISIBLE);
+                                                cardView.setVisibility(View.VISIBLE);
+                                            }
+
+                                            @Override
+                                            public void onAdShowFailed() {
+                                            }
+                                        });
+                                    }
                                 }
 
                                 @Override
@@ -182,7 +199,19 @@ public class NativeAdCompanion1 {
 
                                 @Override
                                 public void onNativeFail(NativeErrorCode errorCode) {
+                                    if (context instanceof BaseClass){
+                                        ((BaseClass)context).showInhouseNativeAd(nativeAdContainer,new InhouseNativeListener() {
+                                            @Override
+                                            public void onAdLoaded() {
+                                                nativeAdContainer.setVisibility(View.VISIBLE);
+                                                cardView.setVisibility(View.VISIBLE);
+                                            }
 
+                                            @Override
+                                            public void onAdShowFailed() {
+                                            }
+                                        });
+                                    }
                                 }
                                 // We will be populating this below
                             };
