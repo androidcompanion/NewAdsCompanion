@@ -245,556 +245,17 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     public IronSourceBannerLayout banner;
 
+    public static boolean isGBannerShown = false;
+    public static boolean isFbBannerShown = false;
+    public static boolean isIsBannerShown = false;
+    public static boolean isMpBannerShown = false;
 
-    public void loadRewardAd() {
-        adsPrefernce = new AdsPrefernce(this);
-        if (isNetworkAvailable(this)) {
-            if (isAdsAvailable) {
-                if (adsPrefernce.showgRewarded()) {
-                    if (!isGRewardedReady) {
-                        MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
-                        gRewardedAd = new RewardedAd(this,
-                                adsPrefernce.gRewardedId());
-                        adLoadCallback = new RewardedAdLoadCallback() {
-                            @Override
-                            public void onRewardedAdLoaded() {
-                                isGRewardedReady = true;
-                            }
 
-                            @Override
-                            public void onRewardedAdFailedToLoad(LoadAdError adError) {
-                                isGRewardedReady = false;
-                            }
-                        };
-                        gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-                    }
-                }
-                if (adsPrefernce.showfbRewarded()) {
-                    if (!isFbRewardedReady) {
-                        AudienceNetworkAds.initialize(this);
-                        fbRewardedVideoAd = new RewardedVideoAd(this, adsPrefernce.fbRewardedId());
-                        rewardedVideoAdListener = new RewardedVideoAdListener() {
-                            @Override
-                            public void onError(Ad ad, AdError error) {
-                            }
+    public static boolean isGLargeBannerShown = false;
+    public static boolean isFbLargeBannerShown = false;
+    public static boolean isIsLargeBannerShown = false;
+    public static boolean isMpLargeBannerShown = false;
 
-                            @Override
-                            public void onAdLoaded(Ad ad) {
-                            }
-
-                            @Override
-                            public void onAdClicked(Ad ad) {
-                            }
-
-                            @Override
-                            public void onLoggingImpression(Ad ad) {
-                            }
-
-                            @Override
-                            public void onRewardedVideoCompleted() {
-                            }
-
-                            @Override
-                            public void onRewardedVideoClosed() {
-                            }
-                        };
-                        fbRewardedVideoAd.loadAd(
-                                fbRewardedVideoAd.buildLoadAdConfig()
-                                        .withAdListener(rewardedVideoAdListener)
-                                        .build());
-                    }
-                }
-                if (adsPrefernce.showisRewarded()) {
-                    if (!isIsRewardedReady) {
-                        isRewardedVideoListener = new RewardedVideoListener() {
-                            @Override
-                            public void onRewardedVideoAdOpened() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdClosed() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAvailabilityChanged(boolean b) {
-                                isIsRewardedReady = IronSource.isRewardedVideoAvailable();
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdStarted() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdEnded() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdRewarded(Placement placement) {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdClicked(Placement placement) {
-
-                            }
-                        };
-                        IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                        IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
-
-                    }
-                }
-                if (adsPrefernce.showmpRewarded()) {
-                    MoPub.onCreate(this);
-                    if (!isMpRewardedReady) {
-                        MoPubRewardedVideos.loadRewardedVideo(adsPrefernce.mpRewardedId());
-                        mpRewardedVideoListener = new MoPubRewardedVideoListener() {
-                            @Override
-                            public void onRewardedVideoLoadSuccess(String adUnitId) {
-                                isMpRewardedReady = true;
-                            }
-
-                            @Override
-                            public void onRewardedVideoLoadFailure(String adUnitId, MoPubErrorCode errorCode) {
-                                isMpRewardedReady = false;
-                            }
-
-                            @Override
-                            public void onRewardedVideoStarted(String adUnitId) {
-                            }
-
-                            @Override
-                            public void onRewardedVideoPlaybackError(String adUnitId, MoPubErrorCode errorCode) {
-                            }
-
-                            @Override
-                            public void onRewardedVideoClicked(@NonNull String adUnitId) {
-                            }
-
-                            @Override
-                            public void onRewardedVideoClosed(String adUnitId) {
-                            }
-
-                            @Override
-                            public void onRewardedVideoCompleted(Set<String> adUnitIds, MoPubReward reward) {
-                            }
-                        };
-
-                        MoPubRewardedVideos.setRewardedVideoListener(mpRewardedVideoListener);
-                    }
-                }
-            }
-        }
-
-    }
-
-    public void showRewardAds(OnRewardAdClosedListener onRewardAdClosedListener) {
-        if (isNetworkAvailable(this)) {
-            if (isAdsAvailable) {
-                if (adsPrefernce.showgRewarded()) {
-                    if (!isGRewardedShown) {
-                        if (isGRewardedReady) {
-                            if (gRewardedAd.isLoaded()) {
-                                RewardedAdCallback adCallback = new RewardedAdCallback() {
-                                    @Override
-                                    public void onRewardedAdOpened() {
-                                        // Ad opened.
-                                    }
-
-                                    @Override
-                                    public void onRewardedAdClosed() {
-                                        // Ad closed.
-                                        if (isGUserRewarded) {
-                                            try {
-                                                onRewardAdClosedListener.onRewardSuccess();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            isGRewardedReady = false;
-                                            isGRewardedShown = true;
-                                            isGUserRewarded = false;
-                                            gRewardedAd = new RewardedAd(BaseClass.this,
-                                                    adsPrefernce.gRewardedId());
-                                            gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-                                        } else {
-                                            try {
-                                                onRewardAdClosedListener.onRewardFailed();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            isGRewardedReady = false;
-                                            isGRewardedShown = true;
-                                            isGUserRewarded = false;
-                                            gRewardedAd = new RewardedAd(BaseClass.this,
-                                                    adsPrefernce.gRewardedId());
-                                            gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-                                        }
-
-                                        loadRewardAd();
-                                    }
-
-                                    @Override
-                                    public void onUserEarnedReward(@NonNull RewardItem reward) {
-                                        // User earned reward.
-                                        isGUserRewarded = true;
-
-                                    }
-
-                                    @Override
-                                    public void onRewardedAdFailedToShow(com.google.android.gms.ads.AdError adError) {
-                                        // Ad failed to display.
-                                        isGRewardedReady = false;
-                                        isGRewardedShown = true;
-                                        isGUserRewarded = false;
-                                        gRewardedAd = new RewardedAd(BaseClass.this,
-                                                adsPrefernce.gRewardedId());
-                                        gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-                                        try {
-                                            onRewardAdClosedListener.onRewardAdNotShown();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        loadRewardAd();
-                                    }
-                                };
-                                gRewardedAd.show(this, adCallback);
-                            }
-                        } else {
-                            goToPlanA2Rewarded(onRewardAdClosedListener);
-                        }
-                    } else {
-                        goToPlanA2Rewarded(onRewardAdClosedListener);
-                    }
-                } else {
-                    goToPlanA2Rewarded(onRewardAdClosedListener);
-                }
-            }
-        }
-
-    }
-
-    public void goToPlanA2Rewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
-        if (adsPrefernce.showfbRewarded()) {
-            if (!isFbRewardedShown) {
-                if (isFbRewardedReady) {
-                    if (fbRewardedVideoAd == null || !fbRewardedVideoAd.isAdLoaded()) {
-                        goToPlanBRewarded(onRewardAdClosedListener);
-                        return;
-                    }
-                    // Check if ad is already expired or invalidated, and do not show ad if that is the case. You will not get paid to show an invalidated ad.
-                    if (fbRewardedVideoAd.isAdInvalidated()) {
-                        goToPlanBRewarded(onRewardAdClosedListener);
-                        return;
-                    }
-                    fbRewardedVideoAd.show();
-                    RewardedVideoAdListener rewardedVideoAdListenerShow = new RewardedVideoAdListener() {
-                        @Override
-                        public void onError(Ad ad, AdError error) {
-                            // Rewarded video ad failed to load
-                            isFbRewardedReady = false;
-                            isFbBannerShown = true;
-                            isfbUserRewarded = false;
-                            fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
-                            fbRewardedVideoAd.loadAd(
-                                    fbRewardedVideoAd.buildLoadAdConfig()
-                                            .withAdListener(rewardedVideoAdListener)
-                                            .build());
-                            try {
-                                onRewardAdClosedListener.onRewardAdNotShown();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            loadRewardAd();
-                        }
-
-                        @Override
-                        public void onAdLoaded(Ad ad) {
-                            // Rewarded video ad is loaded and ready to be displayed
-                        }
-
-                        @Override
-                        public void onAdClicked(Ad ad) {
-                            // Rewarded video ad clicked
-                        }
-
-                        @Override
-                        public void onLoggingImpression(Ad ad) {
-                            // Rewarded Video ad impression - the event will fire when the
-                            // video starts playing
-                        }
-
-                        @Override
-                        public void onRewardedVideoCompleted() {
-                            // Rewarded Video View Complete - the video has been played to the end.
-                            // You can use this event to initialize your reward
-                            isfbUserRewarded = true;
-
-                            // Call method to give reward
-                            // giveReward();
-                        }
-
-                        @Override
-                        public void onRewardedVideoClosed() {
-                            // The Rewarded Video ad was closed - this can occur during the video
-                            // by closing the app, or closing the end card.
-                            if (isfbUserRewarded) {
-                                try {
-                                    onRewardAdClosedListener.onRewardSuccess();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                isFbRewardedReady = false;
-                                isFbRewardedShown = true;
-                                isfbUserRewarded = false;
-                                fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
-                                fbRewardedVideoAd.loadAd(
-                                        fbRewardedVideoAd.buildLoadAdConfig()
-                                                .withAdListener(rewardedVideoAdListener)
-                                                .build());
-                            } else {
-                                try {
-                                    onRewardAdClosedListener.onRewardFailed();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                isFbRewardedReady = false;
-                                isFbRewardedShown = true;
-                                isfbUserRewarded = false;
-                                fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
-                                fbRewardedVideoAd.loadAd(
-                                        fbRewardedVideoAd.buildLoadAdConfig()
-                                                .withAdListener(rewardedVideoAdListener)
-                                                .build());
-                            }
-                            loadRewardAd();
-
-                        }
-                    };
-                    fbRewardedVideoAd.buildLoadAdConfig().withAdListener(rewardedVideoAdListener).build();
-//                    fbRewardedVideoAd.setAdListener(rewardedVideoAdListenerShow);
-
-                } else {
-                    goToPlanBRewarded(onRewardAdClosedListener);
-                }
-            } else {
-                goToPlanBRewarded(onRewardAdClosedListener);
-            }
-        } else {
-            goToPlanBRewarded(onRewardAdClosedListener);
-        }
-    }
-
-    public void goToPlanBRewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
-        if (adsPrefernce.showisRewarded()) {
-            if (!isIsRewardedShown) {
-                if (isIsRewardedReady) {
-                    if (IronSource.isRewardedVideoAvailable()) {
-                        IronSource.showRewardedVideo();
-                        IronSource.setRewardedVideoListener(new RewardedVideoListener() {
-                            @Override
-                            public void onRewardedVideoAdOpened() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdClosed() {
-                                if (isIsUserRewarded) {
-                                    try {
-                                        onRewardAdClosedListener.onRewardSuccess();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    isIsRewardedReady = false;
-                                    isIsRewardedShown = true;
-                                    isIsUserRewarded = false;
-                                    IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
-                                } else {
-                                    try {
-                                        onRewardAdClosedListener.onRewardFailed();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    isIsRewardedReady = false;
-                                    isIsRewardedShown = true;
-                                    isIsUserRewarded = false;
-                                    IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
-                                }
-                            }
-
-                            @Override
-                            public void onRewardedVideoAvailabilityChanged(boolean b) {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdStarted() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdEnded() {
-
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdRewarded(Placement placement) {
-                                isIsUserRewarded = true;
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
-                                isIsRewardedReady = false;
-                                isIsRewardedShown = true;
-                                isIsUserRewarded = false;
-                                IronSource.setRewardedVideoListener(isRewardedVideoListener);
-                                IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
-                                try {
-                                    onRewardAdClosedListener.onRewardAdNotShown();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onRewardedVideoAdClicked(Placement placement) {
-
-                            }
-                        });
-                    } else {
-                        goToPlanCRewarded(onRewardAdClosedListener);
-                    }
-                } else {
-                    goToPlanCRewarded(onRewardAdClosedListener);
-                }
-            } else {
-                goToPlanCRewarded(onRewardAdClosedListener);
-            }
-        } else {
-            goToPlanCRewarded(onRewardAdClosedListener);
-        }
-
-    }
-
-    public void goToPlanCRewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
-        if (adsPrefernce.showmpRewarded()) {
-            if (!isMpRewardedShown) {
-                if (isMpRewardedReady) {
-                    if (MoPubRewardedVideos.hasRewardedVideo(adsPrefernce.mpRewardedId())) {
-//                        MoPub.onCreate(this);
-                        MoPubRewardedVideos.showRewardedVideo(adsPrefernce.mpRewardedId());
-
-//                        MoPub.onPause(this);
-                        MoPubRewardedVideoListener rewardedVideoListener = new MoPubRewardedVideoListener() {
-                            @Override
-                            public void onRewardedVideoLoadSuccess(String adUnitId) {
-                                // Called when the video for the given adUnitId has loaded. At this point you should be able to call MoPubRewardedVideos.showRewardedVideo(String) to show the video.
-                            }
-
-                            @Override
-                            public void onRewardedVideoLoadFailure(String adUnitId, MoPubErrorCode errorCode) {
-                                // Called when a video fails to load for the given adUnitId. The provided error code will provide more insight into the reason for the failure to load.
-                            }
-
-                            @Override
-                            public void onRewardedVideoStarted(String adUnitId) {
-                                // Called when a rewarded video starts playing.
-                            }
-
-                            @Override
-                            public void onRewardedVideoPlaybackError(String adUnitId, MoPubErrorCode errorCode) {
-                                isMpRewardedReady = false;
-                                isMpRewardedShown = true;
-                                isMpUserRewarded = false;
-                                loadRewardAd();
-                                resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
-                                try {
-                                    onRewardAdClosedListener.onRewardAdNotShown();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onRewardedVideoClicked(@NonNull String adUnitId) {
-                                //  Called when a rewarded video is clicked.
-                            }
-
-                            @Override
-                            public void onRewardedVideoClosed(String adUnitId) {
-                                if (isMpUserRewarded) {
-                                    try {
-                                        onRewardAdClosedListener.onRewardSuccess();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    isMpRewardedReady = false;
-                                    isMpRewardedShown = true;
-                                    isMpUserRewarded = false;
-                                    resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
-                                } else {
-                                    try {
-                                        onRewardAdClosedListener.onRewardFailed();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    isMpRewardedReady = false;
-                                    isMpRewardedShown = true;
-                                    isMpUserRewarded = false;
-                                    resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
-                                }
-                                loadRewardAd();
-
-//                                MoPub.onResume(BaseClass.this);
-                            }
-
-                            @Override
-                            public void onRewardedVideoCompleted(Set<String> adUnitIds, MoPubReward reward) {
-                                isMpUserRewarded = true;
-                            }
-                        };
-                        MoPubRewardedVideos.setRewardedVideoListener(rewardedVideoListener);
-                    } else {
-                        resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
-                    }
-                } else {
-                    resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
-                }
-            } else {
-                resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
-            }
-        } else {
-            resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
-        }
-
-    }
-
-    public void resetAllRewardedShownBoolean(Boolean withListner, OnRewardAdClosedListener onRewardAdClosedListener) {
-
-        isGRewardedShown = false;
-        isFbRewardedShown = false;
-        isIsRewardedShown = false;
-        isMpRewardedShown = false;
-        if (withListner) {
-            try {
-                onRewardAdClosedListener.onRewardAdNotShown();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 
     @Override
@@ -981,8 +442,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-
-    public void showLargeBannerAd(Integer top, Integer bottom) {
+    public void showLargeBannerAd() {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
@@ -993,7 +453,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             gadView = new AdView(this);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             gadView.setAdUnitId(adsPrefernce.gBannerId());
                             adContainerView.addView(gadView);
                             AdRequest adRequest = new AdRequest.Builder().build();
@@ -1010,7 +470,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     super.onAdFailedToLoad(loadAdError);
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1031,13 +491,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.addView(adView);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             AdListener bannerAdListner = new AdListener() {
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1073,7 +533,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             adContainerView.addView(banner, 0, layoutParams);
                             banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                                 @Override
@@ -1093,7 +553,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1138,7 +598,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 moPubView.loadAd();
                                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                 adContainerView.setVisibility(View.VISIBLE);
-                                adContainerView.setPadding(0, top, 0, bottom);
+
                                 adContainerView.addView(moPubView);
                                 moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                                     @Override
@@ -1149,7 +609,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
                                         final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                         adContainerView.setVisibility(View.VISIBLE);
-                                        adContainerView.setPadding(0, top, 0, bottom);
+
                                         showInhouseBannerAd(new InhouseBannerListener() {
                                             @Override
                                             public void onAdLoaded() {
@@ -1184,7 +644,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         } else {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1203,12 +663,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     } else {
                         if (adsPrefernce.showgBanner()) {
                             if (!isGLargeBannerShown) {
-                                showGLargeBanner(top, bottom);
+                                showGLargeBanner();
                             } else {
-                                showFbLargeBanner(top, bottom);
+                                showFbLargeBanner();
                             }
                         } else {
-                            showFbLargeBanner(top, bottom);
+                            showFbLargeBanner();
                         }
                     }
 
@@ -1224,7 +684,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         public void onFailedToReceiveAd(View view) {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1253,14 +713,14 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                     adContainerView.setVisibility(View.VISIBLE);
                     adContainerView.setForegroundGravity(Gravity.CENTER);
-                    adContainerView.setPadding(0, top, 0, bottom);
+
                     adContainerView.addView(startAppBanner, bannerParameters);
 
                 }
             } else {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
@@ -1316,18 +776,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         nativeBannerAd.registerViewForInteraction(adView, nativeAdIconView, clickableViews);
     }
 
-    public static boolean isGBannerShown = false;
-    public static boolean isFbBannerShown = false;
-    public static boolean isIsBannerShown = false;
-    public static boolean isMpBannerShown = false;
-
-
-    public static boolean isGLargeBannerShown = false;
-    public static boolean isFbLargeBannerShown = false;
-    public static boolean isIsLargeBannerShown = false;
-    public static boolean isMpLargeBannerShown = false;
-
-    public void showBannerAd(Integer top, Integer bottom) {
+    public void showBannerAd() {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
                 if (!adsPrefernce.planD()) {
@@ -1338,7 +787,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             gadView = new AdView(this);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             gadView.setAdUnitId(adsPrefernce.gBannerId());
                             adContainerView.addView(gadView);
                             AdRequest adRequest = new AdRequest.Builder().build();
@@ -1360,7 +809,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     super.onAdFailedToLoad(loadAdError);
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1384,13 +833,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.addView(adView);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             AdListener bannerAdListner = new AdListener() {
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1434,7 +883,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             adContainerView.addView(banner, 0, layoutParams);
                             banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                                 @Override
@@ -1460,7 +909,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-                                    adContainerView.setPadding(0, top, 0, bottom);
+
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -1505,7 +954,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 moPubView.loadAd();
                                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                 adContainerView.setVisibility(View.VISIBLE);
-                                adContainerView.setPadding(0, top, 0, bottom);
+
                                 adContainerView.addView(moPubView);
                                 moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                                     @Override
@@ -1520,7 +969,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
                                         final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                         adContainerView.setVisibility(View.VISIBLE);
-                                        adContainerView.setPadding(0, top, 0, bottom);
+
                                         showInhouseBannerAd(new InhouseBannerListener() {
                                             @Override
                                             public void onAdLoaded() {
@@ -1559,7 +1008,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         } else {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1578,12 +1027,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     } else {
                         if (adsPrefernce.showgBanner()) {
                             if (!isGBannerShown) {
-                                showGBanner(top, bottom);
+                                showGBanner();
                             } else {
-                                showFbBanner(top, bottom);
+                                showFbBanner();
                             }
                         } else {
-                            showFbBanner(top, bottom);
+                            showFbBanner();
                         }
                     }
                 } else {
@@ -1601,7 +1050,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         public void onFailedToReceiveAd(View view) {
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1634,13 +1083,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                     adContainerView.setVisibility(View.VISIBLE);
                     adContainerView.setForegroundGravity(Gravity.CENTER);
-                    adContainerView.setPadding(0, top, 0, bottom);
+
                     adContainerView.addView(startAppBanner, bannerParameters);
                 }
             } else {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
@@ -1659,7 +1108,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         } else {
             final FrameLayout adContainerView = findViewById(R.id.banner_container);
             adContainerView.setVisibility(View.VISIBLE);
-            adContainerView.setPadding(0, top, 0, bottom);
+
             showInhouseBannerAd(new InhouseBannerListener() {
                 @Override
                 public void onAdLoaded() {
@@ -1691,7 +1140,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         isMpLargeBannerShown = false;
     }
 
-    public void showMpBanner(int top, int bottom) {
+    public void showMpBanner() {
         if (adsPrefernce.showmpBanner()) {
             if (!isMpBannerShown) {
                 MoPubView moPubView;
@@ -1702,7 +1151,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     moPubView.loadAd();
                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                     adContainerView.setVisibility(View.VISIBLE);
-                    adContainerView.setPadding(0, top, 0, bottom);
+
                     adContainerView.addView(moPubView);
                     moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                         @Override
@@ -1721,7 +1170,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             resetAllBannerBoolean();
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1757,7 +1206,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     initializeMoPubSDK();
 //                    final FrameLayout adContainerView = findViewById(R.id.banner_container);
 //                    adContainerView.setVisibility(View.VISIBLE);
-//                    adContainerView.setPadding(0, top, 0, bottom);
+//
 //                    showInhouseBannerAd(new InhouseBannerListener() {
 //                        @Override
 //                        public void onAdLoaded() {
@@ -1777,7 +1226,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 resetAllBannerBoolean();
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
@@ -1797,7 +1246,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             resetAllBannerBoolean();
             final FrameLayout adContainerView = findViewById(R.id.banner_container);
             adContainerView.setVisibility(View.VISIBLE);
-            adContainerView.setPadding(0, top, 0, bottom);
+
             showInhouseBannerAd(new InhouseBannerListener() {
                 @Override
                 public void onAdLoaded() {
@@ -1816,7 +1265,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-    public void showMpLargeBanner(int top, int bottom) {
+    public void showMpLargeBanner() {
         if (adsPrefernce.showmpBanner()) {
             if (!isMpLargeBannerShown) {
                 MoPubView moPubView;
@@ -1827,7 +1276,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     moPubView.loadAd();
                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                     adContainerView.setVisibility(View.VISIBLE);
-                    adContainerView.setPadding(0, top, 0, bottom);
+
                     adContainerView.addView(moPubView);
                     moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                         @Override
@@ -1846,7 +1295,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             resetAllLargeBannerBoolean();
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.setPadding(0, top, 0, bottom);
+
                             showInhouseBannerAd(new InhouseBannerListener() {
                                 @Override
                                 public void onAdLoaded() {
@@ -1885,7 +1334,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 resetAllLargeBannerBoolean();
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
@@ -1905,7 +1354,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             resetAllLargeBannerBoolean();
             final FrameLayout adContainerView = findViewById(R.id.banner_container);
             adContainerView.setVisibility(View.VISIBLE);
-            adContainerView.setPadding(0, top, 0, bottom);
+
             showInhouseBannerAd(new InhouseBannerListener() {
                 @Override
                 public void onAdLoaded() {
@@ -1924,7 +1373,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-    public void showIsBanner(int top, int bottom) {
+    public void showIsBanner() {
         if (adsPrefernce.showisBanner()) {
             if (!isIsBannerShown) {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
@@ -1932,7 +1381,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 adContainerView.addView(banner, 0, layoutParams);
                 banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                     @Override
@@ -1952,7 +1401,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         });
 
                         isIsBannerShown = true;
-                        showMpBanner(top, bottom);
+                        showMpBanner();
 
                     }
 
@@ -1980,16 +1429,16 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                 IronSource.loadBanner(banner);
             } else {
-                showMpBanner(top, bottom);
+                showMpBanner();
             }
         } else {
-            showMpBanner(top, bottom);
+            showMpBanner();
         }
 
     }
 
 
-    public void showIsLargeBanner(int top, int bottom) {
+    public void showIsLargeBanner() {
         if (adsPrefernce.showisBanner()) {
             if (!isIsLargeBannerShown) {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
@@ -1997,7 +1446,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 adContainerView.addView(banner, 0, layoutParams);
                 banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                     @Override
@@ -2017,7 +1466,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         });
 
                         isIsLargeBannerShown = true;
-                        showMpLargeBanner(top, bottom);
+                        showMpLargeBanner();
 
                     }
 
@@ -2045,15 +1494,15 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.BANNER);
                 IronSource.loadBanner(banner);
             } else {
-                showMpLargeBanner(top, bottom);
+                showMpLargeBanner();
             }
         } else {
-            showMpLargeBanner(top, bottom);
+            showMpLargeBanner();
         }
 
     }
 
-    public void showFbBanner(int top, int bottom) {
+    public void showFbBanner() {
         if (adsPrefernce.showfbBanner()) {
             if (!isFbBannerShown) {
                 com.facebook.ads.AdView adView;
@@ -2062,12 +1511,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
                 adContainerView.addView(adView);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 AdListener bannerAdListner = new AdListener() {
                     @Override
                     public void onError(Ad ad, AdError adError) {
                         isFbBannerShown = true;
-                        showIsBanner(top, bottom);
+                        showIsBanner();
                     }
 
                     @Override
@@ -2092,15 +1541,15 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 };
                 adView.loadAd(adView.buildLoadAdConfig().withAdListener(bannerAdListner).build());
             } else {
-                showIsBanner(top, bottom);
+                showIsBanner();
             }
         } else {
-            showIsBanner(top, bottom);
+            showIsBanner();
         }
 
     }
 
-    public void showFbLargeBanner(int top, int bottom) {
+    public void showFbLargeBanner() {
         if (adsPrefernce.showfbBanner()) {
             if (!isFbLargeBannerShown) {
                 com.facebook.ads.AdView adView;
@@ -2109,12 +1558,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
                 adContainerView.addView(adView);
-                adContainerView.setPadding(0, top, 0, bottom);
+
                 AdListener bannerAdListner = new AdListener() {
                     @Override
                     public void onError(Ad ad, AdError adError) {
                         isFbLargeBannerShown = true;
-                        showIsLargeBanner(top, bottom);
+                        showIsLargeBanner();
                     }
 
                     @Override
@@ -2143,7 +1592,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 //                nativeBannerAd = new NativeBannerAd(this, adsPrefernce.fbNativeBannerId());
 //                final FrameLayout adContainerView = findViewById(R.id.banner_container);
 //                adContainerView.setVisibility(View.VISIBLE);
-//                adContainerView.setPadding(0, top, 0, bottom);
+//
 //                NativeAdListener nativeAdListener = new NativeAdListener() {
 //                    @Override
 //                    public void onMediaDownloaded(Ad ad) {
@@ -2181,21 +1630,20 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 //                };
 //                nativeBannerAd.loadAd(nativeBannerAd.buildLoadAdConfig().withAdListener(nativeAdListener).build());
             } else {
-                showIsLargeBanner(top, bottom);
+                showIsLargeBanner();
             }
         } else {
-            showIsLargeBanner(top, bottom);
+            showIsLargeBanner();
         }
-
     }
 
-    public void showGBanner(int top, int bottom) {
+    public void showGBanner() {
         AdView gadView;
         MobileAds.initialize(this, adsPrefernce.gAppId());
         final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
         adContainerView.setVisibility(View.VISIBLE);
         gadView = new AdView(this);
-        adContainerView.setPadding(0, top, 0, bottom);
+
         gadView.setAdUnitId(adsPrefernce.gBannerId());
         adContainerView.addView(gadView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -2217,19 +1665,19 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             public void onAdFailedToLoad(LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
                 isGBannerShown = true;
-                showFbBanner(top, bottom);
+                showFbBanner();
             }
         });
     }
 
-    public void showGLargeBanner(int top, int bottom) {
+    public void showGLargeBanner() {
         AdView gadView;
 
         MobileAds.initialize(this, adsPrefernce.gAppId());
         final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
         adContainerView.setVisibility(View.VISIBLE);
         gadView = new AdView(this);
-        adContainerView.setPadding(0, top, 0, bottom);
+
         gadView.setAdUnitId(adsPrefernce.gBannerId());
         adContainerView.addView(gadView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -2250,7 +1698,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             public void onAdFailedToLoad(LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
                 isGLargeBannerShown = true;
-                showFbLargeBanner(top, bottom);
+                showFbLargeBanner();
             }
         });
     }
@@ -2518,127 +1966,123 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             };
                             fbInterstitial1.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
                         }
+                    }
+                }
+            } else if (adsPrefernce.showisInter1()) {
+                if (isIsInter1Ready) {
+                    if (IronSource.isInterstitialReady()) {
+                        IronSource.showInterstitial();
+                        IronSource.setInterstitialListener(new InterstitialListener() {
+                            @Override
+                            public void onInterstitialAdReady() {
+                            }
 
+                            @Override
+                            public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+
+                            }
+
+                            @Override
+                            public void onInterstitialAdOpened() {
+
+                            }
+
+                            @Override
+                            public void onInterstitialAdClosed() {
+                                IronSource.loadInterstitial();
+                            }
+
+                            @Override
+                            public void onInterstitialAdShowSucceeded() {
+                                isIsInter1Ready = false;
+                                isIsInter1Shown = true;
+                            }
+
+                            @Override
+                            public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+
+                            }
+
+                            @Override
+                            public void onInterstitialAdClicked() {
+
+                            }
+                        });
                     }
                 }
             }
+            else if (adsPrefernce.planC()) {
+                if (adsPrefernce.showmpInter1()) {
+                    if (isMpInter1Ready) {
+                        if (mpInterstitial1 != null) {
+                            if (mpInterstitial1.isReady()) {
+                                mpInterstitial1.show();
+                                mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                    @Override
+                                    public void onInterstitialLoaded(MoPubInterstitial interstitial) {
 
-        } else if (adsPrefernce.showisInter1()) {
-            if (isIsInter1Ready) {
-                if (IronSource.isInterstitialReady()) {
-                    IronSource.showInterstitial();
-                    IronSource.setInterstitialListener(new InterstitialListener() {
-                        @Override
-                        public void onInterstitialAdReady() {
-                        }
+                                    }
 
-                        @Override
-                        public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+                                    @Override
+                                    public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
 
-                        }
+                                    }
 
-                        @Override
-                        public void onInterstitialAdOpened() {
+                                    @Override
+                                    public void onInterstitialShown(MoPubInterstitial interstitial) {
+                                        isMpInter1Ready = false;
+                                    }
 
-                        }
+                                    @Override
+                                    public void onInterstitialClicked(MoPubInterstitial interstitial) {
 
-                        @Override
-                        public void onInterstitialAdClosed() {
-                            IronSource.loadInterstitial();
-                        }
+                                    }
 
-                        @Override
-                        public void onInterstitialAdShowSucceeded() {
-                            isIsInter1Ready = false;
-                            isIsInter1Shown = true;
-                        }
+                                    @Override
+                                    public void onInterstitialDismissed(MoPubInterstitial interstitial) {
 
-                        @Override
-                        public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+                                        mpInterstitial1.load();
+                                        mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+                                                Log.e("inLoadonClosed", "ismpinter1 ready = true");
+                                                isMpInter1Ready = true;
+                                            }
 
-                        }
+                                            @Override
+                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
 
-                        @Override
-                        public void onInterstitialAdClicked() {
+                                            }
 
-                        }
-                    });
-                }
-            }
-        } else if (adsPrefernce.planC()) {
-            if (adsPrefernce.showmpInter1()) {
-                if (isMpInter1Ready) {
-                    if (mpInterstitial1 != null) {
-                        if (mpInterstitial1.isReady()) {
-                            mpInterstitial1.show();
-                            mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-                                @Override
-                                public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+                                            @Override
+                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
 
-                                }
+                                            }
 
-                                @Override
-                                public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                            @Override
+                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
 
-                                }
+                                            }
 
-                                @Override
-                                public void onInterstitialShown(MoPubInterstitial interstitial) {
-                                    isMpInter1Ready = false;
-                                }
+                                            @Override
+                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
 
-                                @Override
-                                public void onInterstitialClicked(MoPubInterstitial interstitial) {
-
-                                }
-
-                                @Override
-                                public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-
-                                    mpInterstitial1.load();
-                                    mpInterstitial1.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-                                        @Override
-                                        public void onInterstitialLoaded(MoPubInterstitial interstitial) {
-                                            Log.e("inLoadonClosed", "ismpinter1 ready = true");
-                                            isMpInter1Ready = true;
-                                        }
-
-                                        @Override
-                                        public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-
-                                        }
-
-                                        @Override
-                                        public void onInterstitialShown(MoPubInterstitial interstitial) {
-
-                                        }
-
-                                        @Override
-                                        public void onInterstitialClicked(MoPubInterstitial interstitial) {
-
-                                        }
-
-                                        @Override
-                                        public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-
-                                        }
-                                    });
+                                            }
+                                        });
 
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
                     }
                 }
             }
         }
-
-
     }
 
     public void showSplashAd(Callable<Void> mathodToFollow) {
         if (isNetworkAvailable(this)) {
-
             if (adsPrefernce.showgInter1()) {
                 if (isGInter1Ready) {
                     if (gInterstitial1.isLoaded() && gInterstitial1 != null) {
@@ -2686,7 +2130,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         e.printStackTrace();
                     }
                 }
-            } else if (adsPrefernce.showfbInter1()) {
+            }
+            else if (adsPrefernce.showfbInter1()) {
                 if (isFbInter1Ready) {
                     if (fbInterstitial1.isAdLoaded()) {
                         fbInterstitial1.show();
@@ -2747,7 +2192,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         e.printStackTrace();
                     }
                 }
-            } else if (adsPrefernce.showisInter1()) {
+            }
+            else if (adsPrefernce.showisInter1()) {
                 if (isIsInter1Ready) {
                     if (IronSource.isInterstitialReady()) {
                         IronSource.showInterstitial();
@@ -2767,6 +2213,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                             @Override
                             public void onInterstitialAdClosed() {
+                                try {
+                                    mathodToFollow.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 IronSource.loadInterstitial();
                             }
 
@@ -2790,6 +2241,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                             }
                         });
+                    } else {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     try {
@@ -2798,7 +2255,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         e.printStackTrace();
                     }
                 }
-            } else if (adsPrefernce.planC()) {
+            }
+            else if (adsPrefernce.planC()) {
                 if (adsPrefernce.showmpInter1()) {
                     if (isMpInter1Ready) {
                         if (mpInterstitial1 != null) {
@@ -2899,7 +2357,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         e.printStackTrace();
                     }
                 }
-            } else {
+            }
+            else {
                 try {
                     mathodToFollow.call();
                 } catch (Exception e) {
@@ -3033,7 +2492,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     }
                     if (adsPrefernce.planB()) {
-
                         if (adsPrefernce.showisInter1()) {
                             if (!isIsInter1Ready) {
                                 IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.INTERSTITIAL);
@@ -4090,7 +3548,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                                 isGInter1Shown = true;
                                             }
 
-
                                             @Override
                                             public void onAdFailedToLoad(LoadAdError loadAdError) {
                                                 super.onAdFailedToLoad(loadAdError);
@@ -4278,7 +3735,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             } else {
                 goToPlanBOnClosed(mathodToPerform);
             }
-
         } else {
             goToPlanBOnClosed(mathodToPerform);
         }
@@ -4483,80 +3939,17 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         } else {
-                            resetAllShownBoolean();
-                            showInhouseInterAd(new InhouseInterstitialListener() {
-                                @Override
-                                public void onAdShown() {
-
-                                }
-
-                                @Override
-                                public void onAdDismissed() {
-                                    try {
-                                        mathodToPerform.call();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
+                            goToPlanAI2OnClosed(mathodToPerform);
                         }
                     } else {
-                        resetAllShownBoolean();
-                        showInhouseInterAd(new InhouseInterstitialListener() {
-                            @Override
-                            public void onAdShown() {
-
-                            }
-
-                            @Override
-                            public void onAdDismissed() {
-                                try {
-                                    mathodToPerform.call();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                        goToPlanAI2OnClosed(mathodToPerform);
                     }
                 } else {
-                    resetAllShownBoolean();
-                    showInhouseInterAd(new InhouseInterstitialListener() {
-                        @Override
-                        public void onAdShown() {
-
-                        }
-
-                        @Override
-                        public void onAdDismissed() {
-                            try {
-                                mathodToPerform.call();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
+                    goToPlanAI2OnClosed(mathodToPerform);
                 }
             } else {
-                resetAllShownBoolean();
-                showInhouseInterAd(new InhouseInterstitialListener() {
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-                        try {
-                            mathodToPerform.call();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
+                goToPlanAI2OnClosed(mathodToPerform);
             }
-
         } else {
             resetAllShownBoolean();
             showInhouseInterAd(new InhouseInterstitialListener() {
@@ -4574,10 +3967,503 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     }
                 }
             });
-
         }
 
     }
+
+    public void goToPlanAI2OnClosed(Callable<Void> mathodToFollow) {
+        if (adsPrefernce.planA()) {
+            if (adsPrefernce.showgInter2()) {
+                if (!isGInter2Shown) {
+                    if (isGInter2Ready) {
+                        if (gInterstitial2.isLoaded() && gInterstitial2 != null) {
+                            gInterstitial2.show();
+                            gInterstitial2.setAdListener(new com.google.android.gms.ads.AdListener() {
+                                public void onAdClosed() {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
+                                    gInterstitial2 = new com.google.android.gms.ads.InterstitialAd(BaseClass.this);
+                                    gInterstitial2.setAdUnitId(adsPrefernce.gInterId2());
+                                    gInterstitial2.loadAd(new AdRequest.Builder().build());
+                                    gInterstitial2.setAdListener(new com.google.android.gms.ads.AdListener() {
+                                        @Override
+                                        public void onAdLoaded() {
+                                            super.onAdLoaded();
+                                            isGInter2Ready = true;
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    super.onAdOpened();
+                                    isGInter2Ready = false;
+                                    isGInter2Shown = true;
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                    super.onAdFailedToLoad(loadAdError);
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
+                                        }
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                mathodToFollow.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                    });
+                                    isGInter2Ready = false;
+                                    isGInter2Shown = true;
+
+
+                                }
+                            });
+                        } else {
+                            goToPlanA2I2OnClosed(mathodToFollow);
+                        }
+                    } else {
+                        goToPlanA2I2OnClosed(mathodToFollow);
+                    }
+                } else {
+                    goToPlanA2I2OnClosed(mathodToFollow);
+                }
+            } else {
+                goToPlanA2I2OnClosed(mathodToFollow);
+            }
+        } else {
+            goToPlanBI2OnClosed(mathodToFollow);
+        }
+
+    }
+
+    public void goToPlanA2I2OnClosed(Callable<Void> mathodToFollow) {
+
+        if (adsPrefernce.showfbInter2()) {
+            if (!isFbInter2Shown) {
+                if (isFbInter2Ready) {
+                    if (fbInterstitial2.isAdLoaded()) {
+                        fbInterstitial2.show();
+                        InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
+                            @Override
+                            public void onInterstitialDisplayed(Ad ad) {
+                                isFbInter2Ready = false;
+                                isFbInter2Shown = true;
+                                resetAllShownBoolean();
+                            }
+
+                            @Override
+                            public void onInterstitialDismissed(Ad ad) {
+                                try {
+                                    mathodToFollow.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                AudienceNetworkAds.initialize(BaseClass.this);
+                                fbInterstitial2 = new com.facebook.ads.InterstitialAd(BaseClass.this, adsPrefernce.fbInterId2());
+                                InterstitialAdListener interstitialAdListener1 = new InterstitialAdListener() {
+                                    @Override
+                                    public void onInterstitialDisplayed(Ad ad) {
+
+                                    }
+
+                                    @Override
+                                    public void onInterstitialDismissed(Ad ad) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Ad ad, AdError adError) {
+
+                                    }
+
+                                    @Override
+                                    public void onAdLoaded(Ad ad) {
+                                        isFbInter2Ready = true;
+                                    }
+
+                                    @Override
+                                    public void onAdClicked(Ad ad) {
+
+                                    }
+
+                                    @Override
+                                    public void onLoggingImpression(Ad ad) {
+
+                                    }
+                                };
+                                fbInterstitial2.loadAd(fbInterstitial2.buildLoadAdConfig().withAdListener(interstitialAdListener1).build());
+
+                            }
+
+                            @Override
+                            public void onError(Ad ad, AdError adError) {
+                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                    @Override
+                                    public void onAdShown() {
+
+                                    }
+
+                                    @Override
+                                    public void onAdDismissed() {
+                                        try {
+                                            mathodToFollow.call();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                isFbInter2Ready = false;
+                                isFbInter2Shown = true;
+                            }
+
+                            @Override
+                            public void onAdLoaded(Ad ad) {
+
+                            }
+
+                            @Override
+                            public void onAdClicked(Ad ad) {
+
+                            }
+
+                            @Override
+                            public void onLoggingImpression(Ad ad) {
+
+                            }
+                        };
+                        fbInterstitial2.buildLoadAdConfig().withAdListener(interstitialAdListener).build();
+                    } else {
+                        goToPlanBI2OnClosed(mathodToFollow);
+                    }
+                } else {
+                    goToPlanBI2OnClosed(mathodToFollow);
+                }
+            } else {
+                goToPlanBI2OnClosed(mathodToFollow);
+            }
+
+        } else {
+            goToPlanBI2OnClosed(mathodToFollow);
+        }
+
+    }
+
+    public void goToPlanBI2OnClosed(Callable<Void> mathodToFollow) {
+
+        if (adsPrefernce.planB()) {
+            if (adsPrefernce.showisInter2()) {
+                if (!isIsInter2Shown) {
+                    if (isIsInter2Ready) {
+                        if (IronSource.isInterstitialReady()) {
+                           IronSource.showInterstitial(adsPrefernce.isInterId2());
+                            IronSource.setInterstitialListener(new InterstitialListener() {
+                                @Override
+                                public void onInterstitialAdReady() {
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdOpened() {
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdClosed() {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    IronSource.loadInterstitial();
+                                    IronSource.setInterstitialListener(new InterstitialListener() {
+                                        @Override
+                                        public void onInterstitialAdReady() {
+                                            isIsInter2Ready = true;
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+                                            isIsInter2Ready = false;
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdOpened() {
+
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdClosed() {
+
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdShowSucceeded() {
+
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+
+                                        }
+
+                                        @Override
+                                        public void onInterstitialAdClicked() {
+
+                                        }
+                                    });
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdShowSucceeded() {
+                                    isIsInter2Ready = false;
+                                    isIsInter2Shown = true;
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
+                                        }
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                mathodToFollow.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    isIsInter2Ready = false;
+                                    isIsInter2Shown = true;
+
+                                }
+
+                                @Override
+                                public void onInterstitialAdClicked() {
+
+                                }
+                            });
+                        } else {
+                            goToPlanCI2OnClosed(mathodToFollow);
+                        }
+                    } else {
+                        goToPlanCI2OnClosed(mathodToFollow);
+                    }
+                } else {
+                    goToPlanCI2OnClosed(mathodToFollow);
+                }
+            } else {
+                goToPlanCI2OnClosed(mathodToFollow);
+            }
+        } else {
+            goToPlanCI2OnClosed(mathodToFollow);
+        }
+    }
+
+    public void goToPlanCI2OnClosed(Callable<Void> mathodToFollow) {
+        if (adsPrefernce.planC()) {
+            if (adsPrefernce.showmpInter2()) {
+                if (!isMpInter2Shown) {
+                    if (mpInterstitial2 != null) {
+                        if (mpInterstitial2.isReady()) {
+                            mpInterstitial2.show();
+                            mpInterstitial2.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                @Override
+                                public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+
+                                }
+
+                                @Override
+                                public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+                                    isMpInter2Ready = false;
+                                    isMpInter2Shown = true;
+                                    resetAllShownBoolean();
+                                    showInhouseInterAd(new InhouseInterstitialListener() {
+                                        @Override
+                                        public void onAdShown() {
+
+                                        }
+
+                                        @Override
+                                        public void onAdDismissed() {
+                                            try {
+                                                mathodToFollow.call();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onInterstitialShown(MoPubInterstitial interstitial) {
+                                    isMpInter2Ready = false;
+                                    isMpInter2Shown = true;
+                                    resetAllShownBoolean();
+                                }
+
+                                @Override
+                                public void onInterstitialClicked(MoPubInterstitial interstitial) {
+
+                                }
+
+                                @Override
+                                public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (mpInter2Initilized) {
+                                        mpInterstitial2.load();
+                                        mpInterstitial2.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
+                                            @Override
+                                            public void onInterstitialLoaded(MoPubInterstitial interstitial) {
+                                                isMpInter2Ready = true;
+                                            }
+
+                                            @Override
+                                            public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialShown(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialClicked(MoPubInterstitial interstitial) {
+
+                                            }
+
+                                            @Override
+                                            public void onInterstitialDismissed(MoPubInterstitial interstitial) {
+
+                                            }
+                                        });
+                                    } else {
+                                        initializeMoPubSDK();
+                                    }
+                                }
+                            });
+                        } else {
+                            resetAllShownBoolean();
+                            showInhouseInterAd(new InhouseInterstitialListener() {
+                                @Override
+                                public void onAdShown() {
+
+                                }
+
+                                @Override
+                                public void onAdDismissed() {
+                                    try {
+                                        mathodToFollow.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        resetAllShownBoolean();
+                        showInhouseInterAd(new InhouseInterstitialListener() {
+                            @Override
+                            public void onAdShown() {
+
+                            }
+
+                            @Override
+                            public void onAdDismissed() {
+                                try {
+                                    mathodToFollow.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    resetAllShownBoolean();
+                    showInhouseInterAd(new InhouseInterstitialListener() {
+                        @Override
+                        public void onAdShown() {
+
+                        }
+
+                        @Override
+                        public void onAdDismissed() {
+                            try {
+                                mathodToFollow.call();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            } else {
+                resetAllShownBoolean();
+                showInhouseInterAd(new InhouseInterstitialListener() {
+                    @Override
+                    public void onAdShown() {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
+                        try {
+                            mathodToFollow.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+
+        } else {
+            resetAllShownBoolean();
+            showInhouseInterAd(new InhouseInterstitialListener() {
+                @Override
+                public void onAdShown() {
+
+                }
+
+                @Override
+                public void onAdDismissed() {
+                    try {
+                        mathodToFollow.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+    }
+
+    ///pending from here
 
     public void resetAllShownBoolean() {
         isGInter1Shown = false;
@@ -4794,22 +4680,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onAdFailedToLoad(LoadAdError loadAdError) {
                                     super.onAdFailedToLoad(loadAdError);
-                                    showInhouseInterAd(new InhouseInterstitialListener() {
-                                        @Override
-                                        public void onAdShown() {
-
-                                        }
-
-                                        @Override
-                                        public void onAdDismissed() {
-                                            try {
-                                                mathodToFollow.call();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    });
 
                                 }
                             });
@@ -4856,22 +4726,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     @Override
                                     public void onError(Ad ad, AdError adError) {
-                                        showInhouseInterAd(new InhouseInterstitialListener() {
-                                            @Override
-                                            public void onAdShown() {
-
-                                            }
-
-                                            @Override
-                                            public void onAdDismissed() {
-                                                try {
-                                                    mathodToFollow.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                            }
-                                        });
                                     }
 
                                     @Override
@@ -5047,22 +4901,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     @Override
                                     public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-                                        showInhouseInterAd(new InhouseInterstitialListener() {
-                                            @Override
-                                            public void onAdShown() {
 
-                                            }
-
-                                            @Override
-                                            public void onAdDismissed() {
-                                                try {
-                                                    mathodToFollow.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                            }
-                                        });
                                     }
 
                                     @Override
@@ -5289,22 +5128,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                     @Override
                                     public void onError(Ad ad, AdError adError) {
-                                        showInhouseInterAd(new InhouseInterstitialListener() {
-                                            @Override
-                                            public void onAdShown() {
-
-                                            }
-
-                                            @Override
-                                            public void onAdDismissed() {
-                                                try {
-                                                    mathodToFollow.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                            }
-                                        });
                                     }
 
                                     @Override
@@ -5660,11 +5483,22 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                         @Override
                                         public void onAdFailedToLoad(LoadAdError loadAdError) {
                                             super.onAdFailedToLoad(loadAdError);
-                                            try {
-                                                methodParam.call();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+                                            showInhouseInterAd(new InhouseInterstitialListener() {
+                                                @Override
+                                                public void onAdShown() {
+
+                                                }
+
+                                                @Override
+                                                public void onAdDismissed() {
+                                                    try {
+                                                        methodParam.call();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                }
+                                            });
                                             gInterstitial11.loadAd(new AdRequest.Builder().build());
                                         }
                                     });
@@ -5708,11 +5542,22 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                             @Override
                                             public void onError(Ad ad, AdError adError) {
-                                                try {
-                                                    methodParam.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
+                                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                                    @Override
+                                                    public void onAdShown() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAdDismissed() {
+                                                        try {
+                                                            methodParam.call();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+                                                });
                                                 loadInterstitial1();
                                             }
 
@@ -5876,11 +5721,22 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                             @Override
                                             public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-                                                try {
-                                                    methodParam.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
+                                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                                    @Override
+                                                    public void onAdShown() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAdDismissed() {
+                                                        try {
+                                                            methodParam.call();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+                                                });
                                             }
 
                                             @Override
@@ -6005,21 +5861,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     });
                 }
             } else {
-                showInhouseInterAd(new InhouseInterstitialListener() {
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-                        try {
-                            methodParam.call();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                try {
+                    methodParam.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -6120,11 +5966,21 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                             @Override
                                             public void onError(Ad ad, AdError adError) {
-                                                try {
-                                                    methodParam.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
+                                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                                    @Override
+                                                    public void onAdShown() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAdDismissed() {
+                                                        try {
+                                                            methodParam.call();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
                                                 loadInterstitial2();
                                             }
 
@@ -6289,11 +6145,21 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                             @Override
                                             public void onInterstitialFailed(MoPubInterstitial interstitial, MoPubErrorCode errorCode) {
-                                                try {
-                                                    methodParam.call();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
+                                                showInhouseInterAd(new InhouseInterstitialListener() {
+                                                    @Override
+                                                    public void onAdShown() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAdDismissed() {
+                                                        try {
+                                                            methodParam.call();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
                                             }
 
                                             @Override
@@ -6417,21 +6283,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 }
 
             } else {
-                showInhouseInterAd(new InhouseInterstitialListener() {
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-                        try {
-                            methodParam.call();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                try {
+                    methodParam.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -6453,7 +6309,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             });
         }
     }
-
 
     public void showInterstitial2(final boolean loadOnClosed,
                                   final Callable<Void> mathodToFollow) {
@@ -7222,7 +7077,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         };
     }
 
-
     private SdkInitializationListener initSdkListenerBanner(Boolean loadOnInitilized) {
         return new SdkInitializationListener() {
             @Override
@@ -7692,7 +7546,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 //        }
     }
 
-
     public void showInhouseBannerAd(InhouseBannerListener inhouseBannerListener) {
         if (adsPrefernce.isBannerAdLoaded()) {
             if (isNetworkAvailable(this)) {
@@ -8016,7 +7869,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
-
     public void showInhouseNativeAd(CardView cardView, InhouseNativeListener inhouseNativeListener) {
 
         if (adsPrefernce.isNativeAdLoaded()) {
@@ -8038,28 +7890,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             inhouseNativeListener.onAdShowFailed();
         }
     }
-
-//    public void showInhouseNativeAd(InhouseNativeListener inhouseNativeListener) {
-//
-//        if (adsPrefernce.isNativeAdLoaded()) {
-//            if (isNetworkAvailable(this)) {
-//                if (finalNative.size() != 0) {
-//
-//                    inflateNativeAdInHouse((RelativeLayout) findViewById(R.id.lay_native_ad), (CardView) findViewById(R.id.native_ad_cardview));
-//                    inhouseNativeListener.onAdLoaded();
-//
-//                } else {
-//                    inhouseNativeListener.onAdShowFailed();
-//                }
-//            } else {
-//                inflateNativeAdInHouse((RelativeLayout) findViewById(R.id.lay_native_ad), (CardView) findViewById(R.id.native_ad_cardview));
-//                inhouseNativeListener.onAdLoaded();
-//            }
-//
-//        } else {
-//            inhouseNativeListener.onAdShowFailed();
-//        }
-//    }
 
     void showAdsPrivacyDialog() {
         Dialog privacyDialog = new Dialog(BaseClass.this);
@@ -8377,6 +8207,555 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         return app_installed;
     }
 
+    public void loadRewardAd() {
+        adsPrefernce = new AdsPrefernce(this);
+        if (isNetworkAvailable(this)) {
+            if (isAdsAvailable) {
+                if (adsPrefernce.showgRewarded()) {
+                    if (!isGRewardedReady) {
+                        MobileAds.initialize(getApplicationContext(), adsPrefernce.gAppId());
+                        gRewardedAd = new RewardedAd(this,
+                                adsPrefernce.gRewardedId());
+                        adLoadCallback = new RewardedAdLoadCallback() {
+                            @Override
+                            public void onRewardedAdLoaded() {
+                                isGRewardedReady = true;
+                            }
+
+                            @Override
+                            public void onRewardedAdFailedToLoad(LoadAdError adError) {
+                                isGRewardedReady = false;
+                            }
+                        };
+                        gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+                    }
+                }
+                if (adsPrefernce.showfbRewarded()) {
+                    if (!isFbRewardedReady) {
+                        AudienceNetworkAds.initialize(this);
+                        fbRewardedVideoAd = new RewardedVideoAd(this, adsPrefernce.fbRewardedId());
+                        rewardedVideoAdListener = new RewardedVideoAdListener() {
+                            @Override
+                            public void onError(Ad ad, AdError error) {
+                            }
+
+                            @Override
+                            public void onAdLoaded(Ad ad) {
+                            }
+
+                            @Override
+                            public void onAdClicked(Ad ad) {
+                            }
+
+                            @Override
+                            public void onLoggingImpression(Ad ad) {
+                            }
+
+                            @Override
+                            public void onRewardedVideoCompleted() {
+                            }
+
+                            @Override
+                            public void onRewardedVideoClosed() {
+                            }
+                        };
+                        fbRewardedVideoAd.loadAd(
+                                fbRewardedVideoAd.buildLoadAdConfig()
+                                        .withAdListener(rewardedVideoAdListener)
+                                        .build());
+                    }
+                }
+                if (adsPrefernce.showisRewarded()) {
+                    if (!isIsRewardedReady) {
+                        isRewardedVideoListener = new RewardedVideoListener() {
+                            @Override
+                            public void onRewardedVideoAdOpened() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdClosed() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAvailabilityChanged(boolean b) {
+                                isIsRewardedReady = IronSource.isRewardedVideoAvailable();
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdStarted() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdEnded() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdRewarded(Placement placement) {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdClicked(Placement placement) {
+
+                            }
+                        };
+                        IronSource.setRewardedVideoListener(isRewardedVideoListener);
+                        IronSource.init(this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
+
+                    }
+                }
+                if (adsPrefernce.showmpRewarded()) {
+                    MoPub.onCreate(this);
+                    if (!isMpRewardedReady) {
+                        MoPubRewardedVideos.loadRewardedVideo(adsPrefernce.mpRewardedId());
+                        mpRewardedVideoListener = new MoPubRewardedVideoListener() {
+                            @Override
+                            public void onRewardedVideoLoadSuccess(String adUnitId) {
+                                isMpRewardedReady = true;
+                            }
+
+                            @Override
+                            public void onRewardedVideoLoadFailure(String adUnitId, MoPubErrorCode errorCode) {
+                                isMpRewardedReady = false;
+                            }
+
+                            @Override
+                            public void onRewardedVideoStarted(String adUnitId) {
+                            }
+
+                            @Override
+                            public void onRewardedVideoPlaybackError(String adUnitId, MoPubErrorCode errorCode) {
+                            }
+
+                            @Override
+                            public void onRewardedVideoClicked(@NonNull String adUnitId) {
+                            }
+
+                            @Override
+                            public void onRewardedVideoClosed(String adUnitId) {
+                            }
+
+                            @Override
+                            public void onRewardedVideoCompleted(Set<String> adUnitIds, MoPubReward reward) {
+                            }
+                        };
+
+                        MoPubRewardedVideos.setRewardedVideoListener(mpRewardedVideoListener);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void showRewardAds(OnRewardAdClosedListener onRewardAdClosedListener) {
+        if (isNetworkAvailable(this)) {
+            if (isAdsAvailable) {
+                if (adsPrefernce.showgRewarded()) {
+                    if (!isGRewardedShown) {
+                        if (isGRewardedReady) {
+                            if (gRewardedAd.isLoaded()) {
+                                RewardedAdCallback adCallback = new RewardedAdCallback() {
+                                    @Override
+                                    public void onRewardedAdOpened() {
+                                        // Ad opened.
+                                    }
+
+                                    @Override
+                                    public void onRewardedAdClosed() {
+                                        // Ad closed.
+                                        if (isGUserRewarded) {
+                                            try {
+                                                onRewardAdClosedListener.onRewardSuccess();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            isGRewardedReady = false;
+                                            isGRewardedShown = true;
+                                            isGUserRewarded = false;
+                                            gRewardedAd = new RewardedAd(BaseClass.this,
+                                                    adsPrefernce.gRewardedId());
+                                            gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+                                        } else {
+                                            try {
+                                                onRewardAdClosedListener.onRewardFailed();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            isGRewardedReady = false;
+                                            isGRewardedShown = true;
+                                            isGUserRewarded = false;
+                                            gRewardedAd = new RewardedAd(BaseClass.this,
+                                                    adsPrefernce.gRewardedId());
+                                            gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+                                        }
+
+                                        loadRewardAd();
+                                    }
+
+                                    @Override
+                                    public void onUserEarnedReward(@NonNull RewardItem reward) {
+                                        // User earned reward.
+                                        isGUserRewarded = true;
+
+                                    }
+
+                                    @Override
+                                    public void onRewardedAdFailedToShow(com.google.android.gms.ads.AdError adError) {
+                                        // Ad failed to display.
+                                        isGRewardedReady = false;
+                                        isGRewardedShown = true;
+                                        isGUserRewarded = false;
+                                        gRewardedAd = new RewardedAd(BaseClass.this,
+                                                adsPrefernce.gRewardedId());
+                                        gRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+                                        try {
+                                            onRewardAdClosedListener.onRewardAdNotShown();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        loadRewardAd();
+                                    }
+                                };
+                                gRewardedAd.show(this, adCallback);
+                            }
+                        } else {
+                            goToPlanA2Rewarded(onRewardAdClosedListener);
+                        }
+                    } else {
+                        goToPlanA2Rewarded(onRewardAdClosedListener);
+                    }
+                } else {
+                    goToPlanA2Rewarded(onRewardAdClosedListener);
+                }
+            }
+        }
+
+    }
+
+    public void goToPlanA2Rewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
+        if (adsPrefernce.showfbRewarded()) {
+            if (!isFbRewardedShown) {
+                if (isFbRewardedReady) {
+                    if (fbRewardedVideoAd == null || !fbRewardedVideoAd.isAdLoaded()) {
+                        goToPlanBRewarded(onRewardAdClosedListener);
+                        return;
+                    }
+                    // Check if ad is already expired or invalidated, and do not show ad if that is the case. You will not get paid to show an invalidated ad.
+                    if (fbRewardedVideoAd.isAdInvalidated()) {
+                        goToPlanBRewarded(onRewardAdClosedListener);
+                        return;
+                    }
+                    fbRewardedVideoAd.show();
+                    RewardedVideoAdListener rewardedVideoAdListenerShow = new RewardedVideoAdListener() {
+                        @Override
+                        public void onError(Ad ad, AdError error) {
+                            // Rewarded video ad failed to load
+                            isFbRewardedReady = false;
+                            isFbBannerShown = true;
+                            isfbUserRewarded = false;
+                            fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
+                            fbRewardedVideoAd.loadAd(
+                                    fbRewardedVideoAd.buildLoadAdConfig()
+                                            .withAdListener(rewardedVideoAdListener)
+                                            .build());
+                            try {
+                                onRewardAdClosedListener.onRewardAdNotShown();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            loadRewardAd();
+                        }
+
+                        @Override
+                        public void onAdLoaded(Ad ad) {
+                            // Rewarded video ad is loaded and ready to be displayed
+                        }
+
+                        @Override
+                        public void onAdClicked(Ad ad) {
+                            // Rewarded video ad clicked
+                        }
+
+                        @Override
+                        public void onLoggingImpression(Ad ad) {
+                            // Rewarded Video ad impression - the event will fire when the
+                            // video starts playing
+                        }
+
+                        @Override
+                        public void onRewardedVideoCompleted() {
+                            // Rewarded Video View Complete - the video has been played to the end.
+                            // You can use this event to initialize your reward
+                            isfbUserRewarded = true;
+
+                            // Call method to give reward
+                            // giveReward();
+                        }
+
+                        @Override
+                        public void onRewardedVideoClosed() {
+                            // The Rewarded Video ad was closed - this can occur during the video
+                            // by closing the app, or closing the end card.
+                            if (isfbUserRewarded) {
+                                try {
+                                    onRewardAdClosedListener.onRewardSuccess();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                isFbRewardedReady = false;
+                                isFbRewardedShown = true;
+                                isfbUserRewarded = false;
+                                fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
+                                fbRewardedVideoAd.loadAd(
+                                        fbRewardedVideoAd.buildLoadAdConfig()
+                                                .withAdListener(rewardedVideoAdListener)
+                                                .build());
+                            } else {
+                                try {
+                                    onRewardAdClosedListener.onRewardFailed();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                isFbRewardedReady = false;
+                                isFbRewardedShown = true;
+                                isfbUserRewarded = false;
+                                fbRewardedVideoAd = new RewardedVideoAd(BaseClass.this, adsPrefernce.fbRewardedId());
+                                fbRewardedVideoAd.loadAd(
+                                        fbRewardedVideoAd.buildLoadAdConfig()
+                                                .withAdListener(rewardedVideoAdListener)
+                                                .build());
+                            }
+                            loadRewardAd();
+
+                        }
+                    };
+                    fbRewardedVideoAd.buildLoadAdConfig().withAdListener(rewardedVideoAdListener).build();
+//                    fbRewardedVideoAd.setAdListener(rewardedVideoAdListenerShow);
+
+                } else {
+                    goToPlanBRewarded(onRewardAdClosedListener);
+                }
+            } else {
+                goToPlanBRewarded(onRewardAdClosedListener);
+            }
+        } else {
+            goToPlanBRewarded(onRewardAdClosedListener);
+        }
+    }
+
+    public void goToPlanBRewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
+        if (adsPrefernce.showisRewarded()) {
+            if (!isIsRewardedShown) {
+                if (isIsRewardedReady) {
+                    if (IronSource.isRewardedVideoAvailable()) {
+                        IronSource.showRewardedVideo();
+                        IronSource.setRewardedVideoListener(new RewardedVideoListener() {
+                            @Override
+                            public void onRewardedVideoAdOpened() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdClosed() {
+                                if (isIsUserRewarded) {
+                                    try {
+                                        onRewardAdClosedListener.onRewardSuccess();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    isIsRewardedReady = false;
+                                    isIsRewardedShown = true;
+                                    isIsUserRewarded = false;
+                                    IronSource.setRewardedVideoListener(isRewardedVideoListener);
+                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                } else {
+                                    try {
+                                        onRewardAdClosedListener.onRewardFailed();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    isIsRewardedReady = false;
+                                    isIsRewardedShown = true;
+                                    isIsUserRewarded = false;
+                                    IronSource.setRewardedVideoListener(isRewardedVideoListener);
+                                    IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                }
+                            }
+
+                            @Override
+                            public void onRewardedVideoAvailabilityChanged(boolean b) {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdStarted() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdEnded() {
+
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdRewarded(Placement placement) {
+                                isIsUserRewarded = true;
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
+                                isIsRewardedReady = false;
+                                isIsRewardedShown = true;
+                                isIsUserRewarded = false;
+                                IronSource.setRewardedVideoListener(isRewardedVideoListener);
+                                IronSource.init(BaseClass.this, adsPrefernce.isAppKey(), IronSource.AD_UNIT.REWARDED_VIDEO);
+                                try {
+                                    onRewardAdClosedListener.onRewardAdNotShown();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onRewardedVideoAdClicked(Placement placement) {
+
+                            }
+                        });
+                    } else {
+                        goToPlanCRewarded(onRewardAdClosedListener);
+                    }
+                } else {
+                    goToPlanCRewarded(onRewardAdClosedListener);
+                }
+            } else {
+                goToPlanCRewarded(onRewardAdClosedListener);
+            }
+        } else {
+            goToPlanCRewarded(onRewardAdClosedListener);
+        }
+
+    }
+
+    public void goToPlanCRewarded(OnRewardAdClosedListener onRewardAdClosedListener) {
+        if (adsPrefernce.showmpRewarded()) {
+            if (!isMpRewardedShown) {
+                if (isMpRewardedReady) {
+                    if (MoPubRewardedVideos.hasRewardedVideo(adsPrefernce.mpRewardedId())) {
+//                        MoPub.onCreate(this);
+                        MoPubRewardedVideos.showRewardedVideo(adsPrefernce.mpRewardedId());
+
+//                        MoPub.onPause(this);
+                        MoPubRewardedVideoListener rewardedVideoListener = new MoPubRewardedVideoListener() {
+                            @Override
+                            public void onRewardedVideoLoadSuccess(String adUnitId) {
+                                // Called when the video for the given adUnitId has loaded. At this point you should be able to call MoPubRewardedVideos.showRewardedVideo(String) to show the video.
+                            }
+
+                            @Override
+                            public void onRewardedVideoLoadFailure(String adUnitId, MoPubErrorCode errorCode) {
+                                // Called when a video fails to load for the given adUnitId. The provided error code will provide more insight into the reason for the failure to load.
+                            }
+
+                            @Override
+                            public void onRewardedVideoStarted(String adUnitId) {
+                                // Called when a rewarded video starts playing.
+                            }
+
+                            @Override
+                            public void onRewardedVideoPlaybackError(String adUnitId, MoPubErrorCode errorCode) {
+                                isMpRewardedReady = false;
+                                isMpRewardedShown = true;
+                                isMpUserRewarded = false;
+                                loadRewardAd();
+                                resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
+                                try {
+                                    onRewardAdClosedListener.onRewardAdNotShown();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onRewardedVideoClicked(@NonNull String adUnitId) {
+                                //  Called when a rewarded video is clicked.
+                            }
+
+                            @Override
+                            public void onRewardedVideoClosed(String adUnitId) {
+                                if (isMpUserRewarded) {
+                                    try {
+                                        onRewardAdClosedListener.onRewardSuccess();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    isMpRewardedReady = false;
+                                    isMpRewardedShown = true;
+                                    isMpUserRewarded = false;
+                                    resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
+                                } else {
+                                    try {
+                                        onRewardAdClosedListener.onRewardFailed();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    isMpRewardedReady = false;
+                                    isMpRewardedShown = true;
+                                    isMpUserRewarded = false;
+                                    resetAllRewardedShownBoolean(false, onRewardAdClosedListener);
+                                }
+                                loadRewardAd();
+
+//                                MoPub.onResume(BaseClass.this);
+                            }
+
+                            @Override
+                            public void onRewardedVideoCompleted(Set<String> adUnitIds, MoPubReward reward) {
+                                isMpUserRewarded = true;
+                            }
+                        };
+                        MoPubRewardedVideos.setRewardedVideoListener(rewardedVideoListener);
+                    } else {
+                        resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
+                    }
+                } else {
+                    resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
+                }
+            } else {
+                resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
+            }
+        } else {
+            resetAllRewardedShownBoolean(true, onRewardAdClosedListener);
+        }
+
+    }
+
+    public void resetAllRewardedShownBoolean(Boolean withListner, OnRewardAdClosedListener onRewardAdClosedListener) {
+
+        isGRewardedShown = false;
+        isFbRewardedShown = false;
+        isIsRewardedShown = false;
+        isMpRewardedShown = false;
+        if (withListner) {
+            try {
+                onRewardAdClosedListener.onRewardAdNotShown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     @Override
     public void networkAvailable() {
@@ -8397,7 +8776,14 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
 
         onNetworkChangeListner = (OnNetworkChangeListner) this;
-        onNetworkChangeListner.onInternetConnected();
+
+        if (!adsPrefernce.allowAccess()){
+            if (isvalidInstall){
+                onNetworkChangeListner.onInternetConnected();
+            }
+        }else {
+            onNetworkChangeListner.onInternetConnected();
+        }
 
 
     }
