@@ -484,7 +484,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 }
                             });
                         } else if (adsPrefernce.showfbBanner()) {
-
                             com.facebook.ads.AdView adView;
                             AudienceNetworkAds.initialize(this);
                             adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
@@ -497,7 +496,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 public void onError(Ad ad, AdError adError) {
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                     adContainerView.setVisibility(View.VISIBLE);
-
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
@@ -7573,15 +7571,20 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     RelativeLayout lay_first = findViewById(R.id.lay_first);
                     RelativeLayout lay_second = findViewById(R.id.lay_second);
                     RelativeLayout lay_banner_ad = findViewById(R.id.lay_banner_ad);
+                    BannerDetail bannerAd;
+
 
                     lay_banner_ad.setVisibility(View.VISIBLE);
 
 
-                    // set Interstitial Data
-                    BannerDetail bannerAd = bannerDetails.get(current);
+                    // set Banner Data
+                    bannerAd = bannerDetails.get(current);
 
                     // icon
-                    Glide.with(this).load(bannerAd.getIcon()).into(iv_ad_icon_banner);
+                    if (!this.isFinishing()){
+                        Glide.with(this).load(bannerAd.getIcon()).into(iv_ad_icon_banner);
+                    }
+
                     // title
                     tv_banner_ad_title.setText(bannerAd.getTitle());
                     // subtitle
@@ -7637,7 +7640,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     tv_banner_ad_subtitle.setSelected(true);
                     tv_banner_extra_text.setSelected(true);
 
-
                     iv_banner_info.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -7659,6 +7661,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         }
                     });
                     inhouseBannerListener.onAdLoaded();
+
+
+
+
+
+
                 } else {
                     inhouseBannerListener.onAdShowFailed();
                 }
@@ -7688,12 +7696,16 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     lay_banner_ad.setVisibility(View.VISIBLE);
 
 
-                    // set Interstitial Data
+                    // set Banner Data
                     BannerDetail bannerAd = savedBannerDetails.get(current);
 
-                    // icon
-                    Glide.with(this).load(bannerAd.getIcon()).into(iv_ad_icon_banner);
-                    // title
+
+                    //icon
+                    if (!this.isFinishing() || !this.isDestroyed()){
+                        Glide.with(this).load(bannerAd.getIcon()).into(iv_ad_icon_banner);
+                    }
+
+                   // title
                     tv_banner_ad_title.setText(bannerAd.getTitle());
                     // subtitle
                     tv_banner_ad_subtitle.setText(bannerAd.getSubtitle());
@@ -7810,10 +7822,14 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         // set Interstitial Data
         NativeDetail nativeAd = nativeDetails.get(current);
 
-        // icon
-        Glide.with(this).load(nativeAd.getIcon()).into(iv_ad_icon_native);
-        // banner
-        Glide.with(this).load(nativeAd.getBigimage()).into(iv_native_main_banner);
+
+        if(!this.isFinishing() || !this.isDestroyed()){
+            // icon
+            Glide.with(this).load(nativeAd.getIcon()).into(iv_ad_icon_native);
+            // banner
+            Glide.with(this).load(nativeAd.getBigimage()).into(iv_native_main_banner);
+        }
+
         // title
         tv_native_ad_title.setText(nativeAd.getTitle());
         // subtitle
@@ -8776,14 +8792,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         }
 
         onNetworkChangeListner = (OnNetworkChangeListner) this;
+        onNetworkChangeListner.onInternetConnected();
 
-        if (!adsPrefernce.allowAccess()){
-            if (isvalidInstall){
-                onNetworkChangeListner.onInternetConnected();
-            }
-        }else {
-            onNetworkChangeListner.onInternetConnected();
-        }
 
 
     }
