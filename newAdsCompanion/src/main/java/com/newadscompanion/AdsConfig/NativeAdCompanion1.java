@@ -182,6 +182,8 @@ public class NativeAdCompanion1 {
                                 @Override
                                 public void onNativeLoad(com.mopub.nativeads.NativeAd nativeAd) {
                                     nativeAdContainer.setVisibility(View.VISIBLE);
+                                    cardView.removeAllViews();
+                                    cardView.setBackground(context.getResources().getDrawable(R.drawable.ad_border));
                                     cardView.setVisibility(View.VISIBLE);
 
                                     FrameLayout.LayoutParams nativePara =
@@ -305,6 +307,7 @@ public class NativeAdCompanion1 {
         cardView.setVisibility(View.VISIBLE);
         UnifiedNativeAdView unifiedNativeAdView = (UnifiedNativeAdView) LayoutInflater.from(this.context).inflate(R.layout.native_ad_layout_google, null);
         cardView.removeAllViews();
+        cardView.setBackground(context.getResources().getDrawable(R.drawable.ad_border));
         cardView.addView(unifiedNativeAdView);
         unifiedNativeAdView.setMediaView((MediaView) unifiedNativeAdView.findViewById(R.id.ad_media));
         unifiedNativeAdView.setHeadlineView(unifiedNativeAdView.findViewById(R.id.ad_headline));
@@ -358,6 +361,8 @@ public class NativeAdCompanion1 {
         NativeAdLayout nativeAdLayout = new NativeAdLayout(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.native_ad_layout_facebook, cardView, false);
+        cardView.removeAllViews();
+        cardView.setBackground(context.getResources().getDrawable(R.drawable.ad_border));
         cardView.addView(adViews);
 
         // Add the AdOptionsView
@@ -482,6 +487,8 @@ public class NativeAdCompanion1 {
                     public void onNativeLoad(com.mopub.nativeads.NativeAd nativeAd) {
                         isMpN1Shown = true;
                         nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.removeAllViews();
+                        cardView.setBackground(context.getResources().getDrawable(R.drawable.ad_border));
                         cardView.setVisibility(View.VISIBLE);
 
                         FrameLayout.LayoutParams nativePara =
@@ -653,6 +660,8 @@ public class NativeAdCompanion1 {
                         resetNativeShownBoolean();
 
                         nativeAdContainer.setVisibility(View.VISIBLE);
+                        cardView.removeAllViews();
+                        cardView.setBackground(context.getResources().getDrawable(R.drawable.ad_border));
                         cardView.setVisibility(View.VISIBLE);
 
                         FrameLayout.LayoutParams nativePara =

@@ -337,8 +337,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         if (adsPrefernce.isMediationActive()) {
                             if (!adsPrefernce.planD()) {
                                 loadMixedInterAds();
-//                                initializeMoPubSDKforInter1(adsPrefernce.mpInterId1(), false);
-//                                initializeMoPubSDKforInter2(adsPrefernce.mpInterId2(), false);
                                 initializeMoPubSDK();
                             }
                         }
@@ -7793,6 +7791,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 //        NativeAdLayout nativeAdLayout = new NativeAdLayout(context);
         LayoutInflater inflater = LayoutInflater.from(this);
         RelativeLayout adViews = (RelativeLayout) inflater.inflate(R.layout.ad_native, cardView, false);
+        cardView.removeAllViews();
+        cardView.setBackground(getResources().getDrawable(R.drawable.ad_border));
+
         cardView.addView(adViews);
 
         // get Interstitial Data
