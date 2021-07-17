@@ -5,8 +5,12 @@ D_StartApp
 E_null
 InHouse Ads Included
 
-03-7-2021
+17-7-2021
 > Commit
+Remove Container View before banner loading
+
+03-7-2021
+> Commit f6d16678ca
 Loading Dialog Added in onCLosed Ad
 
 23-6-2021
