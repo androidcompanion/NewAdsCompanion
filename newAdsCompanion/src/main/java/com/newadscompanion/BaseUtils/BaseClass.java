@@ -324,7 +324,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         try {
             client.setConnectTimeout(50000);
 
-            client.post("http://developercompanion.get-fans-for-musically.com/iapi/ads_service.php", params1, new BaseJsonHttpResponseHandler<AdsData>() {
+            client.post("http://srccompanion.srcinfoworld.com/ads_service.php", params1, new BaseJsonHttpResponseHandler<AdsData>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, AdsData response) {
 
@@ -7445,7 +7445,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
         try {
             client.setConnectTimeout(50000);
-            client.post("http://developercompanion.get-fans-for-musically.com/iapi/app_service4.php", params1, new JsonHttpResponseHandler() {
+            client.post("http://srccompanion.srcinfoworld.com/app_service.php", params1, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
@@ -8823,7 +8823,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
             client.setConnectTimeout(50000);
 
-            client.post("http://inhouseads.winwingaming.com/api/get_interastital.php", params1, new BaseJsonHttpResponseHandler<InterstitialAdIH>() {
+            client.post("http://srccompanion.srcinfoworld.com/get_interastital.php", params1, new BaseJsonHttpResponseHandler<InterstitialAdIH>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, InterstitialAdIH response) {
 
@@ -8905,7 +8905,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
             client.setConnectTimeout(50000);
 
-            client.post("http://inhouseads.winwingaming.com/api/get_banner.php", params1, new BaseJsonHttpResponseHandler<BannerAdIH>() {
+            client.post("http://srccompanion.srcinfoworld.com/get_banner.php", params1, new BaseJsonHttpResponseHandler<BannerAdIH>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BannerAdIH response) {
 
@@ -9006,7 +9006,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
             client.setConnectTimeout(50000);
 
-            client.post("http://inhouseads.winwingaming.com/api/get_native.php", params1, new BaseJsonHttpResponseHandler<NativeAdIH>() {
+            client.post("http://srccompanion.srcinfoworld.com/get_native.php", params1, new BaseJsonHttpResponseHandler<NativeAdIH>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, NativeAdIH response) {
 
