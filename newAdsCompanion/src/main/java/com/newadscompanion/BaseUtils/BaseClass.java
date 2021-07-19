@@ -84,6 +84,7 @@ import com.mopub.mobileads.MoPubRewardedVideos;
 import com.mopub.mobileads.MoPubView;
 import com.newadscompanion.AdsConfig.DefaultIds;
 import com.newadscompanion.BroadcastUtils.NetworkStateReceiver;
+import com.newadscompanion.BuildConfig;
 import com.newadscompanion.Interfaces.InhouseBannerListener;
 import com.newadscompanion.Interfaces.InhouseInterstitialListener;
 import com.newadscompanion.Interfaces.InhouseNativeListener;
@@ -440,6 +441,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     }
 
+    void hideInhouseBanner(){
+
+        RelativeLayout lay_banner_ad =  findViewById(R.id.lay_banner_ad);
+        lay_banner_ad.setVisibility(View.GONE);
+
+    }
     public void showLargeBannerAd() {
         if (isNetworkAvailable(this)) {
             if (isAdsAvailable) {
@@ -451,35 +458,38 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = this.findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             gadView = new AdView(this);
-
                             gadView.setAdUnitId(adsPrefernce.gBannerId());
-                            adContainerView.removeAllViews();
                             adContainerView.addView(gadView);
                             AdRequest adRequest = new AdRequest.Builder().build();
                             gadView.setAdSize(AdSize.LARGE_BANNER);
                             gadView.loadAd(adRequest);
+
                             gadView.setAdListener(new com.google.android.gms.ads.AdListener() {
                                 @Override
                                 public void onAdLoaded() {
                                     super.onAdLoaded();
+                                    hideInhouseBanner();
                                 }
 
                                 @Override
                                 public void onAdFailedToLoad(LoadAdError loadAdError) {
                                     super.onAdFailedToLoad(loadAdError);
+                                    toast("failed");
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
+
                                     adContainerView.setVisibility(View.VISIBLE);
+                                        showInhouseBannerAd(new InhouseBannerListener() {
+                                            @Override
+                                            public void onAdLoaded() {
+                                            }
 
-                                    showInhouseBannerAd(new InhouseBannerListener() {
-                                        @Override
-                                        public void onAdLoaded() {
-                                        }
+                                            @Override
+                                            public void onAdShowFailed() {
 
-                                        @Override
-                                        public void onAdShowFailed() {
+                                            }
+                                        });
 
-                                        }
-                                    });
+
                                 }
                             });
                         } else if (adsPrefernce.showfbBanner()) {
@@ -489,7 +499,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
                             adContainerView.addView(adView);
-                            adContainerView.removeAllViews();
                             AdListener bannerAdListner = new AdListener() {
                                 @Override
                                 public void onError(Ad ad, AdError adError) {
@@ -498,6 +507,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     showInhouseBannerAd(new InhouseBannerListener() {
                                         @Override
                                         public void onAdLoaded() {
+                                            hideInhouseBanner();
                                         }
 
                                         @Override
@@ -530,12 +540,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.removeAllViews();
                             adContainerView.addView(banner, 0, layoutParams);
                             banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                                 @Override
                                 public void onBannerAdLoaded() {
                                     banner.setVisibility(View.VISIBLE);
+                                    hideInhouseBanner();
                                 }
 
                                 @Override
@@ -595,11 +605,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 moPubView.loadAd();
                                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                 adContainerView.setVisibility(View.VISIBLE);
-                                adContainerView.removeAllViews();
                                 adContainerView.addView(moPubView);
                                 moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                                     @Override
                                     public void onBannerLoaded(@NonNull MoPubView banner) {
+                                        hideInhouseBanner();
                                     }
 
                                     @Override
@@ -789,7 +799,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             gadView = new AdView(this);
 
                             gadView.setAdUnitId(adsPrefernce.gBannerId());
-                            adContainerView.removeAllViews();
                             adContainerView.addView(gadView);
                             AdRequest adRequest = new AdRequest.Builder().build();
                             com.google.android.gms.ads.AdSize adSize = getAdSize();
@@ -799,6 +808,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onAdLoaded() {
                                     super.onAdLoaded();
+                                    hideInhouseBanner();
                                     //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
 //                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -833,7 +843,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                             adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
                             final FrameLayout adContainerView = findViewById(R.id.banner_container);
                             adContainerView.setVisibility(View.VISIBLE);
-                            adContainerView.removeAllViews();
                             adContainerView.addView(adView);
 
                             AdListener bannerAdListner = new AdListener() {
@@ -860,6 +869,8 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                                 @Override
                                 public void onAdLoaded(Ad ad) {
+                                    hideInhouseBanner();
+
                                     //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
 //                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                                        getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -886,11 +897,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                     FrameLayout.LayoutParams.WRAP_CONTENT);
                             adContainerView.setVisibility(View.VISIBLE);
 
-                            adContainerView.removeAllViews();
                             adContainerView.addView(banner, 0, layoutParams);
                             banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                                 @Override
                                 public void onBannerAdLoaded() {
+                                    hideInhouseBanner();
                                     banner.setVisibility(View.VISIBLE);
                                     // Called after a banner ad has been successfully loaded
                                     //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
@@ -957,12 +968,13 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 moPubView.loadAd();
                                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                                 adContainerView.setVisibility(View.VISIBLE);
-                                adContainerView.removeAllViews();
 
                                 adContainerView.addView(moPubView);
                                 moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                                     @Override
                                     public void onBannerLoaded(@NonNull MoPubView banner) {
+                                        hideInhouseBanner();
+
                                         //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
 //                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                                            getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -1094,7 +1106,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             } else {
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-
                 showInhouseBannerAd(new InhouseBannerListener() {
                     @Override
                     public void onAdLoaded() {
@@ -1113,7 +1124,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         } else {
             final FrameLayout adContainerView = findViewById(R.id.banner_container);
             adContainerView.setVisibility(View.VISIBLE);
-
             showInhouseBannerAd(new InhouseBannerListener() {
                 @Override
                 public void onAdLoaded() {
@@ -1156,11 +1166,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     moPubView.loadAd();
                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                     adContainerView.setVisibility(View.VISIBLE);
-                    adContainerView.removeAllViews();
                     adContainerView.addView(moPubView);
                     moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                         @Override
                         public void onBannerLoaded(@NonNull MoPubView banner) {
+                            hideInhouseBanner();
                             isMpBannerShown = true;
                             resetAllBannerBoolean();
                             //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
@@ -1281,12 +1291,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                     moPubView.loadAd();
                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
                     adContainerView.setVisibility(View.VISIBLE);
-                    adContainerView.removeAllViews();
 
                     adContainerView.addView(moPubView);
                     moPubView.setBannerAdListener(new MoPubView.BannerAdListener() {
                         @Override
                         public void onBannerLoaded(@NonNull MoPubView banner) {
+                            hideInhouseBanner();
                             isMpLargeBannerShown = true;
                             resetAllLargeBannerBoolean();
                             //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
@@ -1388,11 +1398,11 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                         FrameLayout.LayoutParams.WRAP_CONTENT);
                 adContainerView.setVisibility(View.VISIBLE);
 
-                adContainerView.removeAllViews();
                 adContainerView.addView(banner, 0, layoutParams);
                 banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                     @Override
                     public void onBannerAdLoaded() {
+                        hideInhouseBanner();
                         isIsBannerShown = true;
                         banner.setVisibility(View.VISIBLE);
                     }
@@ -1453,12 +1463,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.removeAllViews();
 
                 adContainerView.addView(banner, 0, layoutParams);
                 banner.setBannerListener(new com.ironsource.mediationsdk.sdk.BannerListener() {
                     @Override
                     public void onBannerAdLoaded() {
+                        hideInhouseBanner();
                         isIsLargeBannerShown = true;
                         banner.setVisibility(View.VISIBLE);
                     }
@@ -1518,7 +1528,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.removeAllViews();
                 adContainerView.addView(adView);
 
                 AdListener bannerAdListner = new AdListener() {
@@ -1530,6 +1539,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     @Override
                     public void onAdLoaded(Ad ad) {
+                        hideInhouseBanner();
                         //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -1566,7 +1576,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                 adView = new com.facebook.ads.AdView(this, adsPrefernce.fbBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_90);
                 final FrameLayout adContainerView = findViewById(R.id.banner_container);
                 adContainerView.setVisibility(View.VISIBLE);
-                adContainerView.removeAllViews();
                 adContainerView.addView(adView);
 
                 AdListener bannerAdListner = new AdListener() {
@@ -1578,6 +1587,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
                     @Override
                     public void onAdLoaded(Ad ad) {
+                        hideInhouseBanner();
                         //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         //                                     getResources().getDrawable(R.drawable.bg_banner).setTint(defaultIds.TINT_COLOR());
@@ -1655,7 +1665,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         gadView = new AdView(this);
 
         gadView.setAdUnitId(adsPrefernce.gBannerId());
-        adContainerView.removeAllViews();
         adContainerView.addView(gadView);
         AdRequest adRequest = new AdRequest.Builder().build();
         com.google.android.gms.ads.AdSize adSize = getAdSize();
@@ -1665,6 +1674,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                hideInhouseBanner();
                 isGBannerShown = true;
                 //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                 //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -1690,7 +1700,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
         gadView = new AdView(this);
 
         gadView.setAdUnitId(adsPrefernce.gBannerId());
-        adContainerView.removeAllViews();
         adContainerView.addView(gadView);
         AdRequest adRequest = new AdRequest.Builder().build();
         gadView.setAdSize(AdSize.LARGE_BANNER);
@@ -1699,6 +1708,7 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                hideInhouseBanner();
                 isGLargeBannerShown = true;
                 //adContainerView.setBackground(getResources().getDrawable(R.drawable.bg_banner));
                 //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -8431,9 +8441,12 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     public void showInhouseBannerAd(InhouseBannerListener inhouseBannerListener) {
         if (adsPrefernce.isBannerAdLoaded()) {
+            toast("1");
             if (isNetworkAvailable(this)) {
+                toast("2");
                 if (finalBanner.size() != 0) {
                     // get Interstitial Data
+                    toast("3");
                     ArrayList<BannerDetail> bannerDetails = adsPrefernce.getBannerAds();
 
                     // ad to show from position
