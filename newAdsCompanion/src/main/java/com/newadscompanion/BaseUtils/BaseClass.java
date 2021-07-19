@@ -474,7 +474,6 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
                                 @Override
                                 public void onAdFailedToLoad(LoadAdError loadAdError) {
                                     super.onAdFailedToLoad(loadAdError);
-                                    toast("failed");
                                     final FrameLayout adContainerView = findViewById(R.id.banner_container);
 
                                     adContainerView.setVisibility(View.VISIBLE);
@@ -8441,12 +8440,9 @@ public class BaseClass extends AppCompatActivity implements NetworkStateReceiver
 
     public void showInhouseBannerAd(InhouseBannerListener inhouseBannerListener) {
         if (adsPrefernce.isBannerAdLoaded()) {
-            toast("1");
             if (isNetworkAvailable(this)) {
-                toast("2");
                 if (finalBanner.size() != 0) {
                     // get Interstitial Data
-                    toast("3");
                     ArrayList<BannerDetail> bannerDetails = adsPrefernce.getBannerAds();
 
                     // ad to show from position
