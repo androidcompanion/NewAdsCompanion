@@ -47,7 +47,7 @@ dependencies {
 //    implementation 'com.appnext.sdk:native-ads2:2.5.3.472'
 
     //iron source
-    implementation 'com.ironsource.sdk:mediationsdk:7.1.8'
+    implementation 'com.ironsource.sdk:mediationsdk:7.0.1.1'
 
 
     implementation('com.mopub:mopub-sdk:5.17.0@aar') {
